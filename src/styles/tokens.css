@@ -1,0 +1,291 @@
+/*
+ * miRutina design tokens — direction «Dorsal» (see DESIGN.md).
+ * Single source of truth for CSS and GSAP (src/motion/tokens.ts reads the motion block).
+ *
+ * Theme resolution:
+ *   - default (no data-theme): dark, unless the OS prefers light.
+ *   - data-theme="dark" | "light": forced by the user.
+ */
+
+/* ── Non-colour tokens (theme independent) ───────────────────────────── */
+:root {
+  /* Typography */
+  --font-sans: 'Barlow', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-condensed: 'Barlow Condensed', 'Barlow', system-ui, sans-serif;
+
+  /* Modular scale (~1.2), fixed rem — product UI, no fluid type */
+  --text-xs: 0.75rem; /* 12 — labels, column headers */
+  --text-sm: 0.8125rem; /* 13 — secondary */
+  --text-md: 0.9375rem; /* 15 — body */
+  --text-lg: 1.125rem; /* 18 */
+  --text-xl: 1.375rem; /* 22 */
+  --text-2xl: 1.625rem; /* 26 — screen title */
+  --text-3xl: 2rem; /* 32 — set figure in the armband */
+  --text-4xl: 2.5rem; /* 40 */
+  --text-dorsal: 4.75rem; /* 76 — «Última vez» weight, one per screen */
+
+  --leading-tight: 1;
+  --leading-snug: 1.2;
+  --leading-normal: 1.4;
+  --tracking-label: 0.08em;
+  --tracking-name: 0.14em;
+  --tracking-tight: -0.01em;
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  /* Spacing — 4 px scale */
+  --space-0: 0;
+  --space-1: 0.25rem; /* 4 */
+  --space-2: 0.5rem; /* 8 */
+  --space-3: 0.75rem; /* 12 */
+  --space-4: 1rem; /* 16 */
+  --space-5: 1.25rem; /* 20 */
+  --space-6: 1.5rem; /* 24 */
+  --space-8: 2rem; /* 32 */
+  --space-10: 2.5rem; /* 40 */
+  --space-12: 3rem; /* 48 */
+  --space-16: 4rem; /* 64 */
+
+  --gutter: var(--space-4);
+  --hit-min: 44px;
+  --control-height: 56px; /* stepper, primary action in the session dock */
+  --control-height-sm: 44px;
+
+  /* Radii — concentric rule: outer = inner + padding */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px; /* controls */
+  --radius-lg: 16px; /* containers */
+  --radius-pill: 999px;
+
+  /* Z-index */
+  --z-base: 0;
+  --z-raised: 10;
+  --z-nav: 100;
+  --z-dock: 200;
+  --z-overlay: 290;
+  --z-sheet: 300;
+  --z-toast: 400;
+
+  /* Layout */
+  --sidebar-width: 15rem;
+  --bottom-nav-height: 64px;
+  --content-max: 72rem;
+
+  /* ── Motion (aligned with transitions.dev scale) ── */
+  --dur-instant: 100ms;
+  --dur-fast: 150ms;
+  --dur-base: 250ms;
+  --dur-slow: 400ms;
+  --dur-stagger: 40ms;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.34, 1.36, 0.64, 1);
+  --ease-linear: linear;
+
+  --distance-micro: 4px;
+  --distance-base: 8px;
+  --distance-medium: 12px;
+  --scale-press: 0.96;
+  --blur-small: 2px;
+
+  /* transitions.dev aliases, so its snippets resolve to our scale */
+  --duration-stagger: var(--dur-stagger);
+  --duration-micro: 80ms;
+  --duration-quick: var(--dur-fast);
+  --duration-fast: var(--dur-base);
+  --duration-medium: 350ms;
+  --duration-slow: var(--dur-slow);
+  --ease-smooth-out: var(--ease-out);
+  --ease-bounce: var(--ease-spring);
+  --scale-large: var(--scale-press);
+}
+
+@media (min-width: 64rem) {
+  :root {
+    --gutter: var(--space-8);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Keep opacity/colour feedback, remove travel and scale. */
+  :root {
+    --distance-micro: 0px;
+    --distance-base: 0px;
+    --distance-medium: 0px;
+    --scale-press: 1;
+    --blur-small: 0px;
+    --ease-spring: var(--ease-out);
+    --dur-slow: var(--dur-fast);
+  }
+}
+
+/* ── Colour: dark («equipación», default) ────────────────────────────── */
+:root,
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  /* Navy kit ground, tinted neutrals */
+  --color-bg: oklch(0.2 0.035 258);
+  --color-surface: oklch(0.235 0.037 258);
+  --color-surface-2: oklch(0.275 0.038 258);
+  --color-dock: oklch(0.17 0.032 258);
+  --color-line: oklch(0.95 0.015 85 / 0.12);
+  --color-line-strong: oklch(0.95 0.015 85 / 0.22);
+
+  /* Vinyl ink */
+  --color-text: oklch(0.95 0.015 85);
+  --color-text-2: oklch(0.82 0.018 85);
+  --color-text-3: oklch(0.66 0.02 85);
+  --color-text-disabled: oklch(0.48 0.02 258);
+
+  /* Kit band (granate) */
+  --color-band: oklch(0.4 0.125 8);
+  --color-on-band: oklch(0.95 0.015 85);
+  --color-on-band-2: oklch(0.86 0.03 20);
+
+  /* Sponsor gold — actions, timer, armband stripe */
+  --color-accent: oklch(0.79 0.14 80);
+  --color-accent-hover: oklch(0.83 0.13 82);
+  --color-accent-press: oklch(0.73 0.14 78);
+  --color-on-accent: oklch(0.2 0.035 258);
+  --color-accent-ink: oklch(0.79 0.14 80);
+
+  /* Armband — the one inverted block per screen */
+  --color-armband: oklch(0.95 0.015 85);
+  --color-on-armband: oklch(0.2 0.035 258);
+  --color-armband-stripe: oklch(0.79 0.14 80);
+
+  /* Media plate for the dataset GIFs (white background) */
+  --color-media-plate: oklch(0.98 0.004 85);
+
+  /* States */
+  --color-danger: oklch(0.7 0.17 25);
+  --color-warning: oklch(0.8 0.13 70);
+  --color-success: oklch(0.76 0.14 150);
+  --color-info: oklch(0.74 0.11 245);
+  --color-focus: oklch(0.79 0.14 80);
+  --color-hover: oklch(0.95 0.015 85 / 0.06);
+  --color-press: oklch(0.95 0.015 85 / 0.1);
+
+  /* Feel (always paired with its label) */
+  --feel-demasiado: oklch(0.7 0.17 25);
+  --feel-justo: oklch(0.75 0.14 50);
+  --feel-bien: oklch(0.77 0.15 150);
+  --feel-puedo-mas: oklch(0.77 0.1 195);
+  --feel-poco: oklch(0.74 0.11 250);
+  --color-on-feel: oklch(0.2 0.035 258);
+
+  --shadow-float: 0 -8px 24px oklch(0.1 0.03 258 / 0.5);
+  --shadow-lift: 0 12px 32px oklch(0.1 0.03 258 / 0.55), 0 2px 6px oklch(0.1 0.03 258 / 0.4);
+}
+
+/* ── Colour: light («segunda equipación») ─────────────────────────────
+ * Duplicated for the OS preference and for the explicit toggle; keep both in sync
+ * (tokens.test.ts checks it).
+ */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']) {
+    color-scheme: light;
+
+    --color-bg: oklch(0.955 0.012 85);
+    --color-surface: oklch(0.985 0.006 85);
+    --color-surface-2: oklch(0.92 0.015 85);
+    --color-dock: oklch(0.985 0.006 85);
+    --color-line: oklch(0.22 0.035 258 / 0.12);
+    --color-line-strong: oklch(0.22 0.035 258 / 0.22);
+
+    --color-text: oklch(0.22 0.035 258);
+    --color-text-2: oklch(0.36 0.03 258);
+    --color-text-3: oklch(0.47 0.025 258);
+    --color-text-disabled: oklch(0.66 0.015 258);
+
+    --color-band: oklch(0.4 0.125 8);
+    --color-on-band: oklch(0.95 0.015 85);
+    --color-on-band-2: oklch(0.86 0.03 20);
+
+    --color-accent: oklch(0.79 0.14 80);
+    --color-accent-hover: oklch(0.75 0.14 78);
+    --color-accent-press: oklch(0.7 0.14 76);
+    --color-on-accent: oklch(0.2 0.035 258);
+    --color-accent-ink: oklch(0.5 0.11 70);
+
+    --color-armband: oklch(0.22 0.035 258);
+    --color-on-armband: oklch(0.95 0.015 85);
+    --color-armband-stripe: oklch(0.79 0.14 80);
+
+    --color-media-plate: oklch(1 0 0);
+
+    --color-danger: oklch(0.5 0.17 25);
+    --color-warning: oklch(0.55 0.12 65);
+    --color-success: oklch(0.5 0.12 150);
+    --color-info: oklch(0.5 0.12 250);
+    --color-focus: oklch(0.5 0.11 70);
+    --color-hover: oklch(0.22 0.035 258 / 0.05);
+    --color-press: oklch(0.22 0.035 258 / 0.09);
+
+    --feel-demasiado: oklch(0.5 0.17 25);
+    --feel-justo: oklch(0.54 0.14 45);
+    --feel-bien: oklch(0.5 0.12 150);
+    --feel-puedo-mas: oklch(0.5 0.08 200);
+    --feel-poco: oklch(0.5 0.12 255);
+    --color-on-feel: oklch(0.985 0.006 85);
+
+    --shadow-float: 0 -6px 20px oklch(0.22 0.035 258 / 0.1);
+    --shadow-lift: 0 12px 28px oklch(0.22 0.035 258 / 0.16), 0 2px 6px oklch(0.22 0.035 258 / 0.1);
+  }
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  --color-bg: oklch(0.955 0.012 85);
+  --color-surface: oklch(0.985 0.006 85);
+  --color-surface-2: oklch(0.92 0.015 85);
+  --color-dock: oklch(0.985 0.006 85);
+  --color-line: oklch(0.22 0.035 258 / 0.12);
+  --color-line-strong: oklch(0.22 0.035 258 / 0.22);
+
+  --color-text: oklch(0.22 0.035 258);
+  --color-text-2: oklch(0.36 0.03 258);
+  --color-text-3: oklch(0.47 0.025 258);
+  --color-text-disabled: oklch(0.66 0.015 258);
+
+  --color-band: oklch(0.4 0.125 8);
+  --color-on-band: oklch(0.95 0.015 85);
+  --color-on-band-2: oklch(0.86 0.03 20);
+
+  --color-accent: oklch(0.79 0.14 80);
+  --color-accent-hover: oklch(0.75 0.14 78);
+  --color-accent-press: oklch(0.7 0.14 76);
+  --color-on-accent: oklch(0.2 0.035 258);
+  --color-accent-ink: oklch(0.5 0.11 70);
+
+  --color-armband: oklch(0.22 0.035 258);
+  --color-on-armband: oklch(0.95 0.015 85);
+  --color-armband-stripe: oklch(0.79 0.14 80);
+
+  --color-media-plate: oklch(1 0 0);
+
+  --color-danger: oklch(0.5 0.17 25);
+  --color-warning: oklch(0.55 0.12 65);
+  --color-success: oklch(0.5 0.12 150);
+  --color-info: oklch(0.5 0.12 250);
+  --color-focus: oklch(0.5 0.11 70);
+  --color-hover: oklch(0.22 0.035 258 / 0.05);
+  --color-press: oklch(0.22 0.035 258 / 0.09);
+
+  --feel-demasiado: oklch(0.5 0.17 25);
+  --feel-justo: oklch(0.54 0.14 45);
+  --feel-bien: oklch(0.5 0.12 150);
+  --feel-puedo-mas: oklch(0.5 0.08 200);
+  --feel-poco: oklch(0.5 0.12 255);
+  --color-on-feel: oklch(0.985 0.006 85);
+
+  --shadow-float: 0 -6px 20px oklch(0.22 0.035 258 / 0.1);
+  --shadow-lift: 0 12px 28px oklch(0.22 0.035 258 / 0.16), 0 2px 6px oklch(0.22 0.035 258 / 0.1);
+}
