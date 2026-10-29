@@ -27,16 +27,16 @@
 - Vitest procesa CSS (`test.css.include`) para que `?raw` funcione en `tokens.test.ts`.
 
 ### F1
-- **Media de Gym visual fuera de git** ( en ): el NOTICE del dataset dice que clonar no da derechos de redistribución y el repo de GitHub puede ser público.  la regenera desde . En F6 (despliegue) habrá que decidir cómo se sirve.
-- **Traducción de nombres**:  reordena al español (movimiento + adjetivos concordados + posición + lateralidad + equipo + «, matices»). Diccionario en ; 99 correcciones manuales en . El import informa de palabras sin traducir y nombres sin movimiento reconocido.
-- **Seed versionado**:  =  (hash del contenido); se recarga solo si cambia y se importa de forma diferida (chunk aparte, ~140 kB gzip).
+- **Media de Gym visual fuera de git** (`public/exercises/` en `.gitignore`): el NOTICE del dataset dice que clonar no da derechos de redistribución y el repo de GitHub puede ser público. `npm run import:exercises` la regenera desde `vendor/`. En F6 (despliegue) habrá que decidir cómo se sirve.
+- **Traducción de nombres**: `scripts/lib/translate-name.ts` reordena al español (movimiento + adjetivos concordados + posición + lateralidad + equipo + «, matices»). Diccionario en `scripts/exercise-terms.es.json`; 99 correcciones manuales en `scripts/exercise-names-overrides.es.json`. El import informa de palabras sin traducir y de nombres sin movimiento reconocido.
+- **Seed versionado**: `src/db/seed/exercises.json` = `{ version, exercises }` (hash del contenido); se recarga solo si cambia y se importa de forma diferida (chunk aparte, ~140 kB gzip).
 - **Outbox con una entrada por fila**: el push sube el estado actual de la fila; varias ediciones seguidas = una subida. Al hacer pull, si el remoto es más nuevo, se descarta la entrada pendiente local (perdió el LWW).
-- ** por tabla** en . Ojo:  podría saltarse filas con el mismo instante exacto en el borde de una página de 1.000; improbable con precisión de microsegundos.
-- **Auth con flujo ** (no PKCE) para que el enlace mágico funcione aunque el correo se abra en otra pestaña del mismo navegador.
-- **Variables de entorno**:  y  (la clave nueva  vale igual). Sin ellas la app funciona solo en local.
-- **Búsqueda en memoria** sobre los 1.324 ejercicios leídos de Dexie (índice con nombre ES/EN + músculo y equipo en ES/EN, prefijos, sin tildes); ~1 ms por consulta. El índice multi-entrada  de Dexie queda disponible para consultas futuras.
-- **Estado de la Biblioteca en la URL** (). La fila seleccionada en PC es el enlace activo del router (), con el brazalete.
--  y sus etiquetas viven ya en .
+- **`lastPulledAt` por tabla** en `meta`. Ojo: `gt(server_updated_at)` podría saltarse filas con el mismo instante exacto en el borde de una página de 1.000; improbable con precisión de microsegundos.
+- **Auth con flujo `implicit`** (no PKCE) para que el enlace mágico funcione aunque el correo se abra en otra pestaña del mismo navegador.
+- **Variables de entorno**: `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` (la clave nueva `sb_publishable_…` vale igual). Sin ellas la app funciona solo en local.
+- **Búsqueda en memoria** sobre los 1.324 ejercicios leídos de Dexie (índice con nombre ES/EN + músculo y equipo en ES/EN, prefijos, sin tildes); ~1 ms por consulta. El índice multi-entrada `searchTokens` de Dexie queda disponible para consultas futuras.
+- **Estado de la Biblioteca en la URL** (`?q=&parte=&equipo=&fav=&sel=`). La fila seleccionada en PC es el enlace activo del router (`data-status="active"`), con el brazalete.
+- `Feel` y sus etiquetas viven ya en `src/db/types.ts`.
 - Sin toasts: el error persistente de sincronización (3 fallos seguidos) se muestra en el indicador (icono rojo) y en Ajustes.
 
 ## Deuda
@@ -46,7 +46,6 @@
 - La sección «Brazalete» de `DESIGN.md` describe un componente que de momento solo existe como muestra en `/dev/ui`.
 - `global.css` reduce las animaciones con keyframes a 1 ms con «reducir movimiento»; hoy no hay ninguna. Cuando lleguen (F5), darles una alternativa propia en lugar de depender de ese recorte global.
 - Auditoría de impeccable hecha sin el overlay del navegador (detector por CLI + Playwright); el overlay en vivo queda pendiente.
-
 - 71 nombres de ejercicio poco comunes conservan alguna palabra en inglés; ampliar el diccionario o las correcciones cuando aparezcan en rutinas.
 - El chunk del catálogo supera el aviso de 500 kB de Vite (se carga diferido; valorar dividirlo en F6).
 
