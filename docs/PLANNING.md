@@ -13,7 +13,8 @@ Criterio de éxito del MVP: registrar una sesión completa (5–6 ejercicios, ~2
 ## Decisiones tomadas
 - Uso personal (un solo usuario). La media del dataset (© Gym visual) se usa tal cual con atribución.
 - PC y móvil, sincronizados (Supabase) desde la F1. PC para organizar, móvil para entrenar.
-- Sin programas predefinidos: el usuario crea sus rutinas.
+- El usuario crea sus rutinas **y además** dispone de una colección de rutinas ya hechas (por músculo, tipo de serie y duración) que puede usar tal cual o copiar y editar. *(Cambio del 29 oct 2026; antes: «sin programas predefinidos».)*
+- Cada ejercicio de una rutina usa una **técnica de series**: normales, alemanas, descendentes, ascendentes o superserie (ver § Técnicas de series).
 - Sin sugerencia automática de peso: valoración de sensaciones de cinco opciones.
 - Peso corporal y medidas incluidos. Unidades en kg.
 
@@ -27,7 +28,7 @@ Repo: https://github.com/hasaneyldrm/exercises-dataset
 ## Pantallas
 | Pantalla | Dispositivo | MVP |
 | --- | --- | --- |
-| Hoy | Móvil | Entreno del día, "Empezar", resumen semanal |
+| Hoy | Móvil | Selector de secciones al abrir (Rutinas, Calendario, Favoritos, Biblioteca), entreno del día, "Empezar", resumen semanal |
 | Calendario | PC | Semana y mes; asignar rutina arrastrando; hecho/planificado/saltado; repetir semanal |
 | Sesión en curso | Móvil | Series precargadas de la última vez; valoración de un toque; descanso; notas |
 | Biblioteca | Ambos | Buscar ES/EN, filtros músculo/equipo, ficha con GIF y pasos en español, favoritos |
@@ -35,6 +36,22 @@ Repo: https://github.com/hasaneyldrm/exercises-dataset
 | Rutinas | PC | Plantillas en dos columnas: biblioteca ↔ rutina, arrastrar y soltar |
 | Cuerpo | Ambos | Peso corporal y medidas con gráfica |
 | Ajustes | Ambos | kg, descanso por defecto, cuenta de sync, exportar JSON |
+
+## Técnicas de series y rutinas predefinidas
+Inspiración: rutinas de Entrenavirtual (Vikikos). La app sigue sin sugerir pesos: precarga lo de la última vez y el usuario decide.
+
+| Técnica | Qué es | Cómo se registra |
+| --- | --- | --- |
+| Normales | N series × rango de reps, descanso fijo | Como hasta ahora |
+| Alemanas (GVT) | 10 × 10 con el mismo peso y descanso corto (60–90 s) | 10 filas precargadas con el mismo peso |
+| Descendentes (drop set) | Al terminar la serie, bajar el peso y seguir sin descanso (1–3 bajadas) | Sub-series encadenadas dentro de la misma serie; el descanso empieza tras la última bajada |
+| Ascendentes (pirámide) | Cada serie sube el peso y baja las reps (p. ej. 12-10-8-6) | Reps objetivo por serie; peso por serie precargado de la última vez |
+| Superserie | 2 (o más) ejercicios seguidos sin descanso entre ellos | Ejercicios agrupados; el descanso empieza al terminar el bloque |
+
+Rutinas predefinidas:
+- Colección local (como el catálogo de ejercicios: no se sincroniza), con nombre, grupo muscular, técnica principal, nivel y **duración estimada** (30 / 45 / 60 / 75 min).
+- Se pueden «Usar» (planificar o empezar tal cual) o «Copiar a mis rutinas» para editarlas; la copia sí se sincroniza.
+- El contenido (qué ejercicios lleva cada rutina) se decide con el usuario en la F2.
 
 ## Valoración de sensaciones (`feel`)
 | Valor | Etiqueta | Significado |

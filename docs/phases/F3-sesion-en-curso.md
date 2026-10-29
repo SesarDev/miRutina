@@ -31,6 +31,7 @@
 3. **Registro de series** (corazón de la fase)
    - En la tarjeta activa, arriba: la línea «Última vez…» destacada y la anterior en gris pequeño. Si no hay historial: «Primera vez con este ejercicio».
    - Filas de serie precargadas: tantas como la rutina indique; peso y reps = los de la misma serie de la última sesión (si no existe, la última serie disponible; si no hay historial, vacío).
+   - **Técnicas de series** (definidas en F2): alemanas → 10 filas; descendentes → sub-series encadenadas sin descanso y el descanso tras la última bajada; ascendentes → reps objetivo por serie; superserie → los ejercicios del bloque se alternan y el descanso empieza al cerrar el bloque. Nunca se sugiere el peso de la bajada ni de la siguiente serie.
    - Cada fila: peso (stepper +/− grande y toque para teclado numérico `inputmode="decimal"`), reps (stepper), botón grande ✓ «Hecha».
    - Al marcar hecha: se guarda `setLog` con `completedAt`; aparecen debajo los 5 botones de valoración (Demasiado, Voy justo, Bien, Puedo más, Poco) con texto + color; tocar uno guarda `feel`, se cierran los botones y **arranca el descanso**. Si no se toca ninguno, el descanso arranca igualmente a los 3 s o al empezar a editar la siguiente serie.
    - Desmarcar una serie hecha y editarla después es posible.

@@ -6,6 +6,8 @@
 
 ## Preguntar antes de empezar
 - Valores por defecto al añadir un ejercicio a una rutina: propongo 3 series × 8–12 reps y 120 s de descanso. ¿Te valen?
+- Técnicas de series (ver `docs/PLANNING.md` § Técnicas de series): confirmar parámetros por defecto de cada una (alemanas 10×10 / 90 s; descendentes nº de bajadas; ascendentes reps por serie; superserie descanso del bloque).
+- Rutinas predefinidas: acordar la colección inicial (cuántas, por músculo / técnica / duración 30-45-60-75 min) y su contenido.
 
 ## Pasos
 
@@ -14,6 +16,9 @@
    - Editor en PC (≥ 1024 px): dos columnas. Izquierda: buscador de la biblioteca (reutilizar componentes de F1). Derecha: la rutina. Añadir arrastrando (dnd-kit) o con botón «+». Reordenar arrastrando.
    - Editor en móvil: lista de la rutina + botón «Añadir ejercicio» que abre la biblioteca en un Sheet; reordenar con asa de arrastre.
    - Cada ejercicio de la rutina: series, rango de reps (min–max), descanso en segundos. Steppers grandes.
+   - **Técnica de series** por ejercicio (normales, alemanas, descendentes, ascendentes) y **superseries** agrupando ejercicios contiguos. Ampliar `RoutineItem` en `src/db/types.ts` (`technique`, `groupId`, parámetros) — es JSON en Supabase, no cambia el esquema remoto.
+   - Duración estimada de la rutina (series × (tiempo de serie + descanso)), visible en la lista.
+   - **Rutinas predefinidas**: tabla local `routineTemplates` cargada desde un seed (como el catálogo), pestaña «Predefinidas» en `/rutinas` con filtros por músculo, técnica y duración; acciones «Usar» y «Copiar a mis rutinas».
    - Guardado automático (sin botón Guardar), vía `repo.saveRoutine`.
    - Tests: crear, reordenar, borrar y deshacer.
    - Commit: `F2: editor de rutinas con arrastrar y soltar`.
@@ -29,6 +34,7 @@
    - Commit: `F2: calendario semana/mes con planificación`.
 
 3. **Pantalla Hoy** (`/`)
+   - **Selector de secciones** al abrir: accesos grandes a Rutinas, Calendario, Favoritos (biblioteca filtrada) y Biblioteca.
    - Entreno planificado de hoy: nombre de la rutina, ejercicios con miniatura y series×reps, botón grande «Empezar» (en F2 crea la `session` y navega a `/sesion/$id`, que de momento muestra un marcador; se implementa en F3).
    - Si hoy no hay nada: próximo entreno planificado y botón «Entrenar algo hoy» (elegir rutina o sesión libre).
    - Resumen de la semana: días entrenados / planificados.

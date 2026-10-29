@@ -43,7 +43,8 @@ vendor/exercises-dataset/  # clon del repo del dataset (en .gitignore)
 ## Modelo de datos (Dexie y Supabase con las mismas tablas de usuario)
 - `exercises` (solo local, catálogo del dataset + propios con `isCustom`): id, name, nameEs, bodyPart, equipment, target, secondaryMuscles[], stepsEs[], image, gif, isCustom
 - `exerciseSettings`: exerciseId, logType ('weight_reps'|'reps'|'time'), repMin, repMax, favorite, note
-- `routines`: id, name, items[] {exerciseId, sets, repMin, repMax, restSec, order}
+- `routines`: id, name, items[] {exerciseId, sets, repMin, repMax, restSec, order, technique?, groupId?, …} — `technique` ∈ 'normal' | 'aleman' | 'descendente' | 'ascendente' | 'superserie' y `groupId` agrupa los ejercicios de una superserie (detalle en F2; ver `docs/PLANNING.md` § Técnicas de series)
+- `routineTemplates` (solo local, como el catálogo): rutinas predefinidas; «Copiar a mis rutinas» crea una `routine` normal
 - `plannedWorkouts`: id, date (YYYY-MM-DD), routineId, status ('planned'|'done'|'skipped'), sessionId?
 - `sessions`: id, date, routineId?, startedAt, endedAt?, notes
 - `setLogs`: id, sessionId, exerciseId, order, weight, reps, durationSec?, feel?, isWarmup, completedAt, note?

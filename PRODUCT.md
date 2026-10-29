@@ -22,7 +22,7 @@ miRutina es un registro personal de entrenamiento de fuerza. Responde en cada mo
 
 ## Positioning
 
-La app **nunca sugiere ni calcula el peso de hoy**. En lugar de un algoritmo de progresión, guarda una valoración de sensaciones de cinco niveles por serie y la pone junto a la última vez, con los valores precargados. La decisión es siempre del usuario. Sin programas predefinidos: el usuario crea sus propias rutinas.
+La app **nunca sugiere ni calcula el peso de hoy**. En lugar de un algoritmo de progresión, guarda una valoración de sensaciones de cinco niveles por serie y la pone junto a la última vez, con los valores precargados. La decisión es siempre del usuario. El usuario crea sus propias rutinas o parte de una colección de rutinas ya hechas (por músculo, técnica de series y duración), con técnicas como series alemanas, descendentes, ascendentes y superseries.
 
 ## Operating Context
 
