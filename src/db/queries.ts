@@ -1,7 +1,9 @@
 /** Live reads for the UI (always from Dexie). */
+import Dexie from 'dexie'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { useMemo } from 'react'
 import { buildIndex } from '@/lib/exerciseSearch'
+import { sortSets, type PastSession } from '@/lib/lastTime'
 import { estimateMinutes } from '@/lib/routines'
 import { db } from './schema'
 import type { PlannedWorkout } from './types'
@@ -137,4 +139,47 @@ export function useOpenSession() {
 
 export function useSession(id: string) {
   return useLiveQuery(async () => (await db.sessions.get(id)) ?? null, [id])
+}
+
+/**
+ * The last `n` sessions with completed work sets of an exercise, most recent first (warm-ups,
+ * unfinished rows and `excludeSessionId` — usually the session in progress — left out).
+ */
+export async function lastSessionsForExercise(
+  exerciseId: string,
+  { n = 2, excludeSessionId }: { n?: number; excludeSessionId?: string } = {},
+): Promise<PastSession[]> {
+  // Rows without completedAt are not in the compound index.
+  const logs = await db.setLogs
+    .where('[exerciseId+completedAt]')
+    .between([exerciseId, Dexie.minKey], [exerciseId, Dexie.maxKey])
+    .reverse()
+    .toArray()
+
+  const bySession = new Map<string, typeof logs>()
+  for (const log of logs) {
+    if (log.deletedAt || log.isWarmup || log.sessionId === excludeSessionId) continue
+    const list = bySession.get(log.sessionId)
+    if (list) list.push(log)
+    else if (bySession.size < n * 2) bySession.set(log.sessionId, [log])
+  }
+
+  const sessions = await db.sessions.bulkGet([...bySession.keys()])
+  const out: PastSession[] = []
+  for (const session of sessions) {
+    if (!session || session.deletedAt || out.length === n) continue
+    out.push({
+      sessionId: session.id,
+      date: session.date,
+      sets: sortSets(bySession.get(session.id)!),
+    })
+  }
+  return out
+}
+
+export function useLastSessions(exerciseId: string, excludeSessionId?: string) {
+  return useLiveQuery(
+    () => lastSessionsForExercise(exerciseId, { excludeSessionId }),
+    [exerciseId, excludeSessionId],
+  )
 }

@@ -101,6 +101,7 @@ describe('setFavorite', () => {
       repMax: 10,
       favorite: false,
       note: 'Banco 3',
+      weightStep: null,
     })
     await setFavorite('0025', true)
     const settings = await db.exerciseSettings.get('0025')

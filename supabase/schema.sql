@@ -40,6 +40,7 @@ create table if not exists public.exercise_settings (
   rep_max           smallint,
   favorite          boolean     not null default false,
   note              text,
+  weight_step       numeric(4,1),
   updated_at        timestamptz not null,
   deleted_at        timestamptz,
   server_updated_at timestamptz not null default now(),
@@ -90,6 +91,7 @@ create table if not exists public.sessions (
   started_at        timestamptz not null,
   ended_at          timestamptz,
   notes             text,
+  items             jsonb       not null default '[]'::jsonb, -- ejercicios de la sesión (SessionItem)
   updated_at        timestamptz not null,
   deleted_at        timestamptz,
   server_updated_at timestamptz not null default now()
@@ -101,6 +103,7 @@ create table if not exists public.set_logs (
   session_id        uuid        not null,
   exercise_id       text        not null,
   "order"           smallint    not null,
+  drop_index        smallint    not null default 0,
   weight            numeric(6,1),
   reps              smallint,
   duration_sec      integer,

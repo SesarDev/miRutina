@@ -104,6 +104,7 @@ describe('push', () => {
       repMax: null,
       favorite: true,
       note: null,
+      weightStep: null,
     })
     await engine.sync()
     expect(remote.table('exercise_settings').get('user-1|0025')).toMatchObject({

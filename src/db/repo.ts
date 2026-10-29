@@ -64,15 +64,25 @@ export async function softDelete(table: SyncTable, id: string): Promise<void> {
   notify(table)
 }
 
-/** Toggles (or sets) the favourite flag of an exercise, creating its settings row if needed. */
-export async function setFavorite(exerciseId: string, favorite: boolean) {
+/** Changes some settings of an exercise, creating its settings row if needed. */
+export async function updateExerciseSettings(
+  exerciseId: string,
+  patch: Partial<Omit<SyncedRows['exerciseSettings'], 'exerciseId' | keyof SyncFields>>,
+) {
   const current = await db.exerciseSettings.get(exerciseId)
   return save('exerciseSettings', {
     exerciseId,
     logType: current?.logType ?? 'weight_reps',
     repMin: current?.repMin ?? null,
     repMax: current?.repMax ?? null,
+    favorite: current?.favorite ?? false,
     note: current?.note ?? null,
-    favorite,
+    weightStep: current?.weightStep ?? null,
+    ...patch,
   })
+}
+
+/** Toggles (or sets) the favourite flag of an exercise, creating its settings row if needed. */
+export function setFavorite(exerciseId: string, favorite: boolean) {
+  return updateExerciseSettings(exerciseId, { favorite })
 }

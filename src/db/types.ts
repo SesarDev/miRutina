@@ -50,6 +50,8 @@ export type ExerciseSettings = {
   repMax: number | null
   favorite: boolean
   note: string | null
+  /** Step of the session's +/− weight buttons (kg); null = default for the equipment. */
+  weightStep: number | null
 } & SyncFields
 
 /** How the sets of an exercise are performed (docs/PLANNING.md § Técnicas de series). */
@@ -128,7 +130,10 @@ export type SetLog = {
   id: string
   sessionId: string
   exerciseId: string
+  /** Set number within its exercise in the session (0-based). */
   order: number
+  /** 0 = the set itself; 1, 2… = the chained drops of a drop set (descendentes). */
+  dropIndex: number
   /** kg, one decimal at most. */
   weight: number | null
   reps: number | null
