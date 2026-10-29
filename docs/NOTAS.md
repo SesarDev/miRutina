@@ -11,6 +11,8 @@
 
 - **F1 · Datos, sincronización y biblioteca:** cerrada el 29 oct 2026 (etiqueta `f1-done`). Catálogo de 1.324 ejercicios con nombres en español, Dexie con outbox, sincronización con Supabase y Biblioteca. **Pendiente de verificar a mano** (el usuario lo prueba después): favorito PC → móvil en < 1 min y favorito en modo avión que se sincroniza al volver la red.
 
+- **F2 · Rutinas y calendario:** pasos 1–4 hechos (29 oct 2026); falta la verificación entre dispositivos y `/cerrar-fase F2`. Editor de rutinas con técnicas y superseries, 12 predefinidas, calendario semana/mes y pantalla Hoy.
+
 ## Decisiones técnicas
 
 - **TypeScript 6.0 en vez de 7.** La plantilla de Vite trae TS 7 (el compilador en Go), pero `typescript-eslint` aún no lo admite (`peer typescript <6.1`). Volver a TS 7 cuando lo soporte.
@@ -39,6 +41,18 @@
 - `Feel` y sus etiquetas viven ya en `src/db/types.ts`.
 - Sin toasts: el error persistente de sincronización (3 fallos seguidos) se muestra en el indicador (icono rojo) y en Ajustes.
 
+### F2
+- **`RoutineItem`** gana `id` (estable, para arrastrar y para superseries), `technique`, `groupId`, `drops` y `repsPerSet`. Es JSON en Supabase: no cambia el esquema remoto.
+- **Superseries**: ejercicios contiguos con el mismo `groupId`; rondas y descanso se comparten en todo el grupo (`updateGroup`) y el descanso es el de tras cada ronda. Si un arrastre rompe la contigüidad o deja un grupo de uno, ese ejercicio vuelve a series normales (`fixGroups`).
+- **Valores por defecto acordados**: normales 3 × 8–12 / 120 s; alemanas 10 × 10 / 90 s; descendentes 3 series con 2 bajadas / 120 s; ascendentes 12·10·8·6 / 120 s; superserie 3 rondas / 90 s. En `src/lib/routines.ts`.
+- **Duración estimada**: 5 min de calentamiento + 45 s por serie (+25 s por bajada) + descansos + 1 min de cambio entre ejercicios, redondeado a 5 min. Es orientativa.
+- **Rutinas predefinidas**: 12, en `src/db/seed/routineTemplates.ts` (contenido original), con ids de ejercicios del catálogo validados por test. Tabla local `routineTemplates` (Dexie v2) recargada al cambiar `TEMPLATES_VERSION`. «Copiar a mis rutinas» crea una rutina normal con ids nuevos.
+- **Editor de rutinas**: copia local de los ejercicios + guardado inmediato en cada cambio (nombre con 400 ms de pausa). Si llega un cambio de otro dispositivo (otro `updatedAt`), reemplaza la copia local.
+- **Calendario**: vista y fecha en la URL (`?vista=semana|mes&fecha=YYYY-MM-DD`); semana por defecto en móvil y mes en PC. «Repetir cada semana» crea una fila por semana (máx. 12); no se guardan reglas de recurrencia. Hoy lleva el brazalete. Estados con icono + texto (en la vista mes el estado va en el icono y en el nombre accesible).
+- **Arrastrar y soltar** (dnd-kit) con sensores de puntero (umbral 6 px) y teclado, y anuncios para lector de pantalla en español (`src/lib/dndA11y.ts`).
+- **Empezar** crea la `session` y la enlaza con el `plannedWorkout` (`sessionId`); pulsar dos veces no duplica. `/sesion/$id` es un marcador hasta F3. Hoy muestra «Continuar entreno» si hay una sesión sin terminar.
+- **Toast** propio (`showToast`) para «Deshacer» (5 s); uno a la vez.
+
 ## Deuda
 
 - El favicon sigue siendo el de Vite; los iconos de la PWA llegan en F6.
@@ -48,7 +62,8 @@
 - Auditoría de impeccable hecha sin el overlay del navegador (detector por CLI + Playwright); el overlay en vivo queda pendiente.
 - 71 nombres de ejercicio poco comunes conservan alguna palabra en inglés; ampliar el diccionario o las correcciones cuando aparezcan en rutinas.
 - El chunk del catálogo supera el aviso de 500 kB de Vite (se carga diferido; valorar dividirlo en F6).
-
+- Predefinidas: solo «Copiar a mis rutinas». «Usar» (planificar o empezar tal cual sin copiar) queda pendiente: el calendario necesita una rutina propia.
+- Las sesiones abiertas no se marcan como «Hecho» en el calendario hasta que F3 las termine.
 - Verificación manual de la sincronización entre dispositivos (criterios 5 y 6 de F1) pendiente; si falla, se arregla al inicio de F2.
 
 ## Ideas para más adelante

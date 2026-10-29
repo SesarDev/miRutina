@@ -372,15 +372,14 @@
   }
 }
 
-/* A superset reads as one block: shared frame, gold rail on the leading edge. */
+/* A superset reads as one block: a shared, gold-tinted frame around its exercises. */
 .superset {
   display: grid;
   gap: var(--space-3);
   padding: var(--space-3);
-  border: 1px solid var(--color-line-strong);
+  border: 1px solid color-mix(in oklch, var(--color-accent) 45%, transparent);
   border-radius: calc(var(--radius-lg) + var(--space-3));
   background: color-mix(in oklch, var(--color-accent) 5%, var(--color-bg));
-  box-shadow: inset 4px 0 0 var(--color-accent);
 }
 
 .supersetHead {

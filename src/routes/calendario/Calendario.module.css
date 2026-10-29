@@ -1,8 +1,21 @@
+/* Panel beside the calendar only when there is room (rem-based: large text stacks it). */
 .columns {
   display: grid;
-  grid-template-columns: 15rem minmax(0, 1fr);
   gap: var(--space-6);
   align-items: start;
+}
+
+@container main (min-width: 60rem) {
+  .columns {
+    grid-template-columns: 15rem minmax(0, 1fr);
+  }
+
+  .panel {
+    position: sticky;
+    top: var(--space-6);
+    max-height: calc(100dvh - var(--space-12));
+    overflow-y: auto;
+  }
 }
 
 .calendar {
@@ -47,7 +60,7 @@
 }
 
 .viewOption {
-  min-height: calc(var(--hit-min) - 6px);
+  min-height: var(--hit-min);
   min-width: 4.5rem;
   padding: 0 var(--space-3);
   border: 0;
@@ -384,12 +397,8 @@
 
 /* ── Desktop panel ── */
 .panel {
-  position: sticky;
-  top: var(--space-6);
   display: grid;
   gap: var(--space-2);
-  max-height: calc(100dvh - var(--space-12));
-  overflow-y: auto;
 }
 
 .panelTitle {
