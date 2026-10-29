@@ -1,0 +1,7 @@
+dist
+dev-dist
+vendor
+node_modules
+.claude
+.agents
+public/exercises
