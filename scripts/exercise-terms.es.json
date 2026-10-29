@@ -138,10 +138,6 @@
     }
   },
   "heads": {
-    "close-grip bench press": {
-      "es": "Press de banca con agarre cerrado",
-      "g": "m"
-    },
     "bench press": {
       "es": "Press de banca",
       "g": "m"

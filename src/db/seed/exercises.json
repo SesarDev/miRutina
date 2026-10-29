@@ -1,5 +1,5 @@
 {
-  "version": "9bff31257a3c",
+  "version": "4275033d32a9",
   "exercises": [
     {
       "id": "0001",
@@ -42,7 +42,7 @@
     {
       "id": "0003",
       "name": "air bike",
-      "nameEs": "Aire bicicleta",
+      "nameEs": "Bicicleta de aire",
       "bodyPart": "waist",
       "equipment": "body weight",
       "target": "abs",
@@ -80,7 +80,7 @@
     {
       "id": "0006",
       "name": "alternate heel touchers",
-      "nameEs": "Alterno talón touchers",
+      "nameEs": "Toques de talón alternos",
       "bodyPart": "waist",
       "equipment": "body weight",
       "target": "abs",
@@ -176,7 +176,7 @@
     {
       "id": "2355",
       "name": "arm slingers hanging bent knee legs",
-      "nameEs": "Brazo slingers colgado rodillas flexionadas piernas",
+      "nameEs": "Arm slingers colgado, rodillas flexionadas",
       "bodyPart": "waist",
       "equipment": "body weight",
       "target": "abs",
@@ -194,7 +194,7 @@
     {
       "id": "2333",
       "name": "arm slingers hanging straight legs",
-      "nameEs": "Brazo slingers colgado piernas rectas",
+      "nameEs": "Arm slingers colgado, piernas rectas",
       "bodyPart": "waist",
       "equipment": "body weight",
       "target": "abs",
@@ -344,7 +344,7 @@
     {
       "id": "1710",
       "name": "assisted lying gluteus and piriformis stretch",
-      "nameEs": "Asistido tumbado glúteo y estiramiento de piriforme",
+      "nameEs": "Estiramiento asistido de glúteo y piriforme tumbado",
       "bodyPart": "upper legs",
       "equipment": "assisted",
       "target": "glutes",
@@ -447,7 +447,7 @@
     {
       "id": "0016",
       "name": "assisted prone hamstring",
-      "nameEs": "Asistido boca abajo isquiotibiales",
+      "nameEs": "Estiramiento asistido de isquiotibiales boca abajo",
       "bodyPart": "upper legs",
       "equipment": "assisted",
       "target": "hamstrings",
@@ -703,7 +703,7 @@
     {
       "id": "3672",
       "name": "back and forth step",
-      "nameEs": "Espalda y forth escalón",
+      "nameEs": "Paso adelante y atrás",
       "bodyPart": "cardio",
       "equipment": "body weight",
       "target": "cardiovascular system",
@@ -742,7 +742,7 @@
     {
       "id": "3297",
       "name": "back lever",
-      "nameEs": "Espalda máquina",
+      "nameEs": "Back lever",
       "bodyPart": "back",
       "equipment": "body weight",
       "target": "upper back",
@@ -801,7 +801,7 @@
     {
       "id": "0020",
       "name": "balance board",
-      "nameEs": "Equilibrio tabla",
+      "nameEs": "Tabla de equilibrio",
       "bodyPart": "upper legs",
       "equipment": "body weight",
       "target": "quads",
@@ -2075,7 +2075,7 @@
     {
       "id": "0030",
       "name": "barbell close-grip bench press",
-      "nameEs": "Press de banca con agarre cerrado con barra",
+      "nameEs": "Press de banca con barra, agarre cerrado",
       "bodyPart": "upper arms",
       "equipment": "barbell",
       "target": "triceps",
@@ -2173,7 +2173,7 @@
     {
       "id": "0035",
       "name": "barbell decline close grip to skull press",
-      "nameEs": "Declinado agarre cerrado con barra a press de cráneo",
+      "nameEs": "Press francés declinado con barra, agarre cerrado",
       "bodyPart": "upper arms",
       "equipment": "barbell",
       "target": "triceps",
@@ -2592,7 +2592,7 @@
     {
       "id": "1719",
       "name": "barbell incline close grip bench press",
-      "nameEs": "Press de banca con agarre cerrado inclinado con barra",
+      "nameEs": "Press de banca inclinado con barra, agarre cerrado",
       "bodyPart": "upper arms",
       "equipment": "barbell",
       "target": "triceps",
@@ -2867,7 +2867,7 @@
     {
       "id": "0058",
       "name": "barbell lying lifting (on hip)",
-      "nameEs": "Tumbado elevando con barra (en cadera)",
+      "nameEs": "Elevación de cadera tumbado con barra",
       "bodyPart": "upper legs",
       "equipment": "barbell",
       "target": "glutes",
@@ -3379,7 +3379,7 @@
     {
       "id": "2187",
       "name": "barbell reverse close-grip bench press",
-      "nameEs": "Press de banca con agarre cerrado inverso con barra",
+      "nameEs": "Press de banca inverso con barra, agarre cerrado",
       "bodyPart": "upper arms",
       "equipment": "barbell",
       "target": "triceps",
@@ -3835,7 +3835,7 @@
     {
       "id": "0096",
       "name": "barbell side bent v. 2",
-      "nameEs": "Lateral flexionado con barra v. 2",
+      "nameEs": "Flexión lateral con barra v. 2",
       "bodyPart": "waist",
       "equipment": "barbell",
       "target": "abs",
@@ -5258,7 +5258,7 @@
     {
       "id": "0870",
       "name": "butt-ups",
-      "nameEs": "Butt-ups",
+      "nameEs": "Elevación de glúteos en plancha",
       "bodyPart": "waist",
       "equipment": "body weight",
       "target": "abs",
@@ -6444,7 +6444,7 @@
     {
       "id": "0191",
       "name": "cable one arm lateral bent-over",
-      "nameEs": "A una mano lateral flexionado sobre en polea",
+      "nameEs": "Elevación lateral inclinado a una mano en polea",
       "bodyPart": "chest",
       "equipment": "cable",
       "target": "pectorals",
@@ -8595,7 +8595,7 @@
     {
       "id": "1271",
       "name": "chest and front of shoulder stretch",
-      "nameEs": "Pecho y estiramiento frontal de de hombro",
+      "nameEs": "Estiramiento de pecho y hombro frontal",
       "bodyPart": "chest",
       "equipment": "body weight",
       "target": "pectorals",
@@ -8866,7 +8866,7 @@
     {
       "id": "0260",
       "name": "cocoons",
-      "nameEs": "Cocoons",
+      "nameEs": "Abdominal capullo",
       "bodyPart": "waist",
       "equipment": "body weight",
       "target": "abs",
@@ -10386,7 +10386,7 @@
     {
       "id": "0316",
       "name": "dumbbell incline breeding",
-      "nameEs": "Inclinado breeding con mancuernas",
+      "nameEs": "Breeding inclinado con mancuernas",
       "bodyPart": "chest",
       "equipment": "dumbbell",
       "target": "pectorals",
@@ -10946,7 +10946,7 @@
     {
       "id": "0332",
       "name": "dumbbell iron cross",
-      "nameEs": "Hierro cruzado con mancuernas",
+      "nameEs": "Cruz de hierro con mancuernas",
       "bodyPart": "shoulders",
       "equipment": "dumbbell",
       "target": "delts",
@@ -11043,7 +11043,7 @@
     {
       "id": "0335",
       "name": "dumbbell lateral to front raise",
-      "nameEs": "Lateral con mancuernas a elevación frontal",
+      "nameEs": "Elevación lateral a frontal con mancuernas",
       "bodyPart": "shoulders",
       "equipment": "dumbbell",
       "target": "delts",
@@ -11179,7 +11179,7 @@
     {
       "id": "0339",
       "name": "dumbbell lying femoral",
-      "nameEs": "Tumbado femoral con mancuernas",
+      "nameEs": "Curl femoral tumbado con mancuerna",
       "bodyPart": "upper legs",
       "equipment": "dumbbell",
       "target": "hamstrings",
@@ -11234,7 +11234,7 @@
     {
       "id": "0341",
       "name": "dumbbell lying one arm deltoid rear",
-      "nameEs": "Tumbado a una mano deltoides posterior con mancuernas",
+      "nameEs": "Elevación posterior tumbado a una mano con mancuerna",
       "bodyPart": "shoulders",
       "equipment": "dumbbell",
       "target": "delts",
@@ -12724,7 +12724,7 @@
     {
       "id": "0377",
       "name": "dumbbell rear delt row_shoulder",
-      "nameEs": "Posterior deltoides row_shoulder con mancuernas",
+      "nameEs": "Remo para deltoides posterior con mancuernas (hombro)",
       "bodyPart": "shoulders",
       "equipment": "dumbbell",
       "target": "delts",
@@ -13129,7 +13129,7 @@
     {
       "id": "3546",
       "name": "dumbbell seated alternate shoulder",
-      "nameEs": "Sentado alterno hombro con mancuernas",
+      "nameEs": "Press de hombros alterno sentado con mancuernas",
       "bodyPart": "shoulders",
       "equipment": "dumbbell",
       "target": "delts",
@@ -13501,7 +13501,7 @@
     {
       "id": "0399",
       "name": "dumbbell seated one arm rotate",
-      "nameEs": "Sentado a una mano rotate con mancuernas",
+      "nameEs": "Rotación sentado a una mano con mancuerna",
       "bodyPart": "lower arms",
       "equipment": "dumbbell",
       "target": "forearms",
@@ -14012,7 +14012,7 @@
     {
       "id": "2143",
       "name": "dumbbell standing around world",
-      "nameEs": "De pie alrededor de mundo con mancuernas",
+      "nameEs": "Vuelta al mundo de pie con mancuernas",
       "bodyPart": "shoulders",
       "equipment": "dumbbell",
       "target": "delts",
@@ -14868,7 +14868,7 @@
     {
       "id": "0443",
       "name": "elbow-to-knee",
-      "nameEs": "Elbow-to-knee",
+      "nameEs": "Codo a rodilla",
       "bodyPart": "waist",
       "equipment": "body weight",
       "target": "abs",
@@ -14908,7 +14908,7 @@
     {
       "id": "1332",
       "name": "exercise ball alternating arm ups",
-      "nameEs": "Alterno brazo ups en fitball",
+      "nameEs": "Elevación alterna de brazos en fitball",
       "bodyPart": "back",
       "equipment": "stability ball",
       "target": "lats",
@@ -15122,7 +15122,7 @@
     {
       "id": "1382",
       "name": "exercise ball on the wall calf raise",
-      "nameEs": "En fitball en elevación de gemelos de pared",
+      "nameEs": "Elevación de gemelos con fitball en la pared",
       "bodyPart": "lower legs",
       "equipment": "dumbbell",
       "target": "calves",
@@ -15142,7 +15142,7 @@
     {
       "id": "3241",
       "name": "exercise ball on the wall calf raise (tennis ball between ankles)",
-      "nameEs": "En fitball en elevación de gemelos de pared (tenis balón entre tobillos)",
+      "nameEs": "Elevación de gemelos con fitball en la pared (pelota de tenis entre los tobillos)",
       "bodyPart": "lower legs",
       "equipment": "dumbbell",
       "target": "calves",
@@ -15163,7 +15163,7 @@
     {
       "id": "3240",
       "name": "exercise ball on the wall calf raise (tennis ball between knees)",
-      "nameEs": "En fitball en elevación de gemelos de pared (tenis balón entre rodillas)",
+      "nameEs": "Elevación de gemelos con fitball en la pared (pelota de tenis entre las rodillas)",
       "bodyPart": "lower legs",
       "equipment": "dumbbell",
       "target": "calves",
@@ -15738,7 +15738,7 @@
     {
       "id": "2432",
       "name": "ez-bar close-grip bench press",
-      "nameEs": "Press de banca con agarre cerrado con barra Z",
+      "nameEs": "Press de banca con barra Z, agarre cerrado",
       "bodyPart": "upper arms",
       "equipment": "ez barbell",
       "target": "triceps",
@@ -15816,7 +15816,7 @@
     {
       "id": "3303",
       "name": "flag",
-      "nameEs": "Bandera",
+      "nameEs": "Bandera humana",
       "bodyPart": "waist",
       "equipment": "body weight",
       "target": "abs",
@@ -16009,7 +16009,7 @@
     {
       "id": "3296",
       "name": "front lever",
-      "nameEs": "Frontal máquina",
+      "nameEs": "Front lever",
       "bodyPart": "waist",
       "equipment": "body weight",
       "target": "abs",
@@ -16030,7 +16030,7 @@
     {
       "id": "3295",
       "name": "front lever reps",
-      "nameEs": "Frontal máquina repeticiones",
+      "nameEs": "Front lever (repeticiones)",
       "bodyPart": "back",
       "equipment": "body weight",
       "target": "upper back",
@@ -16071,7 +16071,7 @@
     {
       "id": "3315",
       "name": "full maltese",
-      "nameEs": "Completo maltese",
+      "nameEs": "Maltese completo",
       "bodyPart": "waist",
       "equipment": "body weight",
       "target": "abs",
@@ -16131,7 +16131,7 @@
     {
       "id": "0466",
       "name": "gironda sternum chin",
-      "nameEs": "Gironda esternón chin",
+      "nameEs": "Dominada Gironda al esternón",
       "bodyPart": "back",
       "equipment": "body weight",
       "target": "lats",
@@ -16211,7 +16211,7 @@
     {
       "id": "0467",
       "name": "gorilla chin",
-      "nameEs": "Gorilla chin",
+      "nameEs": "Dominada gorila",
       "bodyPart": "waist",
       "equipment": "body weight",
       "target": "abs",
@@ -16348,7 +16348,7 @@
     {
       "id": "2139",
       "name": "hands bike",
-      "nameEs": "Manos bicicleta",
+      "nameEs": "Bicicleta de brazos",
       "bodyPart": "chest",
       "equipment": "upper body ergometer",
       "target": "pectorals",
@@ -16503,7 +16503,7 @@
     {
       "id": "0473",
       "name": "hanging pike",
-      "nameEs": "Colgado en pica",
+      "nameEs": "Elevación de piernas en pica colgado",
       "bodyPart": "waist",
       "equipment": "body weight",
       "target": "abs",
@@ -16579,7 +16579,7 @@
     {
       "id": "3636",
       "name": "high knee against wall",
-      "nameEs": "Alto rodilla contra pared",
+      "nameEs": "Rodillas altas contra la pared",
       "bodyPart": "cardio",
       "equipment": "body weight",
       "target": "cardiovascular system",
@@ -16911,7 +16911,7 @@
     {
       "id": "1564",
       "name": "intermediate hip flexor and quad stretch",
-      "nameEs": "Intermedio cadera flexor y estiramiento de cuádriceps",
+      "nameEs": "Estiramiento de flexor de cadera y cuádriceps (intermedio)",
       "bodyPart": "upper legs",
       "equipment": "rope",
       "target": "quads",
@@ -17113,7 +17113,7 @@
     {
       "id": "0500",
       "name": "isometric wipers",
-      "nameEs": "Isométrico wipers",
+      "nameEs": "Limpiaparabrisas isométrico",
       "bodyPart": "chest",
       "equipment": "body weight",
       "target": "pectorals",
@@ -17572,7 +17572,7 @@
     {
       "id": "0532",
       "name": "kettlebell figure 8",
-      "nameEs": "Figura 8 con kettlebell",
+      "nameEs": "Figura en 8 con kettlebell",
       "bodyPart": "waist",
       "equipment": "kettlebell",
       "target": "abs",
@@ -17808,7 +17808,7 @@
     {
       "id": "0543",
       "name": "kettlebell pirate supper legs",
-      "nameEs": "Pirate supper piernas con kettlebell",
+      "nameEs": "Pirate supper con kettlebell (piernas)",
       "bodyPart": "shoulders",
       "equipment": "kettlebell",
       "target": "delts",
@@ -17983,7 +17983,7 @@
     {
       "id": "0551",
       "name": "kettlebell turkish get up (squat style)",
-      "nameEs": "Turkish get arriba con kettlebell (sentadilla estilo)",
+      "nameEs": "Levantamiento turco con kettlebell (estilo sentadilla)",
       "bodyPart": "upper legs",
       "equipment": "kettlebell",
       "target": "glutes",
@@ -18333,7 +18333,7 @@
     {
       "id": "2271",
       "name": "left hook. boxing",
-      "nameEs": "Izquierda hook. boxing",
+      "nameEs": "Gancho de izquierda (boxeo)",
       "bodyPart": "shoulders",
       "equipment": "body weight",
       "target": "delts",
@@ -18714,7 +18714,7 @@
     {
       "id": "2288",
       "name": "lever gripper hands",
-      "nameEs": "Gripper manos en máquina",
+      "nameEs": "Pinza de agarre en máquina",
       "bodyPart": "lower arms",
       "equipment": "leverage machine",
       "target": "forearms",
@@ -19279,7 +19279,7 @@
     {
       "id": "2315",
       "name": "lever rotary calf",
-      "nameEs": "Rotary gemelos en máquina",
+      "nameEs": "Gemelos rotatorios en máquina",
       "bodyPart": "lower legs",
       "equipment": "leverage machine",
       "target": "calves",
@@ -19931,7 +19931,7 @@
     {
       "id": "2312",
       "name": "lying elbow to knee",
-      "nameEs": "Tumbado codo a rodilla",
+      "nameEs": "Codo a rodilla tumbado",
       "bodyPart": "waist",
       "equipment": "body weight",
       "target": "abs",
@@ -20028,7 +20028,7 @@
     {
       "id": "1353",
       "name": "medicine ball catch and overhead throw",
-      "nameEs": "Recepción con balón medicinal y lanzamiento, por encima de la cabeza",
+      "nameEs": "Recepción y lanzamiento por encima de la cabeza con balón medicinal",
       "bodyPart": "back",
       "equipment": "medicine ball",
       "target": "lats",
@@ -20048,7 +20048,7 @@
     {
       "id": "1302",
       "name": "medicine ball chest pass",
-      "nameEs": "Pecho pase con balón medicinal",
+      "nameEs": "Pase de pecho con balón medicinal",
       "bodyPart": "chest",
       "equipment": "medicine ball",
       "target": "pectorals",
@@ -20067,7 +20067,7 @@
     {
       "id": "1303",
       "name": "medicine ball chest push from 3 point stance",
-      "nameEs": "Pecho push con balón medicinal desde 3 punta apoyo",
+      "nameEs": "Empuje de pecho con balón medicinal desde tres apoyos",
       "bodyPart": "chest",
       "equipment": "medicine ball",
       "target": "pectorals",
@@ -20086,7 +20086,7 @@
     {
       "id": "1304",
       "name": "medicine ball chest push multiple response",
-      "nameEs": "Pecho push múltiple response con balón medicinal",
+      "nameEs": "Empuje de pecho con balón medicinal (respuesta múltiple)",
       "bodyPart": "chest",
       "equipment": "medicine ball",
       "target": "pectorals",
@@ -20104,7 +20104,7 @@
     {
       "id": "1305",
       "name": "medicine ball chest push single response",
-      "nameEs": "Pecho push simple response con balón medicinal",
+      "nameEs": "Empuje de pecho con balón medicinal (respuesta simple)",
       "bodyPart": "chest",
       "equipment": "medicine ball",
       "target": "pectorals",
@@ -20122,7 +20122,7 @@
     {
       "id": "1312",
       "name": "medicine ball chest push with run release",
-      "nameEs": "Pecho push con balón medicinal con carrera de liberación",
+      "nameEs": "Empuje de pecho con balón medicinal y carrera",
       "bodyPart": "chest",
       "equipment": "medicine ball",
       "target": "pectorals",
@@ -20470,7 +20470,7 @@
     {
       "id": "1355",
       "name": "one arm against wall",
-      "nameEs": "A una mano contra pared",
+      "nameEs": "Estiramiento de dorsal a una mano contra la pared",
       "bodyPart": "back",
       "equipment": "body weight",
       "target": "lats",
@@ -20627,7 +20627,7 @@
     {
       "id": "0641",
       "name": "otis up",
-      "nameEs": "Otis arriba",
+      "nameEs": "Otis up",
       "bodyPart": "waist",
       "equipment": "weighted",
       "target": "abs",
@@ -20786,7 +20786,7 @@
     {
       "id": "1687",
       "name": "posterior step to overhead reach",
-      "nameEs": "Posterior escalón a alcance, por encima de la cabeza",
+      "nameEs": "Paso atrás con alcance por encima de la cabeza",
       "bodyPart": "waist",
       "equipment": "body weight",
       "target": "abs",
@@ -20969,7 +20969,7 @@
     {
       "id": "0650",
       "name": "pull-in (on stability ball)",
-      "nameEs": "Pull-in (en fitball)",
+      "nameEs": "Recogida de rodillas en fitball",
       "bodyPart": "waist",
       "equipment": "stability ball",
       "target": "abs",
@@ -21007,7 +21007,7 @@
     {
       "id": "1689",
       "name": "push and pull bodyweight",
-      "nameEs": "Push y tirón de peso corporal",
+      "nameEs": "Empuje y tirón con peso corporal",
       "bodyPart": "chest",
       "equipment": "body weight",
       "target": "pectorals",
@@ -21027,7 +21027,7 @@
     {
       "id": "3638",
       "name": "push to run",
-      "nameEs": "Push a carrera",
+      "nameEs": "Empuje a carrera",
       "bodyPart": "cardio",
       "equipment": "body weight",
       "target": "cardiovascular system",
@@ -21298,7 +21298,7 @@
     {
       "id": "3533",
       "name": "quads",
-      "nameEs": "Cuádriceps",
+      "nameEs": "Estiramiento de cuádriceps",
       "bodyPart": "upper legs",
       "equipment": "body weight",
       "target": "quads",
@@ -21337,7 +21337,7 @@
     {
       "id": "3552",
       "name": "quick feet v. 2",
-      "nameEs": "Rápido pies v. 2",
+      "nameEs": "Pies rápidos v. 2",
       "bodyPart": "upper legs",
       "equipment": "body weight",
       "target": "quads",
@@ -21686,7 +21686,7 @@
     {
       "id": "1423",
       "name": "reverse hyper on flat bench",
-      "nameEs": "Inverso hiper en banco plano",
+      "nameEs": "Hiperextensión inversa en banco plano",
       "bodyPart": "upper legs",
       "equipment": "body weight",
       "target": "glutes",
@@ -21805,7 +21805,7 @@
     {
       "id": "2204",
       "name": "roller body saw",
-      "nameEs": "Cuerpo saw con rodillo",
+      "nameEs": "Body saw con rodillo",
       "bodyPart": "waist",
       "equipment": "roller",
       "target": "abs",
@@ -21882,7 +21882,7 @@
     {
       "id": "2203",
       "name": "roller seated shoulder flexor depresor retractor",
-      "nameEs": "Sentado hombro flexor depresor retractor con rodillo",
+      "nameEs": "Movilidad de hombro sentado con rodillo",
       "bodyPart": "chest",
       "equipment": "roller",
       "target": "pectorals",
@@ -21901,7 +21901,7 @@
     {
       "id": "2209",
       "name": "roller seated single leg shoulder flexor depresor retractor",
-      "nameEs": "Sentado a una pierna hombro flexor depresor retractor con rodillo",
+      "nameEs": "Movilidad de hombro sentado a una pierna con rodillo",
       "bodyPart": "chest",
       "equipment": "roller",
       "target": "pectorals",
@@ -22371,7 +22371,7 @@
     {
       "id": "3699",
       "name": "shoulder tap",
-      "nameEs": "Hombro toque",
+      "nameEs": "Toque de hombro",
       "bodyPart": "waist",
       "equipment": "body weight",
       "target": "abs",
@@ -22451,7 +22451,7 @@
     {
       "id": "0709",
       "name": "side hip (on parallel bars)",
-      "nameEs": "Lateral cadera (en paralelas barras)",
+      "nameEs": "Elevación lateral de cadera (en paralelas)",
       "bodyPart": "waist",
       "equipment": "body weight",
       "target": "abs",
@@ -22607,7 +22607,7 @@
     {
       "id": "0720",
       "name": "side-to-side chin",
-      "nameEs": "De lado a lado chin",
+      "nameEs": "Dominada de lado a lado",
       "bodyPart": "back",
       "equipment": "body weight",
       "target": "lats",
@@ -22702,7 +22702,7 @@
     {
       "id": "0730",
       "name": "single leg platform slide",
-      "nameEs": "A una pierna plataforma deslizamiento",
+      "nameEs": "Deslizamiento a una pierna en plataforma",
       "bodyPart": "upper legs",
       "equipment": "body weight",
       "target": "hamstrings",
@@ -22821,7 +22821,7 @@
     {
       "id": "2142",
       "name": "ski ergometer",
-      "nameEs": "Ski ergómetro",
+      "nameEs": "Ergómetro de esquí",
       "bodyPart": "upper arms",
       "equipment": "skierg machine",
       "target": "triceps",
@@ -22842,7 +22842,7 @@
     {
       "id": "3671",
       "name": "ski step",
-      "nameEs": "Ski escalón",
+      "nameEs": "Paso de esquí",
       "bodyPart": "cardio",
       "equipment": "body weight",
       "target": "cardiovascular system",
@@ -22862,7 +22862,7 @@
     {
       "id": "3304",
       "name": "skin the cat",
-      "nameEs": "Skin gato",
+      "nameEs": "Skin the cat",
       "bodyPart": "back",
       "equipment": "body weight",
       "target": "upper back",
@@ -23146,7 +23146,7 @@
     {
       "id": "1496",
       "name": "sledge hammer",
-      "nameEs": "Sledge martillo",
+      "nameEs": "Golpe con mazo",
       "bodyPart": "waist",
       "equipment": "hammer",
       "target": "abs",
@@ -23290,7 +23290,7 @@
     {
       "id": "0751",
       "name": "smith close-grip bench press",
-      "nameEs": "Press de banca con agarre cerrado en multipower",
+      "nameEs": "Press de banca en multipower, agarre cerrado",
       "bodyPart": "upper arms",
       "equipment": "smith machine",
       "target": "triceps",
@@ -23590,7 +23590,7 @@
     {
       "id": "1625",
       "name": "smith machine decline close grip bench press",
-      "nameEs": "Press de banca con agarre cerrado declinado de máquina en multipower",
+      "nameEs": "Press de banca declinado de máquina en multipower, agarre cerrado",
       "bodyPart": "upper arms",
       "equipment": "smith machine",
       "target": "triceps",
@@ -23632,7 +23632,7 @@
     {
       "id": "1626",
       "name": "smith machine reverse decline close grip bench press",
-      "nameEs": "Press de banca con agarre cerrado inverso declinado de máquina en multipower",
+      "nameEs": "Press de banca inverso declinado de máquina en multipower, agarre cerrado",
       "bodyPart": "chest",
       "equipment": "smith machine",
       "target": "pectorals",
@@ -24211,7 +24211,7 @@
     {
       "id": "1362",
       "name": "sphinx",
-      "nameEs": "Sphinx",
+      "nameEs": "Esfinge",
       "bodyPart": "back",
       "equipment": "body weight",
       "target": "spine",
@@ -24429,7 +24429,7 @@
     {
       "id": "3669",
       "name": "standing archer",
-      "nameEs": "De pie arquero",
+      "nameEs": "Arquero de pie",
       "bodyPart": "back",
       "equipment": "body weight",
       "target": "upper back",
@@ -24488,7 +24488,7 @@
     {
       "id": "1397",
       "name": "standing calves",
-      "nameEs": "De pie gemelos",
+      "nameEs": "Estiramiento de gemelos de pie",
       "bodyPart": "lower legs",
       "equipment": "body weight",
       "target": "calves",
@@ -24527,7 +24527,7 @@
     {
       "id": "1599",
       "name": "standing hamstring and calf stretch with strap",
-      "nameEs": "De pie isquiotibiales y estiramiento de gemelos con correa",
+      "nameEs": "Estiramiento de isquiotibiales y gemelos de pie con correa",
       "bodyPart": "upper legs",
       "equipment": "rope",
       "target": "hamstrings",
@@ -24687,7 +24687,7 @@
     {
       "id": "3314",
       "name": "straddle maltese",
-      "nameEs": "Straddle maltese",
+      "nameEs": "Maltese straddle",
       "bodyPart": "waist",
       "equipment": "body weight",
       "target": "abs",
@@ -24725,7 +24725,7 @@
     {
       "id": "1427",
       "name": "straight leg outer hip abductor",
-      "nameEs": "Piernas rígidas exterior cadera abductor",
+      "nameEs": "Abducción de cadera con pierna recta",
       "bodyPart": "upper legs",
       "equipment": "body weight",
       "target": "abductors",
@@ -24919,7 +24919,7 @@
     {
       "id": "2459",
       "name": "tire flip",
-      "nameEs": "Flip con neumático",
+      "nameEs": "Volteo de neumático",
       "bodyPart": "upper legs",
       "equipment": "tire",
       "target": "glutes",
@@ -25216,7 +25216,7 @@
     {
       "id": "1366",
       "name": "upward facing dog",
-      "nameEs": "Hacia arriba mirando perro",
+      "nameEs": "Perro boca arriba",
       "bodyPart": "back",
       "equipment": "body weight",
       "target": "spine",
@@ -25336,7 +25336,7 @@
     {
       "id": "3666",
       "name": "walking on incline treadmill",
-      "nameEs": "Caminando en inclinado cinta",
+      "nameEs": "Caminar en cinta inclinada",
       "bodyPart": "cardio",
       "equipment": "leverage machine",
       "target": "cardiovascular system",
@@ -25356,7 +25356,7 @@
     {
       "id": "2311",
       "name": "walking on stepmill",
-      "nameEs": "Caminando en escaladora",
+      "nameEs": "Caminar en escaladora",
       "bodyPart": "cardio",
       "equipment": "stepmill machine",
       "target": "cardiovascular system",
@@ -25592,7 +25592,7 @@
     {
       "id": "3641",
       "name": "weighted kneeling step with swing",
-      "nameEs": "De rodillas escalón con lastre con swing",
+      "nameEs": "Paso de rodillas con swing con lastre",
       "bodyPart": "shoulders",
       "equipment": "weighted",
       "target": "delts",
@@ -25728,7 +25728,7 @@
     {
       "id": "0844",
       "name": "weighted round arm",
-      "nameEs": "Redondo brazo con lastre",
+      "nameEs": "Círculos de brazo con lastre",
       "bodyPart": "shoulders",
       "equipment": "weighted",
       "target": "delts",
@@ -26230,7 +26230,7 @@
     {
       "id": "0859",
       "name": "wrist rollerer",
-      "nameEs": "Muñeca rollerer",
+      "nameEs": "Enrollador de muñeca",
       "bodyPart": "lower arms",
       "equipment": "weighted",
       "target": "forearms",

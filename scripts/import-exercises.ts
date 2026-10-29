@@ -135,6 +135,9 @@ if (invalid.length) {
   for (const line of invalid) console.warn(`  - ${line}`)
 }
 const untranslated = exercises.filter((e) => translate(e.name).unknown.length).length
+const noMovement = exercises.filter((e) => translate(e.name).noMovement).length
+if (noMovement)
+  console.log(`ℹ ${noMovement} nombres sin movimiento reconocido: revisa o añade una corrección.`)
 console.log(
   `ℹ ${untranslated} nombres conservan alguna palabra en inglés (${unknownWords.size} palabras distintas).`,
 )

@@ -1,3 +1,4 @@
+import 'fake-indexeddb/auto'
 import { createMemoryHistory, RouterProvider } from '@tanstack/react-router'
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'

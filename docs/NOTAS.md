@@ -9,6 +9,8 @@
   - Tokens en `src/styles/tokens.css` (oscuro por defecto, claro por sistema o forzado), motion en `src/motion/tokens.ts`.
   - Shell con TanStack Router, barra inferior / barra lateral, primitivas en `src/components/ui/` y `/dev/ui`.
 
+- **F1 · Datos, sincronización y biblioteca:** en curso (pasos 1–5 hechos; falta la verificación de sincronización entre dispositivos y `/cerrar-fase F1`).
+
 ## Decisiones técnicas
 
 - **TypeScript 6.0 en vez de 7.** La plantilla de Vite trae TS 7 (el compilador en Go), pero `typescript-eslint` aún no lo admite (`peer typescript <6.1`). Volver a TS 7 cuando lo soporte.
@@ -24,6 +26,19 @@
 - **Accesibilidad del shell (auditoría de cierre):** enlace «Saltar al contenido» como primer foco; las etiquetas de la barra inferior se truncan con puntos suspensivos con texto ampliado al 200 % en lugar de solaparse (WCAG 1.4.4); colores sueltos convertidos en tokens (`--color-scrim`, `--color-on-media`).
 - Vitest procesa CSS (`test.css.include`) para que `?raw` funcione en `tokens.test.ts`.
 
+### F1
+- **Media de Gym visual fuera de git** ( en ): el NOTICE del dataset dice que clonar no da derechos de redistribución y el repo de GitHub puede ser público.  la regenera desde . En F6 (despliegue) habrá que decidir cómo se sirve.
+- **Traducción de nombres**:  reordena al español (movimiento + adjetivos concordados + posición + lateralidad + equipo + «, matices»). Diccionario en ; 99 correcciones manuales en . El import informa de palabras sin traducir y nombres sin movimiento reconocido.
+- **Seed versionado**:  =  (hash del contenido); se recarga solo si cambia y se importa de forma diferida (chunk aparte, ~140 kB gzip).
+- **Outbox con una entrada por fila**: el push sube el estado actual de la fila; varias ediciones seguidas = una subida. Al hacer pull, si el remoto es más nuevo, se descarta la entrada pendiente local (perdió el LWW).
+- ** por tabla** en . Ojo:  podría saltarse filas con el mismo instante exacto en el borde de una página de 1.000; improbable con precisión de microsegundos.
+- **Auth con flujo ** (no PKCE) para que el enlace mágico funcione aunque el correo se abra en otra pestaña del mismo navegador.
+- **Variables de entorno**:  y  (la clave nueva  vale igual). Sin ellas la app funciona solo en local.
+- **Búsqueda en memoria** sobre los 1.324 ejercicios leídos de Dexie (índice con nombre ES/EN + músculo y equipo en ES/EN, prefijos, sin tildes); ~1 ms por consulta. El índice multi-entrada  de Dexie queda disponible para consultas futuras.
+- **Estado de la Biblioteca en la URL** (). La fila seleccionada en PC es el enlace activo del router (), con el brazalete.
+-  y sus etiquetas viven ya en .
+- Sin toasts: el error persistente de sincronización (3 fallos seguidos) se muestra en el indicador (icono rojo) y en Ajustes.
+
 ## Deuda
 
 - El favicon sigue siendo el de Vite; los iconos de la PWA llegan en F6.
@@ -32,8 +47,13 @@
 - `global.css` reduce las animaciones con keyframes a 1 ms con «reducir movimiento»; hoy no hay ninguna. Cuando lleguen (F5), darles una alternativa propia en lugar de depender de ese recorte global.
 - Auditoría de impeccable hecha sin el overlay del navegador (detector por CLI + Playwright); el overlay en vivo queda pendiente.
 
+- 71 nombres de ejercicio poco comunes conservan alguna palabra en inglés; ampliar el diccionario o las correcciones cuando aparezcan en rutinas.
+- El chunk del catálogo supera el aviso de 500 kB de Vite (se carga diferido; valorar dividirlo en F6).
+
 ## Ideas para más adelante
 
 - Marcar la pestaña «Más» como activa también mientras su panel está abierto (ahora solo se marca si la ruta actual es Rutinas, Cuerpo o Ajustes).
 - En la sesión (F3), los chips de valoración deberían ser botones grandes de 56 px en el panel inferior, no los chips de 36 px de las listas.
+- Enlace mágico + PWA instalada: el enlace se abre en el navegador, no en la PWA. Valorar en F6 el código de 6 dígitos (OTP) como alternativa.
+- La pestaña Biblioteca podría seguir marcada al abrir `/ejercicio/$id`.
 - Valorar `field-sizing: content` en otros campos numéricos; en navegadores sin soporte el Stepper usa un ancho fijo de 4,5 caracteres.

@@ -57,6 +57,17 @@ const PATHS = {
   close: <path d="m6 6 12 12M18 6 6 18" />,
   check: <path d="m5 12.5 4.5 4.5L19 7.5" />,
   chevronRight: <path d="m9.5 6 6 6-6 6" />,
+  chevronLeft: <path d="m14.5 6-6 6 6 6" />,
+  chevronDown: <path d="m6 9.5 6 6 6-6" />,
+  search: (
+    <>
+      <circle cx="10.5" cy="10.5" r="6" />
+      <path d="m15 15 5 5" />
+    </>
+  ),
+  star: <path d="m12 3.8 2.5 5.2 5.6.8-4.1 4 1 5.6L12 16.7l-5 2.7 1-5.6-4.1-4 5.6-.8Z" />,
+  play: <path d="M8 5.5v13l10.5-6.5Z" />,
+  filter: <path d="M4 6h16M7 12h10M10 18h4" />,
   sun: (
     <>
       <circle cx="12" cy="12" r="3.5" />

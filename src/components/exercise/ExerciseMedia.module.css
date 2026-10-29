@@ -1,0 +1,51 @@
+/* The dataset media is 180 × 180 on white: always shown on a light plate, never scaled up. */
+.plate {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 196px;
+  aspect-ratio: 1;
+  padding: 8px;
+  border: 0;
+  border-radius: var(--radius-lg);
+  background: var(--color-media-plate);
+  outline: 1px solid var(--color-media-outline);
+  outline-offset: -1px;
+}
+
+.plate img {
+  width: 180px;
+  height: 180px;
+  /* Concentric with the plate: 16 − 8 padding. */
+  border-radius: var(--radius-sm);
+}
+
+button.plate {
+  cursor: pointer;
+}
+
+.playBadge {
+  position: absolute;
+  right: var(--space-3);
+  bottom: var(--space-3);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-pill);
+  background: oklch(0.2 0.035 258 / 0.85);
+  color: oklch(0.95 0.015 85);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+}
+
+.thumb {
+  flex: none;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-sm);
+  background: var(--color-media-plate);
+  outline: 1px solid var(--color-media-outline);
+  outline-offset: -1px;
+  object-fit: cover;
+}

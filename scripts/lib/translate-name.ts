@@ -21,7 +21,8 @@ export type Terms = {
   connectors: Record<string, string>
 }
 
-export type Translation = { es: string; unknown: string[] }
+/** `noMovement`: no movement head was recognised (likely an odd name worth an override). */
+export type Translation = { es: string; unknown: string[]; noMovement?: boolean }
 
 const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
@@ -29,6 +30,8 @@ const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 const phraseRegex = (phrase: string) => new RegExp(`(?<![\\w-])${escape(phrase)}(?![\\w-])`, 'g')
 
 const byLengthDesc = (a: string, b: string) => b.length - a.length
+
+const NO_MOVEMENT = '__no_movement__'
 
 export function inflect(adjective: string, g: 'm' | 'f', pl = false): string {
   if (adjective.includes(' ')) return adjective
@@ -134,6 +137,7 @@ export function createTranslator(terms: Terms, overrides: Record<string, string>
     }
 
     if (!best) {
+      unknown.push(NO_MOVEMENT)
       const words = translateWords(rest.trim(), unknown)
       const eq = equip ? terms.equipment[equip]!.es : ''
       return [words, eq].filter(Boolean).join(' ')
@@ -220,7 +224,11 @@ export function createTranslator(terms: Terms, overrides: Record<string, string>
     if (notes.length) es += ` (${notes.join(', ')})`
     es += version
 
-    return { es: capitalize(es.replace(/\s+/g, ' ').replace(/ ,/g, ',').trim()), unknown }
+    return {
+      es: capitalize(es.replace(/\s+/g, ' ').replace(/ ,/g, ',').trim()),
+      unknown: unknown.filter((u) => u !== NO_MOVEMENT),
+      noMovement: unknown.includes(NO_MOVEMENT),
+    }
   }
 
   return translate

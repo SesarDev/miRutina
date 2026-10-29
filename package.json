@@ -20,6 +20,7 @@
     "@gsap/react": "^2.1.2",
     "@supabase/supabase-js": "^2.118.0",
     "@tanstack/react-router": "^1.170.46",
+    "@tanstack/react-virtual": "^3.14.24",
     "date-fns": "^4.4.0",
     "dexie": "^4.4.7",
     "dexie-react-hooks": "^4.4.0",

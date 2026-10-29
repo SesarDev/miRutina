@@ -6,6 +6,7 @@ import {
 } from '@tanstack/react-router'
 import { AjustesPage } from '@/routes/ajustes/AjustesPage'
 import { BibliotecaPage } from '@/routes/biblioteca/BibliotecaPage'
+import { parseBibliotecaSearch } from '@/routes/biblioteca/search'
 import { CalendarioPage } from '@/routes/calendario/CalendarioPage'
 import { CuerpoPage } from '@/routes/cuerpo/CuerpoPage'
 import { DevUiPage } from '@/routes/dev/DevUiPage'
@@ -27,7 +28,12 @@ const getParentRoute = () => rootRoute
 const routeTree = rootRoute.addChildren([
   createRoute({ getParentRoute, path: '/', component: HoyPage }),
   createRoute({ getParentRoute, path: '/calendario', component: CalendarioPage }),
-  createRoute({ getParentRoute, path: '/biblioteca', component: BibliotecaPage }),
+  createRoute({
+    getParentRoute,
+    path: '/biblioteca',
+    component: BibliotecaPage,
+    validateSearch: parseBibliotecaSearch,
+  }),
   createRoute({ getParentRoute, path: '/rutinas', component: RutinasPage }),
   createRoute({ getParentRoute, path: '/progreso', component: ProgresoPage }),
   createRoute({ getParentRoute, path: '/cuerpo', component: CuerpoPage }),
