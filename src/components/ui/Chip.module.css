@@ -1,0 +1,78 @@
+.chip {
+  /* --chip-color is set per feel; neutral chips fall back to the line colour. */
+  --chip-color: var(--color-text-2);
+
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: 28px;
+  padding: 0 var(--space-3);
+  border: 1px solid color-mix(in oklch, var(--chip-color) 55%, transparent);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--chip-color);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* Interactive chips: 36 px visible, 44 px hit area. Rows need ≥ 8 px gap so hit areas never overlap. */
+button.chip {
+  min-height: 36px;
+  touch-action: manipulation;
+  transition:
+    transform var(--dur-instant) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+}
+
+button.chip::after {
+  content: '';
+  position: absolute;
+  inset: -4px 0;
+}
+
+button.chip:active {
+  transform: scale(var(--scale-press));
+}
+
+@media (hover: hover) {
+  button.chip:hover:not([aria-pressed='true']) {
+    background: color-mix(in oklch, var(--chip-color) 12%, transparent);
+  }
+}
+
+.selected,
+button.chip[aria-pressed='true'] {
+  border-color: var(--chip-color);
+  background: var(--chip-color);
+  color: var(--color-on-feel);
+}
+
+.neutral.selected,
+.neutral[aria-pressed='true'] {
+  --chip-color: var(--color-text);
+  color: var(--color-bg);
+}
+
+.demasiado {
+  --chip-color: var(--feel-demasiado);
+}
+
+.justo {
+  --chip-color: var(--feel-justo);
+}
+
+.bien {
+  --chip-color: var(--feel-bien);
+}
+
+.puedo_mas {
+  --chip-color: var(--feel-puedo-mas);
+}
+
+.poco {
+  --chip-color: var(--feel-poco);
+}

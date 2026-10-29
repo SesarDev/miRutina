@@ -1,0 +1,143 @@
+/* Bottom sheet on mobile, side panel from the right at ≥ 1024 px. Native <dialog> + CSS transitions. */
+.sheet {
+  --sheet-radius: var(--radius-lg);
+
+  position: fixed;
+  inset: auto 0 0;
+  width: 100%;
+  max-width: none;
+  max-height: min(85dvh, 40rem);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-top: 1px solid var(--color-line);
+  border-radius: var(--sheet-radius) var(--sheet-radius) 0 0;
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: var(--shadow-lift);
+  overflow: hidden;
+
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    transform var(--dur-base) var(--ease-out),
+    opacity var(--dur-base) var(--ease-out),
+    overlay var(--dur-base) allow-discrete,
+    display var(--dur-base) allow-discrete;
+}
+
+.sheet:not([open]) {
+  transform: translateY(100%);
+  transition-duration: var(--dur-fast);
+}
+
+@starting-style {
+  .sheet[open] {
+    transform: translateY(100%);
+  }
+}
+
+.sheet::backdrop {
+  background: oklch(0.12 0.03 258 / 0.55);
+  opacity: 1;
+  transition:
+    opacity var(--dur-base) var(--ease-out),
+    overlay var(--dur-base) allow-discrete,
+    display var(--dur-base) allow-discrete;
+}
+
+.sheet:not([open])::backdrop {
+  opacity: 0;
+}
+
+@starting-style {
+  .sheet[open]::backdrop {
+    opacity: 0;
+  }
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  max-height: inherit;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.handle {
+  width: 36px;
+  height: 4px;
+  margin: var(--space-2) auto 0;
+  border-radius: var(--radius-pill);
+  background: var(--color-line-strong);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-5);
+}
+
+.title {
+  font-family: var(--font-condensed);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.body {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0 var(--space-5) var(--space-5);
+}
+
+@media (min-width: 64rem) {
+  .sheet {
+    inset: 0 0 0 auto;
+    width: min(28rem, 100vw);
+    height: 100dvh;
+    max-height: none;
+    border-top: 0;
+    border-left: 1px solid var(--color-line);
+    border-radius: var(--sheet-radius) 0 0 var(--sheet-radius);
+  }
+
+  .sheet:not([open]) {
+    transform: translateX(100%);
+  }
+
+  @starting-style {
+    .sheet[open] {
+      transform: translateX(100%);
+    }
+  }
+
+  .inner {
+    height: 100%;
+    padding-top: var(--space-3);
+  }
+
+  .handle {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sheet,
+  .sheet:not([open]) {
+    transform: none;
+  }
+
+  .sheet:not([open]) {
+    opacity: 0;
+  }
+
+  @starting-style {
+    .sheet[open] {
+      transform: none;
+      opacity: 0;
+    }
+  }
+}

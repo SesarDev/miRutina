@@ -1,9 +1,84 @@
 ---
 name: miRutina
 description: Registro personal de fuerza. Cada serie se lee como un dorsal.
+colors:
+  kit-navy: "oklch(0.2 0.035 258)"
+  surface: "oklch(0.235 0.037 258)"
+  surface-2: "oklch(0.275 0.038 258)"
+  dock: "oklch(0.17 0.032 258)"
+  vinyl: "oklch(0.95 0.015 85)"
+  text-2: "oklch(0.82 0.018 85)"
+  text-3: "oklch(0.66 0.02 85)"
+  band-granate: "oklch(0.4 0.125 8)"
+  sponsor-gold: "oklch(0.79 0.14 80)"
+  feel-demasiado: "oklch(0.7 0.17 25)"
+  feel-justo: "oklch(0.75 0.14 50)"
+  feel-bien: "oklch(0.77 0.15 150)"
+  feel-puedo-mas: "oklch(0.77 0.1 195)"
+  feel-poco: "oklch(0.74 0.11 250)"
+typography:
+  dorsal:
+    fontFamily: "Barlow Condensed, Barlow, system-ui, sans-serif"
+    fontSize: "4.75rem"
+    fontWeight: 700
+    lineHeight: 0.95
+    letterSpacing: "-0.01em"
+  figure:
+    fontFamily: "Barlow Condensed, Barlow, system-ui, sans-serif"
+    fontSize: "2rem"
+    fontWeight: 700
+    lineHeight: 1
+  title:
+    fontFamily: "Barlow Condensed, Barlow, system-ui, sans-serif"
+    fontSize: "1.625rem"
+    fontWeight: 700
+    lineHeight: 1
+  label:
+    fontFamily: "Barlow, system-ui, sans-serif"
+    fontSize: "0.75rem"
+    fontWeight: 600
+    letterSpacing: "0.08em"
+  body:
+    fontFamily: "Barlow, system-ui, sans-serif"
+    fontSize: "0.9375rem"
+    fontWeight: 400
+    lineHeight: 1.4
+rounded:
+  sm: "8px"
+  md: "12px"
+  lg: "16px"
+  pill: "999px"
+spacing:
+  "1": "4px"
+  "2": "8px"
+  "3": "12px"
+  "4": "16px"
+  "5": "20px"
+  "6": "24px"
+  "8": "32px"
+components:
+  button-primary:
+    backgroundColor: "{colors.sponsor-gold}"
+    textColor: "{colors.kit-navy}"
+    rounded: "{rounded.md}"
+    height: "44px"
+  button-secondary:
+    backgroundColor: "transparent"
+    textColor: "{colors.vinyl}"
+    rounded: "{rounded.md}"
+    height: "44px"
+  stepper:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.vinyl}"
+    rounded: "{rounded.md}"
+    height: "56px"
+  nav-item-active:
+    backgroundColor: "{colors.band-granate}"
+    textColor: "{colors.vinyl}"
+    rounded: "{rounded.md}"
 ---
 
-<!-- SEED: established with the user before implementation; re-run $impeccable document once there's code to capture the actual tokens and components. -->
+<!-- Fuente normativa de los valores: src/styles/tokens.css (tema oscuro arriba; el claro, allí). Este archivo describe el sistema construido en F0. -->
 
 # Design System: miRutina
 
@@ -25,20 +100,22 @@ El mundo aporta exactamente cuatro cosas: **tipo, paleta, densidad y un gesto pr
 
 ### Primary
 
-- **Marino de equipación** (`#0f1828`, aprox.): fondo de la app en oscuro; tinta principal en claro. Los neutros se tiñen hacia este azul, nunca grises puros.
-- **Vinilo** (`#f2eee4`, aprox.): texto principal en oscuro; fondo en claro; fondo del brazalete y del recuadro de los GIF.
+- **Marino de equipación**: fondo de la app en oscuro; tinta principal en claro. Los neutros se tiñen hacia este azul, nunca grises puros.
+- **Vinilo**: texto principal en oscuro; fondo en claro; fondo del brazalete y del recuadro de los GIF.
 
 ### Secondary
 
-- **Granate** (`#7d1f37`, aprox.): la franja de la equipación. Cabecera de la sesión en curso y marca del elemento activo de la navegación. No es un color de error.
+- **Granate**: la franja de la equipación. Cabecera de la sesión en curso y marca del elemento activo de la navegación. No es un color de error.
 
 ### Tertiary
 
-- **Oro de patrocinio** (`#e3b23c`, aprox.): acción principal («Serie hecha», «Empezar»), temporizador de descanso y franja del brazalete. Solo en acciones y en el estado activo, nunca como decoración.
+- **Oro de patrocinio**: acción principal («Serie hecha», «Empezar»), temporizador de descanso y franja del brazalete. Solo en acciones y en el estado activo, nunca como decoración.
 
 ### Neutral
 
-- Superficies marinas en 3 o 4 pasos de luminosidad (fondo, superficie elevada, panel de los controles inferiores, separadores) y vinilo con opacidades graduadas para texto secundario y terciario. Los valores exactos, en OKLCH, se fijan en `src/styles/tokens.css` [to be resolved during implementation].
+- Cuatro pasos del marino: fondo, superficie, superficie 2 y *dock* (barra inferior, barra lateral y panel de controles; el más oscuro). Separadores en vinilo al 12 % y al 22 %.
+- Texto en tres niveles sólidos tintados (vinilo, texto 2 y texto 3), todos AA sobre cualquier superficie.
+- Tema claro («segunda equipación»): fondo vinilo, tinta marina; el brazalete se invierte a marino con texto vinilo; el oro como texto pasa a un tono oscuro (`--color-accent-ink`) para mantener AA.
 
 ### Valoración (`feel`)
 
@@ -52,7 +129,7 @@ Cinco colores semánticos en una escala que va del esfuerzo excesivo a la facili
 | `puedo_mas` | Puedo más | verde azulado |
 | `poco` | Poco | azul |
 
-Valores OKLCH con contraste AA sobre marino y sobre vinilo [to be resolved during implementation].
+Cada tono cumple AA como texto sobre el fondo y como chip relleno con su texto encima, en los dos temas. Lo comprueba `src/styles/tokens.test.ts`.
 
 ### Named Rules
 
@@ -100,6 +177,39 @@ Sin sombras como sistema. La profundidad se expresa con **pasos de luminosidad d
 - **Contenedores:** radio de 12 a 16 px, siguiendo la regla concéntrica (radio exterior = radio interior + padding).
 - **Brazalete:** banda de borde a borde sin radio, con franja dorada en el lado de entrada.
 - Las áreas táctiles miden siempre 44 × 44 px o más.
+
+## Components
+
+Primitivas en `src/components/ui/`; todas visibles en `/dev/ui` con los dos temas a la vez.
+
+### Buttons
+
+- **Primario** (oro, texto marino): la acción de la pantalla. Uno por vista.
+- **Secundario** (borde vinilo al 22 %) y **fantasma** (sin borde, texto 2).
+- 44 px de alto (56 px en tamaño `lg`, el de la sesión), radio 12 px, escala 0,96 al pulsar. Los enlaces con aspecto de botón usan `buttonClassName`.
+- **IconButton**: 44 × 44 px (56 en `lg`), con nombre accesible obligatorio.
+
+### Chips (if used)
+
+Píldora con borde del color de la valoración; seleccionada, se rellena con texto marino (vinilo en claro). Siempre con la etiqueta de la valoración. Interactiva: 36 px visibles y área táctil de 44 px.
+
+### Cards / Containers
+
+Superficie con filete de 1 px y radio 16 px; padding 16 px. Elementos internos con radio = 16 − padding.
+
+### Inputs / Fields
+
+**Stepper**: −/valor/+ en una pieza de 56 px de alto. La cifra en Barlow Condensed 700, tabular, editable con teclado (acepta coma decimal) y flechas. En huecos estrechos (≤ 184 px) los extremos bajan a 44 px, la cifra a 26 px y la unidad pasa solo al nombre accesible.
+
+### Navigation
+
+- Móvil: barra inferior en el *dock* con Hoy, Calendario, Biblioteca, Progreso y Más (este abre un Sheet con Rutinas, Cuerpo y Ajustes). La pestaña activa lleva el icono sobre una píldora granate.
+- Escritorio (≥ 1024 px): barra lateral de 15 rem con la marca y los siete destinos; el activo, en granate.
+- **Sheet**: `<dialog>` nativo; panel inferior en móvil, lateral derecho en escritorio. Se cierra con Esc, tocando fuera o con la X.
+
+### Brazalete (signature)
+
+Fila invertida (fondo vinilo, cifra marina a 32 px) con franja dorada de 6 px a la izquierda. Uno por pantalla. Se construye en F3; muestra en `/dev/ui`.
 
 ## Do's and Don'ts
 

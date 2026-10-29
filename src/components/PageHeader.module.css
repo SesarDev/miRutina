@@ -1,0 +1,33 @@
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.title {
+  font-family: var(--font-condensed);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.01em;
+  line-height: var(--leading-tight);
+  text-transform: uppercase;
+}
+
+.subtitle {
+  margin-top: var(--space-1);
+  color: var(--color-text-2);
+  font-size: var(--text-sm);
+}
+
+.subtitle::first-letter {
+  text-transform: uppercase;
+}
+
+@media (min-width: 64rem) {
+  .title {
+    font-size: var(--text-3xl);
+  }
+}

@@ -1,0 +1,207 @@
+.themes {
+  display: grid;
+  gap: var(--space-6);
+}
+
+@container main (min-width: 60rem) {
+  .themes {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+}
+
+.panel {
+  display: grid;
+  gap: var(--space-8);
+  padding: var(--space-5);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+.panelTitle {
+  font-family: var(--font-condensed);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  text-transform: uppercase;
+}
+
+.group {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.label {
+  color: var(--color-text-2);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.steppers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: var(--space-2);
+}
+
+/* «Última vez» composed as the back of a shirt (DESIGN.md · Overview). */
+.lastName {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-name);
+  text-transform: uppercase;
+}
+
+.dorsal {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  font-family: var(--font-condensed);
+  font-size: var(--text-dorsal);
+  font-weight: var(--weight-bold);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--tracking-tight);
+  line-height: 0.95;
+}
+
+.dorsalUnit {
+  color: var(--color-text-2);
+  font-size: var(--text-3xl);
+}
+
+.reps {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-condensed);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-2);
+}
+
+.previous {
+  margin-top: var(--space-2);
+  color: var(--color-text-3);
+  font-size: var(--text-sm);
+}
+
+/* Set rows with the captain's armband on the current one. */
+.sets {
+  margin: 0 calc(var(--space-4) * -1);
+  padding: 0;
+  list-style: none;
+}
+
+.set {
+  display: grid;
+  grid-template-columns: 2.5rem 1fr auto;
+  align-items: center;
+  min-height: 52px;
+  padding: 0 var(--space-4);
+  border-bottom: 1px solid var(--color-line);
+}
+
+.setIndex {
+  color: var(--color-text-3);
+  font-family: var(--font-condensed);
+  font-weight: var(--weight-semibold);
+}
+
+.setValue {
+  font-family: var(--font-condensed);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+}
+
+.armband {
+  min-height: 64px;
+  border-bottom-color: transparent;
+  background: var(--color-armband);
+  box-shadow: inset 6px 0 0 var(--color-armband-stripe);
+  color: var(--color-on-armband);
+}
+
+.armband .setIndex,
+.armband .setNote {
+  color: inherit;
+}
+
+.armband .setValue {
+  font-size: var(--text-3xl);
+}
+
+.setNote {
+  color: var(--color-text-2);
+  font-size: var(--text-sm);
+}
+
+.pending .setValue {
+  color: var(--color-text-3);
+}
+
+.media {
+  display: grid;
+  place-items: center;
+  width: 180px;
+  aspect-ratio: 1;
+  border-radius: var(--radius-md);
+  background: var(--color-media-plate);
+  color: oklch(0.45 0.02 258);
+  font-size: var(--text-xs);
+  outline: 1px solid var(--color-media-outline);
+  outline-offset: -1px;
+}
+
+.swatches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(5.5rem, 1fr));
+  gap: var(--space-2);
+}
+
+.swatch {
+  display: grid;
+  gap: var(--space-1);
+  font-size: var(--text-xs);
+  color: var(--color-text-2);
+}
+
+.swatch span {
+  height: 36px;
+  border-radius: var(--radius-sm);
+  outline: 1px solid var(--color-line);
+  outline-offset: -1px;
+}
+
+.type {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.typeSample {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+
+.typeSample small {
+  min-width: 4.5rem;
+  color: var(--color-text-3);
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-regular);
+  letter-spacing: 0;
+  text-transform: none;
+}

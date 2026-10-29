@@ -23,9 +23,9 @@ function block(marker: string): Map<string, string> {
   return vars
 }
 
-const dark = block(":root[data-theme='dark'] {")
+const dark = block("[data-theme='dark'] {")
 const lightMedia = block(":root:not([data-theme='dark']) {")
-const light = block(":root[data-theme='light'] {")
+const light = block("[data-theme='light'] {")
 
 // ── OKLCH → sRGB relative luminance (WCAG 2.x) ──
 function oklchToLinearRgb(l: number, c: number, hDeg: number): [number, number, number] {

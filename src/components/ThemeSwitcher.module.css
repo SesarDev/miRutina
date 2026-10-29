@@ -1,0 +1,41 @@
+.switcher {
+  display: inline-grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.option {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--hit-min);
+  padding: 0 var(--space-3);
+  border: 0;
+  /* Concentric: outer radius minus the 3 px track padding. */
+  border-radius: calc(var(--radius-md) - 3px);
+  background: transparent;
+  color: var(--color-text-2);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+}
+
+.option[aria-checked='true'] {
+  background: var(--color-text);
+  color: var(--color-bg);
+}
+
+@media (hover: hover) {
+  .option:not([aria-checked='true']):hover {
+    background: var(--color-hover);
+    color: var(--color-text);
+  }
+}

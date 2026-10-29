@@ -4,7 +4,7 @@
  *
  * Theme resolution:
  *   - default (no data-theme): dark, unless the OS prefers light.
- *   - data-theme="dark" | "light": forced by the user.
+ *   - data-theme="dark" | "light": forced by the user, on <html> or on any subtree (/dev/ui).
  */
 
 /* ── Non-colour tokens (theme independent) ───────────────────────────── */
@@ -126,7 +126,7 @@
 
 /* ── Colour: dark («equipación», default) ────────────────────────────── */
 :root,
-:root[data-theme='dark'] {
+[data-theme='dark'] {
   color-scheme: dark;
 
   /* Navy kit ground, tinted neutrals */
@@ -162,6 +162,7 @@
 
   /* Media plate for the dataset GIFs (white background) */
   --color-media-plate: oklch(0.98 0.004 85);
+  --color-media-outline: oklch(1 0 0 / 0.1);
 
   /* States */
   --color-danger: oklch(0.7 0.17 25);
@@ -219,6 +220,7 @@
     --color-armband-stripe: oklch(0.79 0.14 80);
 
     --color-media-plate: oklch(1 0 0);
+    --color-media-outline: oklch(0 0 0 / 0.1);
 
     --color-danger: oklch(0.5 0.17 25);
     --color-warning: oklch(0.55 0.12 65);
@@ -240,7 +242,7 @@
   }
 }
 
-:root[data-theme='light'] {
+[data-theme='light'] {
   color-scheme: light;
 
   --color-bg: oklch(0.955 0.012 85);
@@ -270,6 +272,7 @@
   --color-armband-stripe: oklch(0.79 0.14 80);
 
   --color-media-plate: oklch(1 0 0);
+  --color-media-outline: oklch(0 0 0 / 0.1);
 
   --color-danger: oklch(0.5 0.17 25);
   --color-warning: oklch(0.55 0.12 65);
