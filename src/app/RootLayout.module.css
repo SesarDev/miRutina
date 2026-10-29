@@ -180,6 +180,14 @@
     padding: var(--space-5) var(--space-3);
   }
 
+  .sidebarFooter {
+    margin-top: auto;
+  }
+
+  .sidebarInner {
+    min-height: 100dvh;
+  }
+
   .brand {
     display: flex;
     align-items: center;

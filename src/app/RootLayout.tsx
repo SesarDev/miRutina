@@ -1,5 +1,6 @@
 import { Link, Outlet, useRouterState } from '@tanstack/react-router'
 import { useState } from 'react'
+import { SyncIndicator } from '@/components/SyncIndicator'
 import { Icon, Sheet } from '@/components/ui'
 import { BOTTOM_NAV_ITEMS, MORE_NAV_ITEMS, NAV_ITEMS } from './nav'
 import styles from './RootLayout.module.css'
@@ -35,8 +36,13 @@ export function RootLayout() {
               ))}
             </ul>
           </nav>
+          <div className={styles.sidebarFooter}>
+            <SyncIndicator />
+          </div>
         </div>
       </aside>
+
+      <SyncIndicator compact />
 
       <main id="contenido" className={styles.main} tabIndex={-1}>
         <div className={styles.content}>
