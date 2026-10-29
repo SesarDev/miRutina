@@ -219,6 +219,15 @@
   .weekWorkouts {
     justify-items: stretch;
   }
+
+  /* Narrow columns: the status line takes the pill's full width under icon + name. */
+  .weekDay .pill .pillIcon {
+    grid-row: auto;
+  }
+
+  .weekDay .pillStatus {
+    grid-column: 1 / -1;
+  }
 }
 
 /* ── Month ── */
@@ -270,8 +279,10 @@
   border-color: transparent;
 }
 
+/* Adjacent-month days stay readable (AA); the lighter weight and missing border mark them as secondary. */
 .monthDay[data-outside] .monthNum {
-  color: var(--color-text-disabled);
+  color: var(--color-text-3);
+  font-weight: var(--weight-regular);
 }
 
 .monthDay[data-today] {
@@ -279,6 +290,11 @@
   background: var(--color-armband);
   box-shadow: inset 0 3px 0 var(--color-armband-stripe);
   color: var(--color-on-armband);
+}
+
+/* Today can fall outside the shown month; the armband keeps its own ink. */
+.monthDay[data-today] .monthNum {
+  color: inherit;
 }
 
 .monthWorkouts {

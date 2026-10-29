@@ -31,6 +31,7 @@ import {
 } from '@/components/ui'
 import { useExercise, useExercisesById, useRoutine } from '@/db/queries'
 import { deleteRoutine, duplicateRoutine, restoreRoutine, saveRoutine } from '@/db/routines'
+import { db } from '@/db/schema'
 import type { Exercise, Routine, RoutineItem } from '@/db/types'
 import {
   addExercise,
@@ -144,10 +145,10 @@ function Editor({ routine }: { routine: Routine }) {
     const next = addExercise(items, exerciseId, at)
     commit(next)
     setExpanded(null)
-    showToast({
-      message: `Añadido: ${exercises.get(exerciseId)?.nameEs ?? 'ejercicio'}`,
-      durationMs: 2000,
-    })
+    // The exercise is new to the routine, so it is not in `exercises` yet.
+    void db.exercises.get(exerciseId).then((exercise) =>
+      showToast({ message: `Añadido: ${exercise?.nameEs ?? 'ejercicio'}`, durationMs: 2000 }),
+    )
   }
 
   const patchItem = (id: string, patch: Partial<RoutineItem>) =>

@@ -11,7 +11,7 @@
 
 - **F1 · Datos, sincronización y biblioteca:** cerrada el 29 oct 2026 (etiqueta `f1-done`). Catálogo de 1.324 ejercicios con nombres en español, Dexie con outbox, sincronización con Supabase y Biblioteca. **Pendiente de verificar a mano** (el usuario lo prueba después): favorito PC → móvil en < 1 min y favorito en modo avión que se sincroniza al volver la red.
 
-- **F2 · Rutinas y calendario:** pasos 1–4 hechos (29 oct 2026); falta la verificación entre dispositivos y `/cerrar-fase F2`. Editor de rutinas con técnicas y superseries, 12 predefinidas, calendario semana/mes y pantalla Hoy.
+- **F2 · Rutinas y calendario:** cerrada el 29 oct 2026 (etiqueta `f2-done`). Editor de rutinas con técnicas y superseries, 12 predefinidas, calendario semana/mes y pantalla Hoy. Criterios 1, 2 y 5 verificados con Playwright en la app real (PC 1440 px y móvil 390 px); criterios 3 y 4 (PC → móvil) verificados a mano por el usuario.
 
 ## Decisiones técnicas
 
@@ -53,6 +53,8 @@
 - **Empezar** crea la `session` y la enlaza con el `plannedWorkout` (`sessionId`); pulsar dos veces no duplica. `/sesion/$id` es un marcador hasta F3. Hoy muestra «Continuar entreno» si hay una sesión sin terminar.
 - **IDs con `uuid()`** (`src/lib/uuid.ts`), no `crypto.randomUUID()` directo: en el móvil, abriendo el servidor de desarrollo por `http://192.168.x.x`, el contexto no es seguro y `randomUUID` no existe (la app no arrancaba). El respaldo usa `getRandomValues`.
 - **Toast** propio (`showToast`) para «Deshacer» (5 s); uno a la vez.
+- **Cierre (auditoría):** en la vista semana de PC la línea de estado de la píldora ocupa todo el ancho bajo icono + nombre (en columnas estrechas se cortaba). Los días de otros meses en la vista mes usan `--color-text-3` con peso normal (antes `--color-text-disabled`, 2,8:1). El toast «Añadido» lee el nombre de Dexie (el ejercicio aún no estaba en el mapa de la rutina y salía «ejercicio»).
+- **Falsos positivos del detector de impeccable** que se dejan: `side-tab` en la celda de hoy (es el brazalete de `DESIGN.md`) y `monotonous-spacing` (cuenta los huecos de 4 px de las celdas del mes). `--ease-spring` no lo usa ningún componente.
 
 ## Deuda
 
@@ -66,6 +68,8 @@
 - Predefinidas: solo «Copiar a mis rutinas». «Usar» (planificar o empezar tal cual sin copiar) queda pendiente: el calendario necesita una rutina propia.
 - Las sesiones abiertas no se marcan como «Hecho» en el calendario hasta que F3 las termine.
 - Verificación manual de la sincronización entre dispositivos (criterios 5 y 6 de F1) pendiente; si falla, se arregla al inicio de F2.
+- El estado «Hecho» del calendario no se ha visto con datos reales: llega cuando F3 termine sesiones.
+- No hay script `test:e2e` ni tests de Playwright versionados; la verificación de F2 se hizo con un script suelto. Crear la suite e2e cuando haya flujo de sesión (F3).
 
 - Probar en el móvil por `http://` en la red local es un contexto inseguro. Se adelanta el despliegue en Vercel (paso 3 de F6) para tener HTTPS; el resto de F6 (PWA, cabeceras de `sw.js`, exportar) sigue pendiente.
 
