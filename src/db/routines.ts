@@ -1,4 +1,5 @@
 /** Routine writes (all through repo.save / softDelete, so they queue for sync). */
+import { uuid } from '@/lib/uuid'
 import { save, softDelete } from './repo'
 import { db } from './schema'
 import { ROUTINE_TEMPLATES, TEMPLATES_VERSION } from './seed/routineTemplates'
@@ -24,15 +25,15 @@ function cloneItems(items: RoutineItem[]): RoutineItem[] {
   return items.map((item) => {
     let groupId: string | null = null
     if (item.groupId) {
-      if (!groups.has(item.groupId)) groups.set(item.groupId, crypto.randomUUID())
+      if (!groups.has(item.groupId)) groups.set(item.groupId, uuid())
       groupId = groups.get(item.groupId)!
     }
-    return { ...item, id: crypto.randomUUID(), groupId }
+    return { ...item, id: uuid(), groupId }
   })
 }
 
 export function createRoutine(name: string, items: RoutineItem[] = []): Promise<Routine> {
-  return save('routines', { id: crypto.randomUUID(), name, items })
+  return save('routines', { id: uuid(), name, items })
 }
 
 export function saveRoutine(routine: Pick<Routine, 'id' | 'name' | 'items'>): Promise<Routine> {

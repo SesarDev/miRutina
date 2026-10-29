@@ -1,4 +1,5 @@
 /** Planned workouts on the calendar. All writes go through repo.save / softDelete. */
+import { uuid } from '@/lib/uuid'
 import { addWeeksKey, type DateKey } from '@/lib/dates'
 import { save, softDelete } from './repo'
 import { db } from './schema'
@@ -20,7 +21,7 @@ export async function planWorkout(
   for (let w = 0; w < count; w++) {
     created.push(
       await save('plannedWorkouts', {
-        id: crypto.randomUUID(),
+        id: uuid(),
         date: addWeeksKey(date, w),
         routineId,
         status: 'planned',

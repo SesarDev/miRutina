@@ -51,6 +51,7 @@
 - **Calendario**: vista y fecha en la URL (`?vista=semana|mes&fecha=YYYY-MM-DD`); semana por defecto en móvil y mes en PC. «Repetir cada semana» crea una fila por semana (máx. 12); no se guardan reglas de recurrencia. Hoy lleva el brazalete. Estados con icono + texto (en la vista mes el estado va en el icono y en el nombre accesible).
 - **Arrastrar y soltar** (dnd-kit) con sensores de puntero (umbral 6 px) y teclado, y anuncios para lector de pantalla en español (`src/lib/dndA11y.ts`).
 - **Empezar** crea la `session` y la enlaza con el `plannedWorkout` (`sessionId`); pulsar dos veces no duplica. `/sesion/$id` es un marcador hasta F3. Hoy muestra «Continuar entreno» si hay una sesión sin terminar.
+- **IDs con `uuid()`** (`src/lib/uuid.ts`), no `crypto.randomUUID()` directo: en el móvil, abriendo el servidor de desarrollo por `http://192.168.x.x`, el contexto no es seguro y `randomUUID` no existe (la app no arrancaba). El respaldo usa `getRandomValues`.
 - **Toast** propio (`showToast`) para «Deshacer» (5 s); uno a la vez.
 
 ## Deuda
@@ -65,6 +66,8 @@
 - Predefinidas: solo «Copiar a mis rutinas». «Usar» (planificar o empezar tal cual sin copiar) queda pendiente: el calendario necesita una rutina propia.
 - Las sesiones abiertas no se marcan como «Hecho» en el calendario hasta que F3 las termine.
 - Verificación manual de la sincronización entre dispositivos (criterios 5 y 6 de F1) pendiente; si falla, se arregla al inicio de F2.
+
+- Probar en el móvil por `http://` en la red local es un contexto inseguro: sin service worker ni APIs seguras. En F6 (PWA) hará falta HTTPS (despliegue o certificado local).
 
 ## Ideas para más adelante
 

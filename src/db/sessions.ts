@@ -1,4 +1,5 @@
 /** Workout sessions. F2 only starts them; logging sets arrives in F3. */
+import { uuid } from '@/lib/uuid'
 import { todayKey } from '@/lib/dates'
 import { nowIso, save } from './repo'
 import { db } from './schema'
@@ -18,7 +19,7 @@ export async function startSession(
   }
 
   const session = await save('sessions', {
-    id: crypto.randomUUID(),
+    id: uuid(),
     date: todayKey(),
     routineId: options.routineId ?? planned?.routineId ?? null,
     startedAt: nowIso(),

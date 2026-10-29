@@ -2,6 +2,7 @@
  * The only write path of the app. Every change stamps `updatedAt`, queues the row in the
  * outbox and runs in one transaction, so a crash never leaves a change unsynced.
  */
+import { uuid } from '@/lib/uuid'
 import { toSearchTokens } from '@/lib/search'
 import { db, PRIMARY_KEY } from './schema'
 import type { SyncedRows, SyncFields, SyncTable } from './types'
@@ -20,7 +21,7 @@ export function onLocalWrite(listener: WriteListener): () => void {
 
 export const nowIso = () => new Date().toISOString()
 
-export const newId = () => crypto.randomUUID()
+export const newId = () => uuid()
 
 function keyOf<T extends SyncTable>(table: T, row: SyncedRows[T]): string {
   return (row as Record<string, unknown>)[PRIMARY_KEY[table]] as string

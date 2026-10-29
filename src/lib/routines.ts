@@ -1,4 +1,5 @@
 /** Pure routine logic: defaults per technique, ordering, supersets and duration estimate. */
+import { uuid } from './uuid'
 import type { RoutineItem, SetTechnique } from '@/db/types'
 
 type TechniqueDefaults = Pick<RoutineItem, 'sets' | 'repMin' | 'repMax' | 'restSec'> &
@@ -20,11 +21,7 @@ export const LIMITS = {
   drops: { min: 1, max: 4 },
 } as const
 
-export function newItem(
-  exerciseId: string,
-  order: number,
-  id: string = crypto.randomUUID(),
-): RoutineItem {
+export function newItem(exerciseId: string, order: number, id: string = uuid()): RoutineItem {
   return {
     id,
     exerciseId,
@@ -101,7 +98,7 @@ export function linkWithNext(items: RoutineItem[], id: string): RoutineItem[] {
   const current = items[i]
   const next = items[i + 1]
   if (!current || !next) return items
-  const groupId = current.groupId ?? next.groupId ?? crypto.randomUUID()
+  const groupId = current.groupId ?? next.groupId ?? uuid()
   const { sets, restSec } = current.groupId ? current : TECHNIQUE_DEFAULTS.superserie
   return items.map((it) => {
     if (it.id !== current.id && it.id !== next.id && it.groupId !== groupId) return it
