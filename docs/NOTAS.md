@@ -29,7 +29,7 @@
 - Vitest procesa CSS (`test.css.include`) para que `?raw` funcione en `tokens.test.ts`.
 
 ### F1
-- **Media de Gym visual fuera de git** (`public/exercises/` en `.gitignore`): el NOTICE del dataset dice que clonar no da derechos de redistribución y el repo de GitHub puede ser público. `npm run import:exercises` la regenera desde `vendor/`. En F6 (despliegue) habrá que decidir cómo se sirve.
+- **Media de Gym visual en el repo** (`public/exercises/`, 138 MB): al principio se dejó fuera de git por la licencia; el 29 oct 2026, con el repo ya **privado**, se sube para poder desplegar en Vercel, como prevé F6. No volver a hacer público el repo con la media dentro. `npm run import:exercises` la sigue regenerando desde `vendor/`.
 - **Traducción de nombres**: `scripts/lib/translate-name.ts` reordena al español (movimiento + adjetivos concordados + posición + lateralidad + equipo + «, matices»). Diccionario en `scripts/exercise-terms.es.json`; 99 correcciones manuales en `scripts/exercise-names-overrides.es.json`. El import informa de palabras sin traducir y de nombres sin movimiento reconocido.
 - **Seed versionado**: `src/db/seed/exercises.json` = `{ version, exercises }` (hash del contenido); se recarga solo si cambia y se importa de forma diferida (chunk aparte, ~140 kB gzip).
 - **Outbox con una entrada por fila**: el push sube el estado actual de la fila; varias ediciones seguidas = una subida. Al hacer pull, si el remoto es más nuevo, se descarta la entrada pendiente local (perdió el LWW).
@@ -67,7 +67,7 @@
 - Las sesiones abiertas no se marcan como «Hecho» en el calendario hasta que F3 las termine.
 - Verificación manual de la sincronización entre dispositivos (criterios 5 y 6 de F1) pendiente; si falla, se arregla al inicio de F2.
 
-- Probar en el móvil por `http://` en la red local es un contexto inseguro: sin service worker ni APIs seguras. En F6 (PWA) hará falta HTTPS (despliegue o certificado local).
+- Probar en el móvil por `http://` en la red local es un contexto inseguro. Se adelanta el despliegue en Vercel (paso 3 de F6) para tener HTTPS; el resto de F6 (PWA, cabeceras de `sw.js`, exportar) sigue pendiente.
 
 ## Ideas para más adelante
 
