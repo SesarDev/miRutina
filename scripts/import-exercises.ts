@@ -15,6 +15,7 @@ import {
   readFileSync,
   writeFileSync,
 } from 'node:fs'
+import { createHash } from 'node:crypto'
 import { basename, join } from 'node:path'
 import { Ajv2020 } from 'ajv/dist/2020.js'
 import type { Exercise } from '../src/db/types.ts'
@@ -76,7 +77,7 @@ const toSteps = (text: string) =>
 
 const invalid: string[] = []
 const unknownWords = new Map<string, number>()
-const exercises: Exercise[] = []
+const exercises: Omit<Exercise, 'searchTokens'>[] = []
 
 for (const raw of records) {
   const valid: boolean = validateRecord(raw)
@@ -107,7 +108,9 @@ for (const raw of records) {
 }
 
 mkdirSync(join(ROOT, 'src/db/seed'), { recursive: true })
-writeFileSync(SEED_OUT, `${JSON.stringify(exercises)}\n`)
+// The version lets the app reload the catalogue only when it actually changed.
+const version = createHash('sha256').update(JSON.stringify(exercises)).digest('hex').slice(0, 12)
+writeFileSync(SEED_OUT, `${JSON.stringify({ version, exercises })}\n`)
 
 // Media: copy only what is missing so re-runs are fast.
 let copied = 0

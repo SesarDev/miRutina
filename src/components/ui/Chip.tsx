@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { FEEL_LABELS, type Feel } from '@/lib/feel'
+import { FEEL_LABELS, type Feel } from '@/db/types'
 import styles from './Chip.module.css'
 
 type ChipProps = {

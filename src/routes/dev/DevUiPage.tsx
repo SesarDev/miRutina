@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { PageHeader } from '@/components/PageHeader'
 import { ThemeSwitcher } from '@/components/ThemeSwitcher'
 import { Button, Card, Chip, EmptyState, IconButton, Sheet, Stepper } from '@/components/ui'
-import { FEELS, type Feel } from '@/lib/feel'
+import { FEELS, type Feel } from '@/db/types'
 import styles from './DevUiPage.module.css'
 
 const SWATCHES = [
