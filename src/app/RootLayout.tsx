@@ -11,6 +11,9 @@ export function RootLayout() {
 
   return (
     <div className={styles.shell}>
+      <a href="#contenido" className={styles.skipLink}>
+        Saltar al contenido
+      </a>
       <aside className={styles.sidebar}>
         <div className={styles.sidebarInner}>
           <Link to="/" className={styles.brand} aria-label="miRutina, ir a Hoy">
@@ -35,7 +38,7 @@ export function RootLayout() {
         </div>
       </aside>
 
-      <main className={styles.main}>
+      <main id="contenido" className={styles.main} tabIndex={-1}>
         <div className={styles.content}>
           <Outlet />
         </div>
@@ -52,7 +55,7 @@ export function RootLayout() {
             <span className={styles.tabIcon}>
               <Icon name={item.icon} size={22} />
             </span>
-            {item.label}
+            <span className={styles.tabLabel}>{item.label}</span>
           </Link>
         ))}
         <button
@@ -66,7 +69,7 @@ export function RootLayout() {
           <span className={styles.tabIcon}>
             <Icon name="more" size={22} />
           </span>
-          Más
+          <span className={styles.tabLabel}>Más</span>
         </button>
       </nav>
 

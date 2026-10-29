@@ -159,7 +159,7 @@
   aspect-ratio: 1;
   border-radius: var(--radius-md);
   background: var(--color-media-plate);
-  color: oklch(0.45 0.02 258);
+  color: var(--color-on-media);
   font-size: var(--text-xs);
   outline: 1px solid var(--color-media-outline);
   outline-offset: -1px;

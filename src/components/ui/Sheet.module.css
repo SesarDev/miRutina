@@ -38,7 +38,7 @@
 }
 
 .sheet::backdrop {
-  background: oklch(0.12 0.03 258 / 0.55);
+  background: var(--color-scrim);
   opacity: 1;
   transition:
     opacity var(--dur-base) var(--ease-out),

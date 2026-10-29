@@ -2,7 +2,7 @@
 
 ## Estado
 
-- **F0 · Base y diseño:** terminada a falta de `/cerrar-fase F0` (29 oct 2026).
+- **F0 · Base y diseño:** cerrada el 29 oct 2026 (etiqueta `f0-done`).
   - Vite + React 19 + TS strict, alias `@/`, ESLint + Prettier, Vitest + Testing Library.
   - Skills instaladas en `.claude/skills/`: impeccable, transitions-dev, make-interfaces-feel-better y las 8 de GSAP.
   - `PRODUCT.md` y `DESIGN.md` (dirección «Dorsal») en la raíz.
@@ -21,6 +21,7 @@
 - **Rutas declaradas en código** (`src/app/router.tsx`, sin el plugin de rutas por archivo) para mantener el tipado de `<Link to>` sin generar archivos.
 - **`Feel`** está en `src/lib/feel.ts` de forma provisional; en F1 pasará a los tipos de `src/db/`.
 - **Playwright** instalado (con Chromium) para capturas de verificación; los tests e2e llegan en fases posteriores.
+- **Accesibilidad del shell (auditoría de cierre):** enlace «Saltar al contenido» como primer foco; las etiquetas de la barra inferior se truncan con puntos suspensivos con texto ampliado al 200 % en lugar de solaparse (WCAG 1.4.4); colores sueltos convertidos en tokens (`--color-scrim`, `--color-on-media`).
 - Vitest procesa CSS (`test.css.include`) para que `?raw` funcione en `tokens.test.ts`.
 
 ## Deuda
@@ -28,6 +29,8 @@
 - El favicon sigue siendo el de Vite; los iconos de la PWA llegan en F6.
 - `impeccable critique` se ejecutó en un solo contexto (sin subagentes); repetir la crítica completa al cerrar F3, cuando haya una pantalla real de sesión.
 - La sección «Brazalete» de `DESIGN.md` describe un componente que de momento solo existe como muestra en `/dev/ui`.
+- `global.css` reduce las animaciones con keyframes a 1 ms con «reducir movimiento»; hoy no hay ninguna. Cuando lleguen (F5), darles una alternativa propia en lugar de depender de ese recorte global.
+- Auditoría de impeccable hecha sin el overlay del navegador (detector por CLI + Playwright); el overlay en vivo queda pendiente.
 
 ## Ideas para más adelante
 
