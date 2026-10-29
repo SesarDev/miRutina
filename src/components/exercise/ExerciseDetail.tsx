@@ -14,6 +14,8 @@ type Props = {
 
 /** Exercise card: media, names, muscles, equipment, steps and attribution. */
 export function ExerciseDetail({ exercise, favorite, as: Heading = 'h2' }: Props) {
+  // Section headings sit one level below the exercise name.
+  const Section = Heading === 'h1' ? 'h2' : 'h3'
   const secondary = exercise.secondaryMuscles.filter((m) => m !== exercise.target)
 
   return (
@@ -62,9 +64,9 @@ export function ExerciseDetail({ exercise, favorite, as: Heading = 'h2' }: Props
 
       {exercise.stepsEs.length > 0 && (
         <section aria-labelledby={`steps-${exercise.id}`}>
-          <h3 id={`steps-${exercise.id}`} className={styles.sectionTitle}>
+          <Section id={`steps-${exercise.id}`} className={styles.sectionTitle}>
             Cómo se hace
-          </h3>
+          </Section>
           <ol className={styles.steps}>
             {exercise.stepsEs.map((step, i) => (
               <li key={i}>{step}</li>
@@ -74,9 +76,9 @@ export function ExerciseDetail({ exercise, favorite, as: Heading = 'h2' }: Props
       )}
 
       <section aria-labelledby={`hist-${exercise.id}`}>
-        <h3 id={`hist-${exercise.id}`} className={styles.sectionTitle}>
+        <Section id={`hist-${exercise.id}`} className={styles.sectionTitle}>
           Historial
-        </h3>
+        </Section>
         <p className={styles.history}>
           Cuando registres este ejercicio verás aquí tus series, con el peso, las reps y cómo te
           sentiste.
