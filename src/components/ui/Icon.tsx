@@ -67,6 +67,46 @@ const PATHS = {
   ),
   star: <path d="m12 3.8 2.5 5.2 5.6.8-4.1 4 1 5.6L12 16.7l-5 2.7 1-5.6-4.1-4 5.6-.8Z" />,
   play: <path d="M8 5.5v13l10.5-6.5Z" />,
+  copy: (
+    <>
+      <rect x="8.5" y="8.5" width="11" height="11" rx="2" />
+      <path d="M15.5 8.5V6.5a2 2 0 0 0-2-2h-7a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h2" />
+    </>
+  ),
+  trash: (
+    <>
+      <path d="M4.5 7h15M9.5 7V4.5h5V7M6.5 7l1 12.5h9l1-12.5" />
+      <path d="M10.5 11v5M13.5 11v5" />
+    </>
+  ),
+  grip: (
+    <>
+      <circle cx="9" cy="6.5" r="1.1" fill="currentColor" />
+      <circle cx="15" cy="6.5" r="1.1" fill="currentColor" />
+      <circle cx="9" cy="12" r="1.1" fill="currentColor" />
+      <circle cx="15" cy="12" r="1.1" fill="currentColor" />
+      <circle cx="9" cy="17.5" r="1.1" fill="currentColor" />
+      <circle cx="15" cy="17.5" r="1.1" fill="currentColor" />
+    </>
+  ),
+  link: (
+    <>
+      <path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1" />
+      <path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1" />
+    </>
+  ),
+  unlink: (
+    <>
+      <path d="M15.7 14 18.7 11a4 4 0 0 0-5.7-5.7L12 6.3M8.3 10 5.3 13a4 4 0 0 0 5.7 5.7l1-1" />
+      <path d="m4 4 16 16" />
+    </>
+  ),
+  clock: (
+    <>
+      <circle cx="12" cy="12" r="8" />
+      <path d="M12 7.5V12l3 2" />
+    </>
+  ),
   filter: <path d="M4 6h16M7 12h10M10 18h4" />,
   sun: (
     <>

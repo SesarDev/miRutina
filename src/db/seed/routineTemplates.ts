@@ -6,7 +6,7 @@
 import { applyTechnique, estimateMinutes, linkWithNext, newItem, withOrder } from '@/lib/routines'
 import type { RoutineItem, RoutineTemplate, SetTechnique } from '../types'
 
-export const TEMPLATES_VERSION = '2026-10-29.1'
+export const TEMPLATES_VERSION = '2026-10-29.2'
 
 type Spec =
   | string
@@ -50,7 +50,9 @@ function build(templateId: string, specs: (Spec | [Spec, Spec])[]): RoutineItem[
   return withOrder(items)
 }
 
-type Draft = Omit<RoutineTemplate, 'items' | 'durationMin'> & { specs: (Spec | [Spec, Spec])[] }
+type Draft = Omit<RoutineTemplate, 'items' | 'durationMin' | 'position'> & {
+  specs: (Spec | [Spec, Spec])[]
+}
 
 const DRAFTS: Draft[] = [
   // ── Normales por músculo ──
@@ -219,7 +221,7 @@ const DRAFTS: Draft[] = [
   },
 ]
 
-export const ROUTINE_TEMPLATES: RoutineTemplate[] = DRAFTS.map(({ specs, ...t }) => {
+export const ROUTINE_TEMPLATES: RoutineTemplate[] = DRAFTS.map(({ specs, ...t }, position) => {
   const items = build(t.id, specs)
-  return { ...t, items, durationMin: estimateMinutes(items) }
+  return { ...t, position, items, durationMin: estimateMinutes(items) }
 })

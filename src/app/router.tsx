@@ -14,6 +14,7 @@ import { EjercicioPage } from '@/routes/ejercicio/EjercicioPage'
 import { HoyPage } from '@/routes/hoy/HoyPage'
 import { NotFoundPage } from '@/routes/NotFoundPage'
 import { ProgresoPage } from '@/routes/progreso/ProgresoPage'
+import { RoutineEditorPage } from '@/routes/rutinas/RoutineEditorPage'
 import { RutinasPage } from '@/routes/rutinas/RutinasPage'
 import { SesionPage } from '@/routes/sesion/SesionPage'
 import { RootLayout } from './RootLayout'
@@ -34,7 +35,14 @@ const routeTree = rootRoute.addChildren([
     component: BibliotecaPage,
     validateSearch: parseBibliotecaSearch,
   }),
-  createRoute({ getParentRoute, path: '/rutinas', component: RutinasPage }),
+  createRoute({
+    getParentRoute,
+    path: '/rutinas',
+    component: RutinasPage,
+    validateSearch: (s: Record<string, unknown>): { tab?: 'predefinidas' } =>
+      s.tab === 'predefinidas' ? { tab: 'predefinidas' } : {},
+  }),
+  createRoute({ getParentRoute, path: '/rutinas/$routineId', component: RoutineEditorPage }),
   createRoute({ getParentRoute, path: '/progreso', component: ProgresoPage }),
   createRoute({ getParentRoute, path: '/cuerpo', component: CuerpoPage }),
   createRoute({ getParentRoute, path: '/ajustes', component: AjustesPage }),

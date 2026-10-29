@@ -91,6 +91,8 @@ export type Routine = {
 /** Built-in routine (local only, like the catalogue). «Copiar a mis rutinas» creates a Routine. */
 export type RoutineTemplate = {
   id: string
+  /** Display order in «Predefinidas». */
+  position: number
   name: string
   description: string
   /** Main body parts (dataset keys), for filters and labels. */
