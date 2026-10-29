@@ -7,6 +7,7 @@ import type {
   OutboxEntry,
   PlannedWorkout,
   Routine,
+  RoutineTemplate,
   Session,
   SetLog,
 } from './types'
@@ -15,6 +16,7 @@ export class AppDB extends Dexie {
   exercises!: EntityTable<Exercise, 'id'>
   exerciseSettings!: EntityTable<ExerciseSettings, 'exerciseId'>
   routines!: EntityTable<Routine, 'id'>
+  routineTemplates!: EntityTable<RoutineTemplate, 'id'>
   plannedWorkouts!: EntityTable<PlannedWorkout, 'id'>
   sessions!: EntityTable<Session, 'id'>
   setLogs!: EntityTable<SetLog, 'id'>
@@ -34,6 +36,10 @@ export class AppDB extends Dexie {
       bodyMetrics: 'id, date, updatedAt',
       outbox: '++seq, table, rowId, [table+rowId]',
       meta: 'key',
+    })
+    // v2 (F2): built-in routines, local only.
+    this.version(2).stores({
+      routineTemplates: 'id, technique, durationMin, *bodyParts',
     })
   }
 }

@@ -1,4 +1,5 @@
 import 'fake-indexeddb/auto'
+import { newItem } from '@/lib/routines'
 import { newId, onLocalWrite, save, setFavorite, softDelete } from './repo'
 import { db } from './schema'
 import { ensureSeed } from './seed'
@@ -6,7 +7,7 @@ import { ensureSeed } from './seed'
 const routine = (name = 'Empuje') => ({
   id: newId(),
   name,
-  items: [{ exerciseId: '0025', sets: 3, repMin: 8, repMax: 12, restSec: 120, order: 0 }],
+  items: [newItem('0025', 0)],
 })
 
 beforeEach(async () => {

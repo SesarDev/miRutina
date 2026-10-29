@@ -52,13 +52,34 @@ export type ExerciseSettings = {
   note: string | null
 } & SyncFields
 
+/** How the sets of an exercise are performed (docs/PLANNING.md § Técnicas de series). */
+export type SetTechnique = 'normal' | 'aleman' | 'descendente' | 'ascendente' | 'superserie'
+
+export const TECHNIQUE_LABELS: Record<SetTechnique, string> = {
+  normal: 'Normales',
+  aleman: 'Alemanas',
+  descendente: 'Descendentes',
+  ascendente: 'Ascendentes',
+  superserie: 'Superserie',
+}
+
 export type RoutineItem = {
+  /** Stable id of the entry (drag and drop, superset grouping). */
+  id: string
   exerciseId: string
   sets: number
   repMin: number
   repMax: number
+  /** Rest after each set; for a superset, the rest after each round (last item of the group). */
   restSec: number
   order: number
+  technique: SetTechnique
+  /** Items sharing a groupId form one superset, performed back to back. */
+  groupId: string | null
+  /** Descendentes: weight drops chained after each set. */
+  drops?: number
+  /** Ascendentes: target reps of each set, e.g. [12, 10, 8, 6]. */
+  repsPerSet?: number[]
 }
 
 export type Routine = {
@@ -66,6 +87,19 @@ export type Routine = {
   name: string
   items: RoutineItem[]
 } & SyncFields
+
+/** Built-in routine (local only, like the catalogue). «Copiar a mis rutinas» creates a Routine. */
+export type RoutineTemplate = {
+  id: string
+  name: string
+  description: string
+  /** Main body parts (dataset keys), for filters and labels. */
+  bodyParts: string[]
+  technique: SetTechnique
+  /** Estimated minutes: 30, 45, 60 or 75. */
+  durationMin: number
+  items: RoutineItem[]
+}
 
 export type PlannedStatus = 'planned' | 'done' | 'skipped'
 

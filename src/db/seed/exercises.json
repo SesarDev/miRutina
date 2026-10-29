@@ -1,5 +1,5 @@
 {
-  "version": "4275033d32a9",
+  "version": "e6febc54f7e8",
   "exercises": [
     {
       "id": "0001",
@@ -6739,7 +6739,7 @@
     {
       "id": "0196",
       "name": "cable pull through (with rope)",
-      "nameEs": "Tirón en polea a través de (con cuerda)",
+      "nameEs": "Pull through en polea (con cuerda)",
       "bodyPart": "upper legs",
       "equipment": "cable",
       "target": "glutes",
