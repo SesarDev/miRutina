@@ -2,7 +2,9 @@
 import { useLiveQuery } from 'dexie-react-hooks'
 import { useMemo } from 'react'
 import { buildIndex } from '@/lib/exerciseSearch'
+import { estimateMinutes } from '@/lib/routines'
 import { db } from './schema'
+import type { PlannedWorkout } from './types'
 
 const EMPTY: never[] = []
 
@@ -79,4 +81,27 @@ export function useLastDoneByRoutine() {
     [],
     new Map<string, string>(),
   )
+}
+
+export type PlannedEntry = PlannedWorkout & { routineName: string; minutes: number }
+
+/** Planned workouts between two dates (inclusive), with their routine's name and duration. */
+export function usePlannedBetween(from: string, to: string) {
+  return useLiveQuery(async () => {
+    const rows = (
+      await db.plannedWorkouts.where('date').between(from, to, true, true).toArray()
+    ).filter((p) => !p.deletedAt)
+    const routines = await db.routines.bulkGet([...new Set(rows.map((r) => r.routineId))])
+    const byId = new Map(routines.filter((r) => r !== undefined).map((r) => [r.id, r]))
+    return rows
+      .map((p): PlannedEntry => {
+        const routine = byId.get(p.routineId)
+        return {
+          ...p,
+          routineName: routine && !routine.deletedAt ? routine.name : 'Rutina borrada',
+          minutes: routine ? estimateMinutes(routine.items) : 0,
+        }
+      })
+      .sort((a, b) => a.date.localeCompare(b.date) || a.updatedAt.localeCompare(b.updatedAt))
+  }, [from, to])
 }

@@ -101,6 +101,12 @@ const PATHS = {
       <path d="m4 4 16 16" />
     </>
   ),
+  skip: (
+    <>
+      <path d="M6 6.5v11l8-5.5Z" />
+      <path d="M18 6v12" />
+    </>
+  ),
   clock: (
     <>
       <circle cx="12" cy="12" r="8" />

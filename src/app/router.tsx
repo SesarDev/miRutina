@@ -8,6 +8,7 @@ import { AjustesPage } from '@/routes/ajustes/AjustesPage'
 import { BibliotecaPage } from '@/routes/biblioteca/BibliotecaPage'
 import { parseBibliotecaSearch } from '@/routes/biblioteca/search'
 import { CalendarioPage } from '@/routes/calendario/CalendarioPage'
+import { isValidDateKey } from '@/lib/dates'
 import { CuerpoPage } from '@/routes/cuerpo/CuerpoPage'
 import { DevUiPage } from '@/routes/dev/DevUiPage'
 import { EjercicioPage } from '@/routes/ejercicio/EjercicioPage'
@@ -28,7 +29,15 @@ const getParentRoute = () => rootRoute
 
 const routeTree = rootRoute.addChildren([
   createRoute({ getParentRoute, path: '/', component: HoyPage }),
-  createRoute({ getParentRoute, path: '/calendario', component: CalendarioPage }),
+  createRoute({
+    getParentRoute,
+    path: '/calendario',
+    component: CalendarioPage,
+    validateSearch: (s: Record<string, unknown>): { vista?: 'semana' | 'mes'; fecha?: string } => ({
+      vista: s.vista === 'semana' || s.vista === 'mes' ? s.vista : undefined,
+      fecha: isValidDateKey(s.fecha) ? s.fecha : undefined,
+    }),
+  }),
   createRoute({
     getParentRoute,
     path: '/biblioteca',

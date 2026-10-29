@@ -43,6 +43,7 @@ import {
   unlink,
   updateGroup,
 } from '@/lib/routines'
+import { dndAccessibility } from '@/lib/dndA11y'
 import { DESKTOP_QUERY, useMediaQuery } from '@/lib/useMediaQuery'
 import { LIBRARY_DRAG_PREFIX } from './dnd'
 import { ExercisePicker } from './ExercisePicker'
@@ -195,6 +196,15 @@ function Editor({ routine }: { routine: Routine }) {
     if (activeId !== overId) commit(moveItem(items, activeId, overId))
   }
 
+  const nameOf = (id: string | number) => {
+    const key = String(id)
+    if (key === ROUTINE_DROP_ID) return 'la rutina'
+    const exerciseId = key.startsWith(LIBRARY_DRAG_PREFIX)
+      ? key.slice(LIBRARY_DRAG_PREFIX.length)
+      : items.find((i) => i.id === key)?.exerciseId
+    return (exerciseId && exercises.get(exerciseId)?.nameEs) || 'el ejercicio'
+  }
+
   const draggedExercise = dragging?.startsWith(LIBRARY_DRAG_PREFIX)
     ? dragging.slice(LIBRARY_DRAG_PREFIX.length)
     : items.find((i) => i.id === dragging)?.exerciseId
@@ -254,6 +264,7 @@ function Editor({ routine }: { routine: Routine }) {
 
       <DndContext
         sensors={sensors}
+        accessibility={dndAccessibility(nameOf)}
         collisionDetection={closestCenter}
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}
