@@ -1,0 +1,1244 @@
+{
+  "$comment": "Diccionario para traducir los nombres del dataset. heads = movimiento (g: m|f, pl: plural); adjectives = concuerdan con el movimiento; position/laterality/qualifiers = frases invariables; equipment = primer término del nombre; words = respaldo palabra a palabra. Las correcciones puntuales van en exercise-names-overrides.es.json.",
+  "fixes": {
+    "45в°": "45°",
+    "revers": "reverse",
+    "reversed": "reverse",
+    "sitted": "seated",
+    "peacher": "preacher",
+    "bent-over": "bent over",
+    "cross-over": "crossover",
+    "close grip": "close-grip",
+    "wide grip": "wide-grip",
+    "reverse grip": "reverse-grip",
+    "tricep": "triceps",
+    "bicep": "biceps",
+    "pull-ups": "pull-up",
+    "push-ups": "push-up",
+    "chin-ups": "chin-up",
+    "dips": "dip",
+    "curls": "curl",
+    "squats": "squat",
+    "raises": "raise",
+    "flyes": "fly",
+    "kickbacks": "kickback",
+    "crunches": "crunch",
+    "thrusts": "thrust",
+    "ez-bar": "ez barbell",
+    "ez-barbell": "ez barbell",
+    "sz-bar": "ez bar",
+    "45 degrees": "45°",
+    "skull crusher": "skullcrusher",
+    "rollerout": "rollout",
+    "hyperextension": "hyperextension",
+    "alternating": "alternate",
+    "push up": "push-up",
+    "sit up": "sit-up",
+    "pull up": "pull-up",
+    "chin up": "chin-up",
+    "step up": "step-up",
+    "curl up": "curl-up",
+    "muscle up": "muscle-up",
+    "on knees": "kneeling",
+    "toe touchers": "toe touch",
+    "toes touch": "toe touch",
+    "crossovers": "crossover",
+    "presses": "press",
+    "jumps": "jump",
+    "kicks": "kick",
+    "twists": "twist",
+    "sprints": "sprint",
+    "bends": "bend",
+    "on floor": "floor",
+    "on the floor": "floor"
+  },
+  "equipment": {
+    "olympic barbell": {
+      "es": "con barra"
+    },
+    "ez barbell": {
+      "es": "con barra Z"
+    },
+    "ez bar": {
+      "es": "con barra Z"
+    },
+    "trap bar": {
+      "es": "con barra hexagonal"
+    },
+    "barbell": {
+      "es": "con barra"
+    },
+    "dumbbell": {
+      "es": "con mancuernas",
+      "one": "con mancuerna"
+    },
+    "dumbbells": {
+      "es": "con mancuernas",
+      "one": "con mancuerna"
+    },
+    "cable": {
+      "es": "en polea"
+    },
+    "resistance band": {
+      "es": "con banda elástica"
+    },
+    "band": {
+      "es": "con banda elástica"
+    },
+    "lever": {
+      "es": "en máquina"
+    },
+    "leverage": {
+      "es": "en máquina"
+    },
+    "smith": {
+      "es": "en multipower"
+    },
+    "sled": {
+      "es": "en máquina"
+    },
+    "kettlebell": {
+      "es": "con kettlebell"
+    },
+    "medicine ball": {
+      "es": "con balón medicinal"
+    },
+    "stability ball": {
+      "es": "en fitball"
+    },
+    "exercise ball": {
+      "es": "en fitball"
+    },
+    "bosu ball": {
+      "es": "en bosu"
+    },
+    "weighted": {
+      "es": "con lastre"
+    },
+    "bodyweight": {
+      "es": ""
+    },
+    "body weight": {
+      "es": ""
+    },
+    "roller": {
+      "es": "con rodillo"
+    },
+    "wheel roller": {
+      "es": "con rueda abdominal"
+    },
+    "rope": {
+      "es": "con cuerda"
+    },
+    "tire": {
+      "es": "con neumático"
+    },
+    "hammer": {
+      "es": "con mazo"
+    }
+  },
+  "heads": {
+    "close-grip bench press": {
+      "es": "Press de banca con agarre cerrado",
+      "g": "m"
+    },
+    "bench press": {
+      "es": "Press de banca",
+      "g": "m"
+    },
+    "floor press": {
+      "es": "Press en el suelo",
+      "g": "m"
+    },
+    "military press": {
+      "es": "Press militar",
+      "g": "m"
+    },
+    "shoulder press": {
+      "es": "Press de hombros",
+      "g": "m"
+    },
+    "arnold press": {
+      "es": "Press Arnold",
+      "g": "m"
+    },
+    "chest press": {
+      "es": "Press de pecho",
+      "g": "m"
+    },
+    "pallof press": {
+      "es": "Press Pallof",
+      "g": "m"
+    },
+    "hammer press": {
+      "es": "Press con agarre neutro",
+      "g": "m"
+    },
+    "push press": {
+      "es": "Push press",
+      "g": "m"
+    },
+    "leg press": {
+      "es": "Prensa de piernas",
+      "g": "f",
+      "dropEquipment": ["sled", "lever"]
+    },
+    "calf press": {
+      "es": "Extensión de gemelos",
+      "g": "f"
+    },
+    "press": {
+      "es": "Press",
+      "g": "m"
+    },
+    "front squat": {
+      "es": "Sentadilla frontal",
+      "g": "f"
+    },
+    "hack squat": {
+      "es": "Sentadilla hack",
+      "g": "f",
+      "dropEquipment": ["sled"]
+    },
+    "goblet squat": {
+      "es": "Sentadilla goblet",
+      "g": "f"
+    },
+    "split squat": {
+      "es": "Sentadilla dividida",
+      "g": "f"
+    },
+    "sumo squat": {
+      "es": "Sentadilla sumo",
+      "g": "f"
+    },
+    "full squat": {
+      "es": "Sentadilla profunda",
+      "g": "f"
+    },
+    "zercher squat": {
+      "es": "Sentadilla Zercher",
+      "g": "f"
+    },
+    "jump squat": {
+      "es": "Sentadilla con salto",
+      "g": "f"
+    },
+    "pistol squat": {
+      "es": "Sentadilla pistol",
+      "g": "f"
+    },
+    "sissy squat": {
+      "es": "Sentadilla sissy",
+      "g": "f"
+    },
+    "overhead squat": {
+      "es": "Sentadilla por encima de la cabeza",
+      "g": "f"
+    },
+    "squat": {
+      "es": "Sentadilla",
+      "g": "f"
+    },
+    "romanian deadlift": {
+      "es": "Peso muerto rumano",
+      "g": "m"
+    },
+    "stiff leg deadlift": {
+      "es": "Peso muerto con piernas rígidas",
+      "g": "m"
+    },
+    "straight leg deadlift": {
+      "es": "Peso muerto con piernas rígidas",
+      "g": "m"
+    },
+    "sumo deadlift": {
+      "es": "Peso muerto sumo",
+      "g": "m"
+    },
+    "deadlift": {
+      "es": "Peso muerto",
+      "g": "m"
+    },
+    "bent over row": {
+      "es": "Remo inclinado",
+      "g": "m"
+    },
+    "upright row": {
+      "es": "Remo al mentón",
+      "g": "m"
+    },
+    "pendlay row": {
+      "es": "Remo Pendlay",
+      "g": "m"
+    },
+    "t-bar row": {
+      "es": "Remo en T",
+      "g": "m"
+    },
+    "rear delt row": {
+      "es": "Remo para deltoides posterior",
+      "g": "m"
+    },
+    "row": {
+      "es": "Remo",
+      "g": "m"
+    },
+    "lat pulldown": {
+      "es": "Jalón al pecho",
+      "g": "m",
+      "dropEquipment": ["cable"]
+    },
+    "pulldown": {
+      "es": "Jalón",
+      "g": "m"
+    },
+    "pull-up": {
+      "es": "Dominada",
+      "g": "f"
+    },
+    "chin-up": {
+      "es": "Dominada supina",
+      "g": "f"
+    },
+    "muscle-up": {
+      "es": "Muscle-up",
+      "g": "m"
+    },
+    "push-up": {
+      "es": "Flexión",
+      "g": "f"
+    },
+    "chest dip": {
+      "es": "Fondos de pecho",
+      "g": "m",
+      "pl": true
+    },
+    "triceps dip": {
+      "es": "Fondos de tríceps",
+      "g": "m",
+      "pl": true
+    },
+    "bench dip": {
+      "es": "Fondos en banco",
+      "g": "m",
+      "pl": true
+    },
+    "dip": {
+      "es": "Fondos",
+      "g": "m",
+      "pl": true
+    },
+    "hammer preacher curl": {
+      "es": "Curl martillo en banco Scott",
+      "g": "m"
+    },
+    "zottman preacher curl": {
+      "es": "Curl Zottman en banco Scott",
+      "g": "m"
+    },
+    "preacher curl": {
+      "es": "Curl en banco Scott",
+      "g": "m"
+    },
+    "hammer curl": {
+      "es": "Curl martillo",
+      "g": "m"
+    },
+    "concentration curl": {
+      "es": "Curl concentrado",
+      "g": "m"
+    },
+    "biceps curl": {
+      "es": "Curl de bíceps",
+      "g": "m"
+    },
+    "wrist curl": {
+      "es": "Curl de muñeca",
+      "g": "m"
+    },
+    "drag curl": {
+      "es": "Curl arrastrado",
+      "g": "m"
+    },
+    "zottman curl": {
+      "es": "Curl Zottman",
+      "g": "m"
+    },
+    "spider curl": {
+      "es": "Curl araña",
+      "g": "m"
+    },
+    "leg curl": {
+      "es": "Curl femoral",
+      "g": "m"
+    },
+    "curl": {
+      "es": "Curl",
+      "g": "m"
+    },
+    "triceps extension": {
+      "es": "Extensión de tríceps",
+      "g": "f"
+    },
+    "leg extension": {
+      "es": "Extensión de cuádriceps",
+      "g": "f"
+    },
+    "back extension": {
+      "es": "Extensión lumbar",
+      "g": "f"
+    },
+    "hip extension": {
+      "es": "Extensión de cadera",
+      "g": "f"
+    },
+    "extension": {
+      "es": "Extensión",
+      "g": "f"
+    },
+    "skullcrusher": {
+      "es": "Press francés",
+      "g": "m"
+    },
+    "triceps pushdown": {
+      "es": "Extensión de tríceps",
+      "g": "f"
+    },
+    "pushdown": {
+      "es": "Extensión de tríceps",
+      "g": "f"
+    },
+    "triceps kickback": {
+      "es": "Patada de tríceps",
+      "g": "f"
+    },
+    "kickback": {
+      "es": "Patada de tríceps",
+      "g": "f"
+    },
+    "pullover": {
+      "es": "Pullover",
+      "g": "m"
+    },
+    "rear lateral raise": {
+      "es": "Elevación posterior",
+      "g": "f"
+    },
+    "lateral raise": {
+      "es": "Elevación lateral",
+      "g": "f"
+    },
+    "front raise": {
+      "es": "Elevación frontal",
+      "g": "f"
+    },
+    "calf raise": {
+      "es": "Elevación de gemelos",
+      "g": "f"
+    },
+    "leg raise": {
+      "es": "Elevación de piernas",
+      "g": "f"
+    },
+    "knee raise": {
+      "es": "Elevación de rodillas",
+      "g": "f"
+    },
+    "shoulder raise": {
+      "es": "Elevación de hombros",
+      "g": "f"
+    },
+    "y-raise": {
+      "es": "Elevación en Y",
+      "g": "f"
+    },
+    "t-raise": {
+      "es": "Elevación en T",
+      "g": "f"
+    },
+    "raise": {
+      "es": "Elevación",
+      "g": "f"
+    },
+    "reverse fly": {
+      "es": "Aperturas inversas",
+      "g": "f",
+      "pl": true
+    },
+    "chest fly": {
+      "es": "Aperturas",
+      "g": "f",
+      "pl": true
+    },
+    "fly": {
+      "es": "Aperturas",
+      "g": "f",
+      "pl": true
+    },
+    "crossover": {
+      "es": "Cruce de poleas",
+      "g": "m",
+      "dropEquipment": ["cable"]
+    },
+    "shrug": {
+      "es": "Encogimiento de hombros",
+      "g": "m"
+    },
+    "bicycle crunch": {
+      "es": "Crunch bicicleta",
+      "g": "m"
+    },
+    "crunch": {
+      "es": "Crunch",
+      "g": "m"
+    },
+    "sit-up": {
+      "es": "Abdominal",
+      "g": "m"
+    },
+    "v-up": {
+      "es": "Abdominal en V",
+      "g": "m"
+    },
+    "side plank": {
+      "es": "Plancha lateral",
+      "g": "f"
+    },
+    "plank": {
+      "es": "Plancha",
+      "g": "f"
+    },
+    "rear lunge": {
+      "es": "Zancada hacia atrás",
+      "g": "f"
+    },
+    "forward lunge": {
+      "es": "Zancada hacia delante",
+      "g": "f"
+    },
+    "walking lunge": {
+      "es": "Zancada caminando",
+      "g": "f"
+    },
+    "lunge": {
+      "es": "Zancada",
+      "g": "f"
+    },
+    "step-up": {
+      "es": "Subida al cajón",
+      "g": "f"
+    },
+    "hip thrust": {
+      "es": "Hip thrust",
+      "g": "m"
+    },
+    "glute bridge": {
+      "es": "Puente de glúteos",
+      "g": "m"
+    },
+    "bridge": {
+      "es": "Puente",
+      "g": "m"
+    },
+    "good morning": {
+      "es": "Buenos días",
+      "g": "m",
+      "pl": true
+    },
+    "hyperextension": {
+      "es": "Hiperextensión",
+      "g": "f"
+    },
+    "russian twist": {
+      "es": "Giro ruso",
+      "g": "m"
+    },
+    "twist": {
+      "es": "Giro",
+      "g": "m"
+    },
+    "stretch": {
+      "es": "Estiramiento",
+      "g": "m"
+    },
+    "swing": {
+      "es": "Swing",
+      "g": "m"
+    },
+    "clean and jerk": {
+      "es": "Dos tiempos",
+      "g": "m"
+    },
+    "clean": {
+      "es": "Cargada",
+      "g": "f"
+    },
+    "snatch": {
+      "es": "Arrancada",
+      "g": "f"
+    },
+    "jerk": {
+      "es": "Envión",
+      "g": "m"
+    },
+    "thruster": {
+      "es": "Thruster",
+      "g": "m"
+    },
+    "burpee": {
+      "es": "Burpee",
+      "g": "m"
+    },
+    "jumping jack": {
+      "es": "Jumping jack",
+      "g": "m"
+    },
+    "mountain climber": {
+      "es": "Escalador",
+      "g": "m"
+    },
+    "farmers walk": {
+      "es": "Paseo del granjero",
+      "g": "m"
+    },
+    "rollout": {
+      "es": "Rueda abdominal",
+      "g": "f"
+    },
+    "internal rotation": {
+      "es": "Rotación interna",
+      "g": "f"
+    },
+    "external rotation": {
+      "es": "Rotación externa",
+      "g": "f"
+    },
+    "rotation": {
+      "es": "Rotación",
+      "g": "f"
+    },
+    "adduction": {
+      "es": "Aducción",
+      "g": "f"
+    },
+    "abduction": {
+      "es": "Abducción",
+      "g": "f"
+    },
+    "kick": {
+      "es": "Patada",
+      "g": "f"
+    },
+    "jump": {
+      "es": "Salto",
+      "g": "m"
+    },
+    "walk": {
+      "es": "Caminata",
+      "g": "f"
+    },
+    "run": {
+      "es": "Carrera",
+      "g": "f"
+    },
+    "sprint": {
+      "es": "Sprint",
+      "g": "m"
+    },
+    "pull": {
+      "es": "Tirón",
+      "g": "m"
+    },
+    "carry": {
+      "es": "Acarreo",
+      "g": "m"
+    },
+    "bend": {
+      "es": "Flexión lateral",
+      "g": "f"
+    },
+    "side bend": {
+      "es": "Flexión lateral",
+      "g": "f"
+    },
+    "hold": {
+      "es": "Sostenimiento",
+      "g": "m"
+    },
+    "toe touch": {
+      "es": "Toque de puntas",
+      "g": "m"
+    },
+    "planche": {
+      "es": "Planche",
+      "g": "m"
+    },
+    "handstand": {
+      "es": "Pino",
+      "g": "m"
+    },
+    "inchworm": {
+      "es": "Inchworm",
+      "g": "m"
+    },
+    "windmill": {
+      "es": "Molino",
+      "g": "m"
+    },
+    "pelvic tilt": {
+      "es": "Basculación pélvica",
+      "g": "f"
+    },
+    "wall sit": {
+      "es": "Sentadilla isométrica en pared",
+      "g": "f"
+    },
+    "dead bug": {
+      "es": "Dead bug",
+      "g": "m"
+    },
+    "bear crawl": {
+      "es": "Paso de oso",
+      "g": "m"
+    },
+    "crab walk": {
+      "es": "Paso de cangrejo",
+      "g": "m"
+    },
+    "superman": {
+      "es": "Superman",
+      "g": "m"
+    },
+    "jackknife": {
+      "es": "Navaja",
+      "g": "f"
+    },
+    "flutter kick": {
+      "es": "Patada de tijera",
+      "g": "f"
+    },
+    "scissor kick": {
+      "es": "Patada de tijera",
+      "g": "f"
+    },
+    "v-sit": {
+      "es": "V-sit",
+      "g": "m"
+    },
+    "l-sit": {
+      "es": "L-sit",
+      "g": "m"
+    },
+    "battling ropes": {
+      "es": "Cuerdas de batalla",
+      "g": "f",
+      "pl": true
+    },
+    "slam": {
+      "es": "Lanzamiento al suelo",
+      "g": "m"
+    },
+    "throw": {
+      "es": "Lanzamiento",
+      "g": "m"
+    },
+    "reach": {
+      "es": "Alcance",
+      "g": "m"
+    },
+    "circles": {
+      "es": "Círculos",
+      "g": "m",
+      "pl": true
+    },
+    "march": {
+      "es": "Marcha",
+      "g": "f"
+    },
+    "hug": {
+      "es": "Abrazo",
+      "g": "m"
+    },
+    "flexion": {
+      "es": "Flexión",
+      "g": "f"
+    },
+    "pronation": {
+      "es": "Pronación",
+      "g": "f"
+    },
+    "supination": {
+      "es": "Supinación",
+      "g": "f"
+    },
+    "squeeze": {
+      "es": "Contracción",
+      "g": "f"
+    },
+    "face pull": {
+      "es": "Face pull",
+      "g": "m"
+    },
+    "jm press": {
+      "es": "Press JM",
+      "g": "m"
+    },
+    "w-press": {
+      "es": "Press en W",
+      "g": "m"
+    },
+    "curl-up": {
+      "es": "Curl-up",
+      "g": "m"
+    },
+    "l-pull-up": {
+      "es": "Dominada en L",
+      "g": "f"
+    },
+    "tilt": {
+      "es": "Inclinación",
+      "g": "f"
+    },
+    "lift": {
+      "es": "Elevación",
+      "g": "f"
+    },
+    "drive": {
+      "es": "Empuje",
+      "g": "m"
+    },
+    "hang": {
+      "es": "Colgada",
+      "g": "f"
+    },
+    "pose": {
+      "es": "Postura",
+      "g": "f"
+    },
+    "stride": {
+      "es": "Zancada",
+      "g": "f"
+    },
+    "hops": {
+      "es": "Saltos",
+      "g": "m",
+      "pl": true
+    },
+    "crawl": {
+      "es": "Gateo",
+      "g": "m"
+    },
+    "climb": {
+      "es": "Escalada",
+      "g": "f"
+    },
+    "fallout": {
+      "es": "Fallout",
+      "g": "m"
+    },
+    "thrust": {
+      "es": "Hip thrust",
+      "g": "m"
+    },
+    "cycle": {
+      "es": "Pedaleo",
+      "g": "m"
+    },
+    "one leg press": {
+      "es": "Prensa de piernas a una pierna",
+      "g": "f",
+      "dropEquipment": ["sled", "lever"]
+    }
+  },
+  "adjectives": {
+    "incline": "inclinado",
+    "decline": "declinado",
+    "flat": "plano",
+    "alternate": "alterno",
+    "reverse": "inverso",
+    "assisted": "asistido",
+    "full": "completo",
+    "high": "alto",
+    "low": "bajo",
+    "isometric": "isométrico",
+    "cross body": "cruzado",
+    "twisting": "con giro",
+    "front": "frontal",
+    "side": "lateral",
+    "lateral": "lateral",
+    "rear": "posterior",
+    "inverse": "inverso",
+    "unilateral": "unilateral",
+    "horizontal": "horizontal",
+    "vertical": "vertical",
+    "middle": "medio",
+    "single": "simple",
+    "double": "doble",
+    "jumping": "con salto"
+  },
+  "position": {
+    "seated": "sentado",
+    "standing": "de pie",
+    "lying": "tumbado",
+    "kneeling": "de rodillas",
+    "prone": "boca abajo",
+    "supine": "boca arriba",
+    "hanging": "colgado",
+    "sitting": "sentado",
+    "floor": "en el suelo",
+    "on floor": "en el suelo"
+  },
+  "laterality": {
+    "one arm": "a una mano",
+    "single arm": "a una mano",
+    "two arm": "a dos manos",
+    "one leg": "a una pierna",
+    "single leg": "a una pierna",
+    "two legs": "a dos piernas"
+  },
+  "qualifiers": {
+    "close-grip": "agarre cerrado",
+    "wide-grip": "agarre abierto",
+    "reverse-grip": "agarre inverso",
+    "neutral grip": "agarre neutro",
+    "parallel grip": "agarre neutro",
+    "narrow grip": "agarre estrecho",
+    "mixed grip": "agarre mixto",
+    "underhand": "agarre supino",
+    "overhand": "agarre prono",
+    "palms up": "palmas arriba",
+    "palms down": "palmas abajo",
+    "narrow stance": "pies juntos",
+    "wide stance": "pies separados",
+    "overhead": "por encima de la cabeza",
+    "behind head": "tras nuca",
+    "behind neck": "tras nuca",
+    "straight arm": "brazos rectos",
+    "bent arm": "brazos flexionados",
+    "bent knee": "rodillas flexionadas",
+    "straight back": "espalda recta",
+    "stiff leg": "piernas rígidas",
+    "straight leg": "piernas rígidas",
+    "full range of motion": "recorrido completo",
+    "palm-in": "agarre neutro",
+    "pronated": "agarre prono",
+    "supinated": "agarre supino",
+    "pronate-grip": "agarre prono",
+    "clean-grip": "agarre de cargada",
+    "gripless": "sin agarre",
+    "bent knees": "rodillas flexionadas",
+    "knees bent": "rodillas flexionadas",
+    "straight legs": "piernas rectas",
+    "straight arms": "brazos rectos",
+    "wide": "agarre abierto",
+    "narrow": "agarre estrecho"
+  },
+  "words": {
+    "male": "hombre",
+    "female": "mujer",
+    "back pov": "vista trasera",
+    "side pov": "vista lateral",
+    "front pov": "vista frontal",
+    "pov": "vista",
+    "exercise ball": "fitball",
+    "stability ball": "fitball",
+    "medicine ball": "balón medicinal",
+    "bosu ball": "bosu",
+    "ball": "balón",
+    "bench": "banco",
+    "flat bench": "banco plano",
+    "incline bench": "banco inclinado",
+    "box": "cajón",
+    "step": "escalón",
+    "stepbox": "step",
+    "floor": "suelo",
+    "wall": "pared",
+    "knees": "rodillas",
+    "knee": "rodilla",
+    "towel": "toalla",
+    "rope attachment": "cuerda",
+    "rope": "cuerda",
+    "arm blaster": "arm blaster",
+    "support": "apoyo",
+    "head support": "apoyo de cabeza",
+    "chest support": "apoyo de pecho",
+    "dip cage": "estación de fondos",
+    "dip-pull-up cage": "estación de fondos y dominadas",
+    "straight bar": "barra recta",
+    "bar": "barra",
+    "v-bar": "barra en V",
+    "ez bar": "barra Z",
+    "machine": "máquina",
+    "leg press machine": "prensa de piernas",
+    "pull-up cable machine": "máquina de dominadas",
+    "pull-up bar": "barra de dominadas",
+    "band": "banda",
+    "chair": "silla",
+    "bed": "cama",
+    "both legs": "ambas piernas",
+    "legs": "piernas",
+    "leg": "pierna",
+    "arms": "brazos",
+    "arm": "brazo",
+    "hands": "manos",
+    "hand": "mano",
+    "head": "cabeza",
+    "neck": "cuello",
+    "chest": "pecho",
+    "back": "espalda",
+    "shoulder": "hombro",
+    "shoulders": "hombros",
+    "hip": "cadera",
+    "hips": "caderas",
+    "calf": "gemelos",
+    "calves": "gemelos",
+    "triceps": "tríceps",
+    "biceps": "bíceps",
+    "glute": "glúteo",
+    "glutes": "glúteos",
+    "hamstring": "isquiotibiales",
+    "hamstrings": "isquiotibiales",
+    "quad": "cuádriceps",
+    "quads": "cuádriceps",
+    "wrist": "muñeca",
+    "ankle": "tobillo",
+    "abs": "abdominales",
+    "delt": "deltoides",
+    "lat": "dorsal",
+    "spine": "columna",
+    "groin": "ingles",
+    "piriformis": "piriforme",
+    "full range of motion": "recorrido completo",
+    "range of motion": "recorrido",
+    "hands overhead": "manos sobre la cabeza",
+    "variation": "variante",
+    "plus": "plus",
+    "position": "posición",
+    "pause": "pausa",
+    "the": "",
+    "a": "",
+    "of": "de",
+    "hold": "sostenido",
+    "with": "con",
+    "on": "en",
+    "to": "a",
+    "and": "y",
+    "in": "en",
+    "over": "sobre",
+    "under": "bajo",
+    "up": "arriba",
+    "down": "abajo",
+    "behind": "detrás de",
+    "between": "entre",
+    "around": "alrededor de",
+    "out": "fuera",
+    "off": "fuera",
+    "bent": "flexionado",
+    "straight": "recto",
+    "toe": "puntas",
+    "touch": "toque",
+    "grip": "agarre",
+    "lower": "inferior",
+    "upper": "superior",
+    "parallel": "paralelas",
+    "inner": "interior",
+    "outer": "exterior",
+    "one": "uno",
+    "two": "dos",
+    "three": "tres",
+    "inverted": "invertido",
+    "suspended": "suspendido",
+    "bike": "bicicleta",
+    "wheel": "rueda",
+    "forward": "hacia delante",
+    "backward": "hacia atrás",
+    "palm": "palma",
+    "palms": "palmas",
+    "tap": "toque",
+    "cross": "cruzado",
+    "donkey": "burro",
+    "elbow": "codo",
+    "neutral": "neutro",
+    "flexor": "flexor",
+    "muscle": "músculo",
+    "bars": "barras",
+    "jack": "jack",
+    "drop": "caída",
+    "extended": "extendido",
+    "raised": "elevado",
+    "stance": "apoyo",
+    "twisted": "girado",
+    "french": "francés",
+    "plyo": "pliométrico",
+    "frog": "rana",
+    "half": "medio",
+    "oblique": "oblicuos",
+    "scapula": "escápula",
+    "scapular": "escapular",
+    "walking": "caminando",
+    "jump": "salto",
+    "balance": "equilibrio",
+    "fixed": "fijo",
+    "rocking": "balanceo",
+    "pulley": "polea",
+    "rotational": "rotacional",
+    "tuck": "recogido",
+    "finger": "dedos",
+    "face": "cara",
+    "deltoid": "deltoides",
+    "world": "mundo",
+    "body": "cuerpo",
+    "pike": "en pica",
+    "kick": "patada",
+    "hack": "hack",
+    "clasped": "entrelazadas",
+    "pass": "pase",
+    "landmine": "landmine",
+    "point": "punta",
+    "modified": "modificado",
+    "posterior": "posterior",
+    "power": "potencia",
+    "stationary": "estática",
+    "air": "aire",
+    "heel": "talón",
+    "feet": "pies",
+    "ankles": "tobillos",
+    "elevated": "elevado",
+    "deep": "profundo",
+    "diamond": "diamante",
+    "external": "externa",
+    "internal": "interna",
+    "ground": "suelo",
+    "diagonal": "diagonal",
+    "quarter": "cuarto",
+    "quick": "rápido",
+    "short": "corto",
+    "angled": "en ángulo",
+    "upward": "hacia arriba",
+    "facing": "mirando",
+    "dog": "perro",
+    "round": "redondo",
+    "upright": "vertical",
+    "left": "izquierda",
+    "right": "derecha",
+    "rack": "rack",
+    "pin": "pin",
+    "speed": "velocidad",
+    "ab": "abdominal",
+    "abdominal": "abdominal",
+    "basic": "básico",
+    "advanced": "avanzado",
+    "intermediate": "intermedio",
+    "negative": "negativa",
+    "board": "tabla",
+    "platform": "plataforma",
+    "strap": "correa",
+    "straps": "correas",
+    "handle": "maneral",
+    "twin": "doble",
+    "pad": "almohadilla",
+    "ring": "anillas",
+    "ropes": "cuerdas",
+    "yoga": "yoga",
+    "stability": "estabilidad",
+    "stabilization": "estabilización",
+    "dynamic": "dinámico",
+    "lean": "inclinación",
+    "flag": "bandera",
+    "gravity": "gravedad",
+    "anti": "anti",
+    "slide": "deslizamiento",
+    "star": "estrella",
+    "cat": "gato",
+    "crab": "cangrejo",
+    "bear": "oso",
+    "clap": "palmada",
+    "release": "liberación",
+    "catch": "recepción",
+    "reclining": "reclinado",
+    "supported": "con apoyo",
+    "self": "auto",
+    "reps": "repeticiones",
+    "concentration": "concentrado",
+    "preacher": "banco Scott",
+    "sumo": "sumo",
+    "russian": "ruso",
+    "pistol": "pistol",
+    "spider": "araña",
+    "skull": "cráneo",
+    "scott": "Scott",
+    "lever": "máquina",
+    "dumbbell": "mancuerna",
+    "barbell": "barra",
+    "hammer": "martillo",
+    "bodyweight": "peso corporal",
+    "sit": "sentado",
+    "squatting": "en sentadilla",
+    "lifting": "elevando",
+    "jumping": "con salto",
+    "circular": "circular",
+    "archer": "arquero",
+    "tennis": "tenis",
+    "iron": "hierro",
+    "mountain": "montaña",
+    "contralateral": "contralateral",
+    "bowling": "bolos",
+    "motion": "movimiento",
+    "range": "recorrido",
+    "hyper": "hiper",
+    "side-to-side": "de lado a lado",
+    "trainer": "entrenador",
+    "stirrups": "estribos",
+    "equipment": "equipo",
+    "sternum": "esternón",
+    "cage": "jaula",
+    "elliptical": "elíptica",
+    "treadmill": "cinta",
+    "stepmill": "escaladora",
+    "ergometer": "ergómetro",
+    "pec": "pectoral",
+    "gluteus": "glúteo",
+    "adductor": "aductor",
+    "abductor": "abductor",
+    "tibialis": "tibial",
+    "peroneals": "peroneos",
+    "rectus": "recto",
+    "femoris": "femoral",
+    "pectoralis": "pectoral",
+    "major": "mayor",
+    "femoral": "femoral",
+    "outstretched": "extendidos",
+    "outside": "exterior",
+    "inside": "interior",
+    "big": "grande",
+    "multiple": "múltiple",
+    "sequence": "secuencia",
+    "style": "estilo",
+    "figure": "figura",
+    "angle": "ángulo",
+    "fours": "cuadrupedia",
+    "apart": "separados",
+    "astride": "a horcajadas",
+    "semi": "semi",
+    "v": "V",
+    "t": "T",
+    "t-bar": "barra T",
+    "upper body": "tren superior",
+    "lower back": "zona lumbar",
+    "upper back": "espalda alta",
+    "all fours": "cuadrupedia",
+    "all": "",
+    "over bench": "sobre banco"
+  },
+  "connectors": {
+    "with": "con",
+    "on": "en",
+    "and": "y",
+    "to": "a",
+    "into": "a",
+    "from": "desde",
+    "against": "contra",
+    "through": "a través de"
+  }
+}

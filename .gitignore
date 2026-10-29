@@ -32,3 +32,6 @@ dev-dist
 coverage
 test-results
 playwright-report
+
+# Media del dataset (© Gym visual): se regenera con npm run import:exercises, no se redistribuye
+public/exercises/
