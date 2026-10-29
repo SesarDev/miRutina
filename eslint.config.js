@@ -21,6 +21,13 @@ export default defineConfig([
       ecmaVersion: 2023,
       globals: globals.browser,
     },
+    rules: {
+      // Leading underscore = intentionally unused (e.g. omitting fields when destructuring).
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { varsIgnorePattern: '^_', argsIgnorePattern: '^_', ignoreRestSiblings: true },
+      ],
+    },
   },
   {
     files: ['scripts/**/*.ts', '*.config.{js,ts}'],
