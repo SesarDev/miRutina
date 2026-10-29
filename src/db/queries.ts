@@ -105,3 +105,36 @@ export function usePlannedBetween(from: string, to: string) {
       .sort((a, b) => a.date.localeCompare(b.date) || a.updatedAt.localeCompare(b.updatedAt))
   }, [from, to])
 }
+
+/** Next planned (not skipped, not done) workout after `afterKey`. */
+export function useNextPlanned(afterKey: string) {
+  return useLiveQuery(async () => {
+    const rows = await db.plannedWorkouts.where('date').above(afterKey).sortBy('date')
+    const next = rows.find((p) => !p.deletedAt && p.status === 'planned')
+    if (!next) return null
+    const routine = await db.routines.get(next.routineId)
+    return { ...next, routineName: routine?.name ?? 'Rutina borrada' }
+  }, [afterKey])
+}
+
+/** Sessions between two dates (inclusive), not deleted. */
+export function useSessionsBetween(from: string, to: string) {
+  return useLiveQuery(
+    async () =>
+      (await db.sessions.where('date').between(from, to, true, true).toArray()).filter(
+        (s) => !s.deletedAt,
+      ),
+    [from, to],
+  )
+}
+
+export function useOpenSession() {
+  return useLiveQuery(async () => {
+    const open = (await db.sessions.toArray()).filter((s) => !s.endedAt && !s.deletedAt)
+    return open.sort((a, b) => b.startedAt.localeCompare(a.startedAt))[0] ?? null
+  }, [])
+}
+
+export function useSession(id: string) {
+  return useLiveQuery(async () => (await db.sessions.get(id)) ?? null, [id])
+}

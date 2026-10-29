@@ -1,0 +1,244 @@
+.page {
+  display: grid;
+  gap: var(--space-8);
+  max-width: 44rem;
+}
+
+/* ── Sections ── */
+.sections {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@container main (min-width: 40rem) {
+  .sections {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.section {
+  display: grid;
+  gap: 2px;
+  min-height: 92px;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  color: inherit;
+  text-decoration: none;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-instant) var(--ease-out);
+}
+
+.section:active {
+  transform: scale(var(--scale-press));
+}
+
+@media (hover: hover) {
+  .section:hover {
+    background: var(--color-surface-2);
+  }
+}
+
+.sectionIcon {
+  margin-bottom: var(--space-1);
+  color: var(--color-accent-ink);
+}
+
+.sectionLabel {
+  font-weight: var(--weight-semibold);
+}
+
+.sectionHint {
+  color: var(--color-text-2);
+  font-size: var(--text-sm);
+}
+
+/* ── Today ── */
+.today {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.kicker {
+  color: var(--color-accent-ink);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.routineName {
+  font-family: var(--font-condensed);
+  font-size: var(--text-4xl);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  text-transform: uppercase;
+}
+
+.routineMeta {
+  color: var(--color-text-2);
+}
+
+.exercises {
+  display: grid;
+  margin: var(--space-2) 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--color-line);
+}
+
+.exercise {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 68px;
+  border-bottom: 1px solid var(--color-line);
+}
+
+.exerciseName {
+  overflow: hidden;
+  font-weight: var(--weight-medium);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.exerciseSets {
+  font-family: var(--font-condensed);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  text-align: end;
+}
+
+/* ── Nothing today ── */
+.nothing {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.nothingTitle {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+}
+
+.next {
+  color: var(--color-text-2);
+}
+
+.next strong {
+  color: var(--color-text);
+}
+
+.startList {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.startOption {
+  display: grid;
+  width: 100%;
+  min-height: 60px;
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-2);
+  color: inherit;
+  text-align: start;
+}
+
+.startOption:active {
+  transform: scale(var(--scale-press));
+}
+
+.startName {
+  font-weight: var(--weight-semibold);
+}
+
+.startMeta {
+  color: var(--color-text-2);
+  font-size: var(--text-sm);
+}
+
+/* ── Week ── */
+.week {
+  display: grid;
+  gap: var(--space-3);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--color-line);
+}
+
+.weekTitle {
+  color: var(--color-text-2);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.weekCount {
+  color: var(--color-text-2);
+}
+
+.weekCount strong {
+  color: var(--color-text);
+  font-family: var(--font-condensed);
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-bold);
+}
+
+.weekDays {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.weekDay {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2) 0;
+  border-radius: var(--radius-md);
+  color: var(--color-text-3);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+}
+
+.weekMark {
+  display: grid;
+  place-items: center;
+  height: 20px;
+  font-size: var(--text-xl);
+  line-height: 1;
+}
+
+.weekDay[data-state='planned'] {
+  color: var(--color-text);
+}
+
+.weekDay[data-state='planned'] .weekMark {
+  color: var(--color-accent-ink);
+}
+
+.weekDay[data-state='done'] {
+  color: var(--color-text);
+}
+
+.weekDay[data-state='done'] .weekMark {
+  color: var(--color-success);
+}
+
+.weekDay[data-today] {
+  outline: 1px solid var(--color-line-strong);
+}

@@ -14,7 +14,8 @@ describe('shell', () => {
   it('abre en Hoy con su estado vacío', async () => {
     renderAt('/')
     expect(await screen.findByRole('heading', { level: 1, name: 'Hoy' })).toBeInTheDocument()
-    expect(screen.getByText('Hoy no tienes nada planificado')).toBeInTheDocument()
+    expect(await screen.findByText('Hoy no tienes nada planificado')).toBeInTheDocument()
+    expect(screen.getByRole('navigation', { name: 'Secciones' })).toBeInTheDocument()
   })
 
   it.each([
