@@ -11,6 +11,7 @@ import {
 } from '@/db/queries'
 import { addExerciseToSession, itemsOf } from '@/db/sessions'
 import { usePrefs } from '@/lib/prefs'
+import { useGSAP } from '@/motion/gsap'
 import { blocksOf, defaultWeightStep, sequence } from '@/lib/session'
 import { ExercisePicker } from '@/routes/rutinas/ExercisePicker'
 import { ControlPanel } from './ControlPanel'
@@ -19,6 +20,7 @@ import { FinishButton, SessionSummary } from './FinishSession'
 import { ExerciseCard } from './ExerciseCard'
 import { SessionHeader } from './SessionHeader'
 import { SessionNotes } from './SessionNotes'
+import { playSessionLayout } from './sessionFlip'
 import { selectRow, useSessionUi } from './sessionStore'
 import styles from './Session.module.css'
 
@@ -47,6 +49,14 @@ export function SesionPage() {
   const open = !!session && !session.endedAt && !session.deletedAt
   useWakeLock(open && keepScreenOn)
   usePersistentStorage()
+
+  // The armband row and the order of the exercises: when either changes, play the layout
+  // captured just before (sessionFlip.ts).
+  const armbandRow = (
+    steps.find((s) => s.row.id === selectedRowId) ?? steps.find((s) => !s.row.completedAt)
+  )?.row.id
+  const layoutKey = `${armbandRow}|${items.map((i) => i.id).join()}`
+  useGSAP(playSessionLayout, { dependencies: [layoutKey] })
 
   if (session === undefined || rows === undefined) return null
   if (!session || session.deletedAt) {
@@ -95,7 +105,7 @@ export function SesionPage() {
             <p>Añade el primer ejercicio y empieza a registrar.</p>
           </div>
         ) : (
-          <ol className={styles.exercises} aria-label="Ejercicios">
+          <ol className={styles.exercises} aria-label="Ejercicios" data-session-flip>
             {blocksOf(items).map((block) => {
               const cards = block.map((item) => (
                 <ExerciseCard

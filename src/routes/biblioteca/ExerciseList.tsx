@@ -1,7 +1,8 @@
 import { Link } from '@tanstack/react-router'
 import { useWindowVirtualizer } from '@tanstack/react-virtual'
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useLayoutEffect, useRef, useState, type MouseEvent } from 'react'
 import { ExerciseThumb } from '@/components/exercise/ExerciseMedia'
+import { captureForRoute } from '@/motion/flip'
 import { Icon } from '@/components/ui'
 import { EQUIPMENT_LABELS, label, MUSCLE_LABELS } from '@/db/labels'
 import type { Exercise } from '@/db/types'
@@ -51,7 +52,7 @@ export function ExerciseList({ exercises, favorites, selectInPlace }: Props) {
         const favorite = favorites.has(exercise.id)
         const content = (
           <>
-            <ExerciseThumb src={exercise.image} />
+            <ExerciseThumb src={exercise.image} flipId={`media-${exercise.id}`} />
             <span className={styles.rowText}>
               <span className={styles.rowName}>{exercise.nameEs}</span>
               <span className={styles.rowMeta}>
@@ -85,6 +86,7 @@ export function ExerciseList({ exercises, favorites, selectInPlace }: Props) {
                 replace
                 resetScroll={false}
                 className={styles.row}
+                onClick={growThumb}
               >
                 {content}
               </Link>
@@ -93,6 +95,7 @@ export function ExerciseList({ exercises, favorites, selectInPlace }: Props) {
                 to="/ejercicio/$exerciseId"
                 params={{ exerciseId: exercise.id }}
                 className={styles.row}
+                onClick={growThumb}
               >
                 {content}
               </Link>
@@ -102,4 +105,9 @@ export function ExerciseList({ exercises, favorites, selectInPlace }: Props) {
       })}
     </ul>
   )
+}
+
+/** The row's thumbnail grows into the media of the exercise it opens (GSAP Flip). */
+function growThumb(e: MouseEvent<HTMLAnchorElement>) {
+  captureForRoute(e.currentTarget.querySelector('[data-flip-id]'))
 }

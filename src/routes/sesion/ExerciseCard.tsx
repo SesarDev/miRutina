@@ -32,6 +32,7 @@ import { chainsOf, progressOf, targetReps, workIndexOf } from '@/lib/session'
 import { NoteField } from './SessionNotes'
 import { selectRow } from './sessionStore'
 import styles from './Session.module.css'
+import { captureSessionLayout } from './sessionFlip'
 
 type Props = {
   sessionId: string
@@ -68,6 +69,7 @@ export function ExerciseCard({
   return (
     <li
       className={styles.card}
+      data-flip-id={`card-${item.id}`}
       data-active={active || undefined}
       data-skipped={item.skipped || undefined}
     >
@@ -218,6 +220,7 @@ function SetRows({
             <button
               type="button"
               className={styles.set}
+              data-flip-id={`row-${row.id}`}
               data-active={isActive || undefined}
               data-done={row.completedAt ? true : undefined}
               data-drop={row.dropIndex > 0 || undefined}
@@ -357,7 +360,10 @@ function ExerciseOptions({
               icon="chevronLeft"
               disabled={index === 0}
               className={styles.up}
-              onClick={run(() => moveSessionItem(sessionId, item.id, -1))}
+              onClick={run(() => {
+                captureSessionLayout()
+                return moveSessionItem(sessionId, item.id, -1)
+              })}
             >
               Subir
             </Button>
@@ -366,7 +372,10 @@ function ExerciseOptions({
               icon="chevronRight"
               disabled={index === count - 1}
               className={styles.down}
-              onClick={run(() => moveSessionItem(sessionId, item.id, 1))}
+              onClick={run(() => {
+                captureSessionLayout()
+                return moveSessionItem(sessionId, item.id, 1)
+              })}
             >
               Bajar
             </Button>

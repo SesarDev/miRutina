@@ -1,14 +1,24 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Icon } from '@/components/ui'
 import { REDUCED_MOTION_QUERY, useMediaQuery } from '@/lib/useMediaQuery'
+import { playFromRoute } from '@/motion/flip'
+import { useGSAP } from '@/motion/gsap'
 import styles from './ExerciseMedia.module.css'
 
-type Props = { image: string; gif: string; alt: string }
+type Props = {
+  image: string
+  gif: string
+  alt: string
+  /** Shared with the list thumbnail that opened this page: the thumbnail grows into it. */
+  flipId?: string
+}
 
 /** Animated GIF; with «reducir movimiento» shows the still image and plays only on tap. */
-export function ExerciseMedia({ image, gif, alt }: Props) {
+export function ExerciseMedia({ image, gif, alt, flipId }: Props) {
   const reduced = useMediaQuery(REDUCED_MOTION_QUERY)
   const [playing, setPlaying] = useState(false)
+  const plate = useRef<HTMLDivElement>(null)
+  useGSAP(() => playFromRoute(plate.current), { scope: plate, dependencies: [flipId] })
 
   if (!gif && !image) return null
 
@@ -29,17 +39,18 @@ export function ExerciseMedia({ image, gif, alt }: Props) {
   }
 
   return (
-    <div className={styles.plate}>
+    <div ref={plate} className={styles.plate} data-flip-id={flipId}>
       <img src={gif || image} alt={alt} width={180} height={180} />
     </div>
   )
 }
 
-export function ExerciseThumb({ src }: { src: string }) {
+export function ExerciseThumb({ src, flipId }: { src: string; flipId?: string }) {
   if (!src) return <span className={styles.thumb} aria-hidden="true" />
   return (
     <img
       className={styles.thumb}
+      data-flip-id={flipId}
       src={src}
       alt=""
       width={56}

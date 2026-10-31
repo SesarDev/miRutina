@@ -444,7 +444,11 @@
   color: var(--color-text);
   text-align: start;
   touch-action: manipulation;
-  transition: background-color var(--dur-fast) var(--ease-out);
+  /* The armband hand-off: fill, stripe and ink cross-fade while sessionFlip.ts moves the rows. */
+  transition:
+    background-color var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out),
+    color var(--dur-base) var(--ease-out);
 }
 
 .set[data-drop] {

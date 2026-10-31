@@ -121,7 +121,12 @@ function HowTo({
   return (
     <>
       <div className={styles.media}>
-        <ExerciseMedia image={exercise.image} gif={exercise.gif} alt={exercise.nameEs} />
+        <ExerciseMedia
+          image={exercise.image}
+          gif={exercise.gif}
+          alt={exercise.nameEs}
+          flipId={`media-${exercise.id}`}
+        />
         <FavoriteButton exerciseId={exercise.id} favorite={favorite} />
       </div>
 

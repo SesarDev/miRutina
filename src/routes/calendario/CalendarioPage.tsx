@@ -11,7 +11,7 @@ import {
   type DragEndEvent,
 } from '@dnd-kit/core'
 import { getRouteApi, Link } from '@tanstack/react-router'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { PageHeader } from '@/components/PageHeader'
 import { Button, buttonClassName, Icon, IconButton, Segmented, showToast } from '@/components/ui'
 import { usePlannedBetween, useRoutines, type PlannedEntry } from '@/db/queries'
@@ -32,6 +32,8 @@ import {
 import { estimateMinutes } from '@/lib/routines'
 import { dndAccessibility } from '@/lib/dndA11y'
 import { DESKTOP_QUERY, useMediaQuery } from '@/lib/useMediaQuery'
+import { capture, play, type FlipCapture } from '@/motion/flip'
+import { useGSAP } from '@/motion/gsap'
 import { DaySheet } from './DaySheet'
 import { DAY_DROP_PREFIX, PLANNED_DRAG_PREFIX, ROUTINE_DRAG_PREFIX } from './status'
 import { WorkoutPill } from './WorkoutPill'
@@ -55,6 +57,23 @@ export function CalendarioPage() {
   const anchor = search.fecha ?? todayKey()
   const [openDay, setOpenDay] = useState<DateKey | null>(null)
   const [dragLabel, setDragLabel] = useState<string | null>(null)
+
+  // Semana ↔ mes: the days on screen in both views travel to their new cell (GSAP Flip); the
+  // rest of the month fades in around them.
+  const viewsRef = useRef<HTMLDivElement>(null)
+  const viewFlip = useRef<FlipCapture | null>(null)
+  const dayCells = () => viewsRef.current?.querySelectorAll('[data-flip-id]') ?? []
+  const changeView = (vista: CalendarView) => {
+    viewFlip.current = capture(dayCells())
+    go({ vista })
+  }
+  useGSAP(
+    () => {
+      play(viewFlip.current, dayCells(), { absolute: true, nested: true })
+      viewFlip.current = null
+    },
+    { dependencies: [view], scope: viewsRef },
+  )
 
   const days =
     view === 'semana'
@@ -151,19 +170,16 @@ export function CalendarioPage() {
             onClick={() => step(1)}
           />
         </div>
-        <Segmented
-          label="Vista"
-          options={VIEW_OPTIONS}
-          value={view}
-          onChange={(vista) => go({ vista })}
-        />
+        <Segmented label="Vista" options={VIEW_OPTIONS} value={view} onChange={changeView} />
       </div>
 
-      {view === 'semana' ? (
-        <WeekView days={days} byDay={byDay} onOpen={setOpenDay} draggable={desktop} />
-      ) : (
-        <MonthView anchor={anchor} byDay={byDay} onOpen={setOpenDay} draggable={desktop} />
-      )}
+      <div ref={viewsRef}>
+        {view === 'semana' ? (
+          <WeekView days={days} byDay={byDay} onOpen={setOpenDay} draggable={desktop} />
+        ) : (
+          <MonthView anchor={anchor} byDay={byDay} onOpen={setOpenDay} draggable={desktop} />
+        )}
+      </div>
     </div>
   )
 
@@ -323,6 +339,7 @@ function DayCell({
     <li
       ref={setNodeRef}
       className={className}
+      data-flip-id={`day-${day}`}
       data-today={today || undefined}
       data-outside={outside || undefined}
       data-over={isOver || undefined}

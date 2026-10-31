@@ -4,6 +4,7 @@
  */
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
+import { captureSessionLayout } from './sessionFlip'
 
 export type Rest = {
   sessionId: string
@@ -29,7 +30,10 @@ export const useSessionUi = create<SessionUi>()(
   }),
 )
 
-export const selectRow = (rowId: string | null) => useSessionUi.setState({ selectedRowId: rowId })
+export const selectRow = (rowId: string | null) => {
+  if (rowId !== useSessionUi.getState().selectedRowId) captureSessionLayout()
+  useSessionUi.setState({ selectedRowId: rowId })
+}
 
 export function startRest(sessionId: string, seconds: number) {
   useSessionUi.setState({
@@ -46,6 +50,7 @@ export function askFeel(
   restSec: number,
   nextRowId: string | null,
 ) {
+  captureSessionLayout()
   useSessionUi.setState({ feelPrompt: { rowId, sessionId, restSec }, selectedRowId: nextRowId })
 }
 
