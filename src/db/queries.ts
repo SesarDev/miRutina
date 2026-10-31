@@ -3,11 +3,12 @@ import Dexie from 'dexie'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { useMemo } from 'react'
 import { buildIndex } from '@/lib/exerciseSearch'
-import { sortSets, type PastSession } from '@/lib/lastTime'
+import { sortSets, summarizeSets, summaryFeel, type PastSession } from '@/lib/lastTime'
+import { recordsBySession, sessionStats, workSets, type ExerciseRecord } from '@/lib/progress'
 import { estimateMinutes } from '@/lib/routines'
 import { db } from './schema'
-import type { DateKey } from '@/lib/dates'
-import type { ExerciseSettings, PlannedWorkout, SetLog } from './types'
+import { addDaysKey, type DateKey } from '@/lib/dates'
+import type { ExerciseSettings, Feel, PlannedWorkout, SetLog } from './types'
 
 const EMPTY: never[] = []
 
@@ -250,4 +251,77 @@ export async function exerciseHistory(exerciseId: string): Promise<HistorySessio
 /** undefined while loading. */
 export function useExerciseHistory(exerciseId: string) {
   return useLiveQuery(() => exerciseHistory(exerciseId), [exerciseId])
+}
+
+export type RecentExercise = {
+  exerciseId: string
+  name: string
+  lastDate: DateKey
+  /** Heaviest set per session (most reps for bodyweight work), oldest first. */
+  trend: { date: DateKey; value: number }[]
+  trendUnit: 'kg' | 'reps'
+  lastFeel: Feel | null
+  lastSets: string
+}
+
+export type RecentRecord = ExerciseRecord & { name: string }
+
+/** /progreso: exercises of the last 90 days, records of the last 30 and the trained days. */
+export async function progressOverview(today: DateKey) {
+  const since90 = addDaysKey(today, -89)
+  const since30 = addDaysKey(today, -29)
+  const sessions = (
+    await db.sessions.where('date').between(since90, today, true, true).toArray()
+  ).filter((s) => !s.deletedAt)
+  const logs = (
+    await db.setLogs
+      .where('sessionId')
+      .anyOf(sessions.map((s) => s.id))
+      .toArray()
+  ).filter((l) => !l.deletedAt && l.completedAt)
+
+  const dateOf = new Map(sessions.map((s) => [s.id, s.date]))
+  const trainedDates = new Set(workSets(logs).map((l) => dateOf.get(l.sessionId)!))
+  const ids = [...new Set(workSets(logs).map((l) => l.exerciseId))]
+  const names = new Map(
+    (await db.exercises.bulkGet(ids)).filter((e) => e !== undefined).map((e) => [e.id, e.nameEs]),
+  )
+
+  const exercises: RecentExercise[] = []
+  const records: RecentRecord[] = []
+  for (const exerciseId of ids) {
+    const name = names.get(exerciseId) ?? 'Ejercicio'
+    const history = await exerciseHistory(exerciseId)
+    const recent = history.filter((h) => h.date >= since90 && workSets(h.sets).length)
+    const last = recent[0]
+    if (!last) continue
+
+    const stats = recent.map((h) => ({ date: h.date, stats: sessionStats(h.sets) })).reverse()
+    const byWeight = stats.some((s) => s.stats.maxWeight !== null)
+    const lastWork = workSets(last.sets)
+    exercises.push({
+      exerciseId,
+      name,
+      lastDate: last.date,
+      trend: stats.flatMap(({ date, stats: s }) => {
+        const value = byWeight ? s.maxWeight : s.maxReps
+        return value === null ? [] : [{ date, value }]
+      }),
+      trendUnit: byWeight ? 'kg' : 'reps',
+      lastFeel: summaryFeel(lastWork),
+      lastSets: summarizeSets(lastWork),
+    })
+
+    for (const list of recordsBySession(exerciseId, history).values()) {
+      for (const r of list) if (r.date >= since30) records.push({ ...r, name })
+    }
+  }
+
+  exercises.sort((a, b) => b.lastDate.localeCompare(a.lastDate) || a.name.localeCompare(b.name))
+  records.sort((a, b) => b.date.localeCompare(a.date) || a.name.localeCompare(b.name))
+  return { exercises, records, trainedDates }
+}
+
+export function useProgressOverview(today: DateKey) {
+  return useLiveQuery(() => progressOverview(today), [today])
 }

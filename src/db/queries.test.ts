@@ -1,5 +1,5 @@
 import 'fake-indexeddb/auto'
-import { exerciseHistory, lastSessionsForExercise } from './queries'
+import { exerciseHistory, lastSessionsForExercise, progressOverview } from './queries'
 import { save, softDelete } from './repo'
 import { db } from './schema'
 import type { SetLog } from './types'
@@ -98,5 +98,30 @@ describe('exerciseHistory', () => {
     expect(history[0]!.sets.map((s) => s.order)).toEqual([0, 1])
     // Warm-ups stay: lib/progress filters them.
     expect(history[1]!.sets.map((s) => s.isWarmup)).toEqual([true, false])
+  })
+})
+
+describe('progressOverview', () => {
+  it('ejercicios de 90 días con su tendencia, récords de 30 días y días entrenados', async () => {
+    await session('old', '2026-06-01') // más de 90 días: solo cuenta como precedente
+    await session('a', '2026-09-20')
+    await session('b', '2026-10-20')
+    await log('old', '2026-06-01', 0, { weight: 50 })
+    await log('a', '2026-09-20', 0, { weight: 55 })
+    await log('b', '2026-10-20', 0, { weight: 60, feel: 'bien' })
+    await log('b', '2026-10-20', 1, { exerciseId: 'dips', weight: null, reps: 12 })
+
+    const { exercises, records, trainedDates } = await progressOverview('2026-10-31')
+    expect([...trainedDates].sort()).toEqual(['2026-09-20', '2026-10-20'])
+    const press = exercises.find((e) => e.exerciseId === 'press')!
+    expect(press.trend).toEqual([
+      { date: '2026-09-20', value: 55 },
+      { date: '2026-10-20', value: 60 },
+    ])
+    expect(press).toMatchObject({ lastDate: '2026-10-20', lastFeel: 'bien', trendUnit: 'kg' })
+    expect(exercises.find((e) => e.exerciseId === 'dips')).toMatchObject({ trendUnit: 'reps' })
+    // El récord del 20 sep queda fuera de los 30 días; el de 20 oct, dentro.
+    expect(new Set(records.map((r) => r.date))).toEqual(new Set(['2026-10-20']))
+    expect(records.map((r) => r.kind)).toContain('weight')
   })
 })

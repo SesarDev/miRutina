@@ -4,7 +4,7 @@
  * they never turn into a suggestion of today's weight.
  */
 import type { SetLog } from '@/db/types'
-import { addDaysKey, addMonthsKey, type DateKey } from './dates'
+import { addDaysKey, addMonthsKey, weekDays, type DateKey } from './dates'
 import { formatWeight, roundTo } from './numbers'
 
 /** Epley is unreliable above this many reps, so those sets have no estimate. */
@@ -312,4 +312,32 @@ export function rangeStart(range: ChartRange, today: DateKey): DateKey | null {
   if (range === 'all') return null
   const months = { '1m': 1, '3m': 3, '1y': 12 }[range]
   return addDaysKey(addMonthsKey(today, -months), 1)
+}
+
+// ── Consistency ──
+
+export type ConsistencyWeek = {
+  /** Monday of the week. */
+  start: DateKey
+  /** Monday … Sunday, each with whether it was trained (future days of this week: null). */
+  days: { date: DateKey; trained: boolean | null }[]
+  count: number
+}
+
+/** The last `weeks` weeks (Monday first, this one last) with the days that were trained. */
+export function consistencyWeeks(
+  trainedDates: Iterable<DateKey>,
+  today: DateKey,
+  weeks = 12,
+): ConsistencyWeek[] {
+  const trained = new Set(trainedDates)
+  const out: ConsistencyWeek[] = []
+  for (let w = weeks - 1; w >= 0; w--) {
+    const days = weekDays(addDaysKey(today, -7 * w)).map((date) => ({
+      date,
+      trained: date > today ? null : trained.has(date),
+    }))
+    out.push({ start: days[0]!.date, days, count: days.filter((d) => d.trained).length })
+  }
+  return out
 }

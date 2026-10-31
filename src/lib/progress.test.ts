@@ -1,5 +1,6 @@
 import {
   detectRecords,
+  consistencyWeeks,
   estimated1RM,
   formatRecord,
   formatSet,
@@ -288,5 +289,37 @@ describe('formatSet', () => {
   it('peso × reps o reps sin peso', () => {
     expect(formatSet({ weight: 62.5, reps: 8 })).toBe('62,5 kg × 8')
     expect(formatSet({ weight: null, reps: 12 })).toBe('12 reps')
+  })
+})
+
+describe('consistencyWeeks', () => {
+  // 2026-10-31 is a Saturday.
+  const weeks = consistencyWeeks(
+    ['2026-10-26', '2026-10-28', '2026-10-28', '2026-10-19', '2026-08-01'],
+    '2026-10-31',
+  )
+
+  it('12 semanas de lunes a domingo, la actual al final', () => {
+    expect(weeks).toHaveLength(12)
+    expect(weeks.at(-1)!.start).toBe('2026-10-26')
+    expect(weeks[0]!.start).toBe('2026-08-10')
+  })
+
+  it('cuenta días distintos entrenados por semana', () => {
+    expect(weeks.at(-1)!.count).toBe(2)
+    expect(weeks.at(-2)!.count).toBe(1)
+    expect(weeks[0]!.count).toBe(0)
+  })
+
+  it('los días futuros de esta semana no cuentan', () => {
+    expect(weeks.at(-1)!.days.map((d) => d.trained)).toEqual([
+      true,
+      false,
+      true,
+      false,
+      false,
+      false,
+      null,
+    ])
   })
 })
