@@ -76,6 +76,15 @@
 - **e2e**: `npm run test:e2e` (Playwright, 390×844, levanta Vite en el puerto 4180). Vitest excluye `e2e/`.
 - **Crítica de impeccable** completa con dos subagentes (28/40 antes de corregir); el informe está en `.impeccable/critique/`.
 
+### F4
+- **Récords** (`src/lib/progress.ts`, calculados, nunca guardados): solo series de trabajo marcadas; los calentamientos no cuentan para nada. La primera sesión de un ejercicio no da récords (no hay con qué comparar) e igualar no es récord. «Más reps» compara con el **mismo peso exacto** (un peso nuevo no es récord de reps; eso ya lo cubre «más peso»); con peso corporal, contra peso corporal. Las **bajadas** suman volumen pero no definen peso, reps ni 1RM. Sesiones del mismo día se ordenan por `startedAt`.
+- **1RM (Epley)** con un decimal; `null` con más de 12 reps, sin peso o en calentamientos.
+- **Gráfica**: el color y la etiqueta de cada punto son la valoración de la última serie (si no tiene, la más repetida, como en «Última vez»). Las etiquetas de texto junto al punto salen con 5 puntos o menos; con más, leyenda + tooltip. Alternativa textual: `aria-label` con el resumen y tabla «Ver los datos». Sin animación de dibujo (F5).
+- **Pestañas de la ficha** (`Segmented`, nueva primitiva para pestañas y radios con flechas): en `/ejercicio/$id` van en la URL (`?tab=historial|grafica`); en el panel de la Biblioteca, estado local. Los récords personales van encima de las pestañas.
+- **Progreso**: ejercicios con series en los últimos 90 días; la minigráfica es el peso máximo por sesión (reps máximas si es de peso corporal), SVG propio sin Recharts. Los récords de 30 días se calculan contra todo el historial.
+- **Cuerpo**: un registro por fecha. «Registrar» abre el de hoy si existe y elegir una fecha con registro pasa a editarlo. Rangos: peso 20–300 kg, cintura y pecho 30–250, brazo 10–100, muslo 20–150 cm. La media móvil de 7 días usa los días previos al rango antes de recortarlo. Borrar = soft delete con «Deshacer».
+- **Recharts 3** (`recharts@3.10`) con colores por CSS (clases sobre `.recharts-*`), `accessibilityLayer` desactivado porque la tabla es la alternativa accesible.
+
 ## Deuda
 
 - El favicon sigue siendo el de Vite; los iconos de la PWA llegan en F6.
@@ -110,3 +119,7 @@
 - Sesión: preguntar la valoración solo en la última serie de cada ejercicio, como opción en Ajustes.
 - Resumen de sesión: comparación por ejercicio con la última vez («65 × 10 · antes 60 × 10»), sin sugerencias (F4/F5).
 - En PC, aprovechar el hueco bajo el panel de la sesión para las notas.
+- Gráfica del ejercicio: elegir las reps máximas como métrica en ejercicios de peso corporal (ahora solo peso, 1RM y volumen, que salen vacíos).
+- Progreso: filtrar la lista por grupo muscular cuando haya muchos ejercicios.
+- Progreso: distinguir mejor los días futuros de la semana en la cuadrícula de constancia (ahora solo un filete tenue).
+- Récords: valorar si «Más reps» debería contar también con un peso mayor (60 × 10 tras 57,5 × 10), no solo con el mismo.

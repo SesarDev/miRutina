@@ -71,6 +71,16 @@
   }
 }
 
+.row:active,
+.record:active {
+  background: var(--color-press);
+}
+
+.row:focus-visible,
+.record:focus-visible {
+  outline-offset: -2px;
+}
+
 .rowMain {
   grid-area: main;
   display: grid;

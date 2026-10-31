@@ -181,7 +181,6 @@
   display: grid;
   gap: var(--space-1);
   padding: var(--space-3);
-  border: 1px solid var(--color-line-strong);
   border-radius: var(--radius-md);
   background: var(--color-surface-2);
   box-shadow: var(--shadow-lift);
@@ -261,12 +260,17 @@
   text-decoration: underline;
   text-decoration-color: var(--color-line-strong);
   text-underline-offset: 3px;
+  transition: background-color var(--dur-fast) var(--ease-out);
 }
 
 @media (hover: hover) {
   .dateButton:hover {
     background: var(--color-hover);
   }
+}
+
+.dateButton:active {
+  background: var(--color-press);
 }
 
 .notesCell {

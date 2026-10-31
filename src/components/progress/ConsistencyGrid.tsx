@@ -23,11 +23,10 @@ export function ConsistencyGrid({ weeks }: { weeks: ConsistencyWeek[] }) {
         </ol>
         <ol className={styles.weeks}>
           {weeks.map((w) => (
-            <li
-              key={w.start}
-              className={styles.week}
-              aria-label={`Semana del ${formatDay(w.start, "d 'de' MMMM")}: ${days(w.count)}`}
-            >
+            <li key={w.start} className={styles.week}>
+              <span className="visually-hidden">
+                Semana del {formatDay(w.start, "d 'de' MMMM")}: {days(w.count)}
+              </span>
               <span className={styles.weekDays} aria-hidden="true">
                 {w.days.map((d) => (
                   <span
