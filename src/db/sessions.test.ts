@@ -10,6 +10,7 @@ import {
   addWarmup,
   completeSet,
   findOpenSession,
+  finishSession,
   moveSessionItem,
   removeSet,
   setFeel,
@@ -151,5 +152,43 @@ describe('ejercicios de la sesión', () => {
     expect((await db.sessions.get(s.id))?.items.map((i) => i.id)).toEqual(['b', 'c', 'a'])
     await moveSessionItem(s.id, 'a', -1)
     expect((await db.sessions.get(s.id))?.items.map((i) => i.id)).toEqual(['a', 'b', 'c'])
+  })
+})
+
+describe('terminar', () => {
+  it('cierra la sesión, descarta las series sin hacer y marca hecho el entreno del día', async () => {
+    const r = await routine()
+    const [planned] = await planWorkout(todayKey(), r.id)
+    const s = await startSession({ plannedId: planned!.id })
+    const [first] = await rowsOf(s.id, 'press')
+    await updateSetRow(first!.id, { weight: 60, reps: 10 })
+    await completeSet(first!.id)
+
+    const ended = await finishSession(s.id)
+    expect(ended?.endedAt).not.toBeNull()
+    expect((await rowsOf(s.id)).map((x) => x.id)).toEqual([first!.id])
+    expect(await db.plannedWorkouts.get(planned!.id)).toMatchObject({
+      status: 'done',
+      sessionId: s.id,
+    })
+    expect(await findOpenSession()).toBeUndefined()
+  })
+
+  it('una sesión empezada sin el planificado también lo marca si es la misma rutina', async () => {
+    const r = await routine()
+    const [planned] = await planWorkout(todayKey(), r.id)
+    const s = await startSession({ routineId: r.id })
+    await finishSession(s.id)
+    expect(await db.plannedWorkouts.get(planned!.id)).toMatchObject({
+      status: 'done',
+      sessionId: s.id,
+    })
+  })
+
+  it('sesión libre sin planificación', async () => {
+    const s = await startSession()
+    await addExerciseToSession(s.id, 'curl')
+    const ended = await finishSession(s.id)
+    expect(ended?.endedAt).not.toBeNull()
   })
 })

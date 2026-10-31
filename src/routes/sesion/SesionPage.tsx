@@ -14,6 +14,8 @@ import { usePrefs } from '@/lib/prefs'
 import { blocksOf, defaultWeightStep, sequence } from '@/lib/session'
 import { ExercisePicker } from '@/routes/rutinas/ExercisePicker'
 import { ControlPanel } from './ControlPanel'
+import { usePersistentStorage, useWakeLock } from './device'
+import { FinishButton, SessionSummary } from './FinishSession'
 import { ExerciseCard } from './ExerciseCard'
 import { SessionHeader } from './SessionHeader'
 import { SessionNotes } from './SessionNotes'
@@ -33,6 +35,7 @@ export function SesionPage() {
   const settings = useExerciseSettingsById(exerciseIds)
   const selectedRowId = useSessionUi((s) => s.selectedRowId)
   const defaultRestSec = usePrefs((s) => s.defaultRestSec)
+  const keepScreenOn = usePrefs((s) => s.wakeLock)
   const [adding, setAdding] = useState(false)
 
   // A selection from another session (or a deleted row) falls back to «next set».
@@ -41,6 +44,9 @@ export function SesionPage() {
   }, [rows, selectedRowId])
 
   const steps = useMemo(() => sequence(items, rows ?? []), [items, rows])
+  const open = !!session && !session.endedAt && !session.deletedAt
+  useWakeLock(open && keepScreenOn)
+  usePersistentStorage()
 
   if (session === undefined || rows === undefined) return null
   if (!session || session.deletedAt) {
@@ -61,19 +67,27 @@ export function SesionPage() {
     )
   }
 
+  const title = session.routineId ? (routine?.name ?? 'Entreno') : 'Sesión libre'
+  if (session.endedAt) return <SessionSummary session={session} rows={rows} title={title} />
+
   const next = steps.find((s) => !s.row.completedAt)
   const active = steps.find((s) => s.row.id === selectedRowId) ?? next
   const activeItem = items.find((i) => i.id === active?.itemId)
+  // With every set done, the last exercise stays open (without armband) to review it.
+  const expandedId = activeItem?.id ?? steps.at(-1)?.itemId
   const activeExercise = activeItem ? exercises.get(activeItem.exerciseId) : undefined
   const weightStep = activeItem
     ? (settings.get(activeItem.exerciseId)?.weightStep ??
       defaultWeightStep(activeExercise?.equipment ?? ''))
     : 1
-  const title = session.routineId ? (routine?.name ?? 'Entreno') : 'Sesión libre'
 
   return (
     <div className={styles.session}>
-      <SessionHeader session={session} title={title} />
+      <SessionHeader
+        session={session}
+        title={title}
+        action={<FinishButton session={session} rows={rows} />}
+      />
 
       <div className={styles.body}>
         {items.length === 0 ? (
@@ -92,7 +106,7 @@ export function SesionPage() {
                   count={items.length}
                   exercise={exercises.get(item.exerciseId)}
                   rows={rows.filter((r) => r.exerciseId === item.exerciseId)}
-                  active={item.id === activeItem?.id}
+                  active={item.id === expandedId}
                   activeRowId={active?.row.id ?? null}
                   weightStep={
                     settings.get(item.exerciseId)?.weightStep ??

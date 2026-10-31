@@ -211,3 +211,26 @@ export async function removeSet(id: string) {
   const later = rows.filter((r) => r.order > row.order).map((r) => ({ ...r, order: r.order - 1 }))
   await saveMany('setLogs', later)
 }
+
+/**
+ * Ends a session: unfinished rows are discarded (they never count), and the day's planned
+ * workout is marked done and linked (the one started from it, or today's plan of the routine).
+ */
+export async function finishSession(sessionId: string): Promise<Session | undefined> {
+  const session = await db.sessions.get(sessionId)
+  if (!session || session.endedAt) return session
+
+  const rows = await db.setLogs.where('sessionId').equals(sessionId).toArray()
+  for (const row of rows)
+    if (!row.completedAt && !row.deletedAt) await softDelete('setLogs', row.id)
+
+  const planned = (await db.plannedWorkouts.where('date').equals(session.date).toArray()).filter(
+    (p) => !p.deletedAt,
+  )
+  const linked =
+    planned.find((p) => p.sessionId === sessionId) ??
+    planned.find((p) => p.routineId === session.routineId && p.status === 'planned' && !p.sessionId)
+  if (linked) await save('plannedWorkouts', { ...linked, status: 'done', sessionId })
+
+  return save('sessions', { ...session, endedAt: nowIso() })
+}
