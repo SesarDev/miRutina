@@ -20,8 +20,8 @@ import { FinishButton, SessionSummary } from './FinishSession'
 import { ExerciseCard } from './ExerciseCard'
 import { SessionHeader } from './SessionHeader'
 import { SessionNotes } from './SessionNotes'
-import { playSessionLayout } from './sessionFlip'
-import { selectRow, useSessionUi } from './sessionStore'
+import { captureSessionLayout, playSessionLayout } from './sessionFlip'
+import { onBeforeArmbandMove, selectRow, useSessionUi } from './sessionStore'
 import styles from './Session.module.css'
 
 const route = getRouteApi('/sesion/$sessionId')
@@ -39,6 +39,11 @@ export function SesionPage() {
   const defaultRestSec = usePrefs((s) => s.defaultRestSec)
   const keepScreenOn = usePrefs((s) => s.wakeLock)
   const [adding, setAdding] = useState(false)
+
+  useEffect(() => {
+    onBeforeArmbandMove(captureSessionLayout)
+    return () => onBeforeArmbandMove(null)
+  }, [])
 
   // A selection from another session (or a deleted row) falls back to «next set».
   useEffect(() => {

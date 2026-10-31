@@ -2,24 +2,17 @@ import {
   createRootRoute,
   createRoute,
   createRouter,
+  lazyRouteComponent,
   type RouterHistory,
 } from '@tanstack/react-router'
-import { AjustesPage } from '@/routes/ajustes/AjustesPage'
-import { BibliotecaPage } from '@/routes/biblioteca/BibliotecaPage'
 import { parseBibliotecaSearch } from '@/routes/biblioteca/search'
-import { CalendarioPage } from '@/routes/calendario/CalendarioPage'
 import { isValidDateKey } from '@/lib/dates'
-import { CuerpoPage } from '@/routes/cuerpo/CuerpoPage'
-import { DevUiPage } from '@/routes/dev/DevUiPage'
-import { EjercicioPage } from '@/routes/ejercicio/EjercicioPage'
 import { HoyPage } from '@/routes/hoy/HoyPage'
 import { NotFoundPage } from '@/routes/NotFoundPage'
-import { ProgresoPage } from '@/routes/progreso/ProgresoPage'
-import { RoutineEditorPage } from '@/routes/rutinas/RoutineEditorPage'
-import { RutinasPage } from '@/routes/rutinas/RutinasPage'
-import { SesionPage } from '@/routes/sesion/SesionPage'
 import { RootLayout } from './RootLayout'
 
+// Every screen but Hoy loads on demand: charts, drag and drop and the editors stay out of the
+// first load (the service worker precaches all chunks, so they still work offline).
 const rootRoute = createRootRoute({
   component: RootLayout,
   notFoundComponent: NotFoundPage,
@@ -32,7 +25,10 @@ const routeTree = rootRoute.addChildren([
   createRoute({
     getParentRoute,
     path: '/calendario',
-    component: CalendarioPage,
+    component: lazyRouteComponent(
+      () => import('@/routes/calendario/CalendarioPage'),
+      'CalendarioPage',
+    ),
     validateSearch: (s: Record<string, unknown>): { vista?: 'semana' | 'mes'; fecha?: string } => ({
       vista: s.vista === 'semana' || s.vista === 'mes' ? s.vista : undefined,
       fecha: isValidDateKey(s.fecha) ? s.fecha : undefined,
@@ -41,30 +37,63 @@ const routeTree = rootRoute.addChildren([
   createRoute({
     getParentRoute,
     path: '/biblioteca',
-    component: BibliotecaPage,
+    component: lazyRouteComponent(
+      () => import('@/routes/biblioteca/BibliotecaPage'),
+      'BibliotecaPage',
+    ),
     validateSearch: parseBibliotecaSearch,
   }),
   createRoute({
     getParentRoute,
     path: '/rutinas',
-    component: RutinasPage,
+    component: lazyRouteComponent(() => import('@/routes/rutinas/RutinasPage'), 'RutinasPage'),
     validateSearch: (s: Record<string, unknown>): { tab?: 'predefinidas' } =>
       s.tab === 'predefinidas' ? { tab: 'predefinidas' } : {},
   }),
-  createRoute({ getParentRoute, path: '/rutinas/$routineId', component: RoutineEditorPage }),
-  createRoute({ getParentRoute, path: '/progreso', component: ProgresoPage }),
-  createRoute({ getParentRoute, path: '/cuerpo', component: CuerpoPage }),
-  createRoute({ getParentRoute, path: '/ajustes', component: AjustesPage }),
-  createRoute({ getParentRoute, path: '/sesion/$sessionId', component: SesionPage }),
+  createRoute({
+    getParentRoute,
+    path: '/rutinas/$routineId',
+    component: lazyRouteComponent(
+      () => import('@/routes/rutinas/RoutineEditorPage'),
+      'RoutineEditorPage',
+    ),
+  }),
+  createRoute({
+    getParentRoute,
+    path: '/progreso',
+    component: lazyRouteComponent(() => import('@/routes/progreso/ProgresoPage'), 'ProgresoPage'),
+  }),
+  createRoute({
+    getParentRoute,
+    path: '/cuerpo',
+    component: lazyRouteComponent(() => import('@/routes/cuerpo/CuerpoPage'), 'CuerpoPage'),
+  }),
+  createRoute({
+    getParentRoute,
+    path: '/ajustes',
+    component: lazyRouteComponent(() => import('@/routes/ajustes/AjustesPage'), 'AjustesPage'),
+  }),
+  createRoute({
+    getParentRoute,
+    path: '/sesion/$sessionId',
+    component: lazyRouteComponent(() => import('@/routes/sesion/SesionPage'), 'SesionPage'),
+  }),
   createRoute({
     getParentRoute,
     path: '/ejercicio/$exerciseId',
-    component: EjercicioPage,
+    component: lazyRouteComponent(
+      () => import('@/routes/ejercicio/EjercicioPage'),
+      'EjercicioPage',
+    ),
     validateSearch: (s: Record<string, unknown>): { tab?: 'historial' | 'grafica' } =>
       s.tab === 'historial' || s.tab === 'grafica' ? { tab: s.tab } : {},
   }),
   // Hidden: primitives showcase, not linked from the navigation.
-  createRoute({ getParentRoute, path: '/dev/ui', component: DevUiPage }),
+  createRoute({
+    getParentRoute,
+    path: '/dev/ui',
+    component: lazyRouteComponent(() => import('@/routes/dev/DevUiPage'), 'DevUiPage'),
+  }),
 ])
 
 export function createAppRouter(history?: RouterHistory) {

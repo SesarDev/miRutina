@@ -44,19 +44,3 @@ export function ExerciseMedia({ image, gif, alt, flipId }: Props) {
     </div>
   )
 }
-
-export function ExerciseThumb({ src, flipId }: { src: string; flipId?: string }) {
-  if (!src) return <span className={styles.thumb} aria-hidden="true" />
-  return (
-    <img
-      className={styles.thumb}
-      data-flip-id={flipId}
-      src={src}
-      alt=""
-      width={56}
-      height={56}
-      loading="lazy"
-      decoding="async"
-    />
-  )
-}

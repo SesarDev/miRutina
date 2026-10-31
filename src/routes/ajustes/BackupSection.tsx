@@ -15,7 +15,7 @@ import {
   type ImportPlanRow,
 } from '@/db/backup'
 import { formatDay, toDateKey } from '@/lib/dates'
-import { syncEngine } from '@/sync'
+import { requestSync } from '@/sync'
 import styles from './AjustesPage.module.css'
 
 /** After this many days without a copy, Ajustes says so (informative only). */
@@ -70,7 +70,7 @@ export function BackupSection() {
         ? `Importados ${count(written)} registros`
         : 'No había nada nuevo que importar',
     })
-    void syncEngine?.sync()
+    void requestSync()
   }
 
   const toWrite = pending?.plan.reduce((n, r) => n + r.added + r.updated, 0) ?? 0

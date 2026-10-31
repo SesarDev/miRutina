@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { useWindowVirtualizer } from '@tanstack/react-virtual'
 import { useLayoutEffect, useRef, useState, type MouseEvent } from 'react'
-import { ExerciseThumb } from '@/components/exercise/ExerciseMedia'
+import { ExerciseThumb } from '@/components/exercise/ExerciseThumb'
 import { captureForRoute } from '@/motion/flip'
 import { Icon } from '@/components/ui'
 import { EQUIPMENT_LABELS, label, MUSCLE_LABELS } from '@/db/labels'

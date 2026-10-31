@@ -4,7 +4,6 @@
  */
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import { captureSessionLayout } from './sessionFlip'
 
 export type Rest = {
   sessionId: string
@@ -30,8 +29,17 @@ export const useSessionUi = create<SessionUi>()(
   }),
 )
 
+/**
+ * Called right before the armband moves. The session screen registers the Flip capture
+ * (sessionFlip.ts); keeping GSAP out of this module keeps it out of the first-load bundle.
+ */
+let beforeArmbandMove: (() => void) | null = null
+export function onBeforeArmbandMove(fn: (() => void) | null) {
+  beforeArmbandMove = fn
+}
+
 export const selectRow = (rowId: string | null) => {
-  if (rowId !== useSessionUi.getState().selectedRowId) captureSessionLayout()
+  if (rowId !== useSessionUi.getState().selectedRowId) beforeArmbandMove?.()
   useSessionUi.setState({ selectedRowId: rowId })
 }
 
@@ -50,7 +58,7 @@ export function askFeel(
   restSec: number,
   nextRowId: string | null,
 ) {
-  captureSessionLayout()
+  beforeArmbandMove?.()
   useSessionUi.setState({ feelPrompt: { rowId, sessionId, restSec }, selectedRowId: nextRowId })
 }
 

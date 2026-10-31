@@ -17,7 +17,7 @@ import {
 } from '@dnd-kit/sortable'
 import { getRouteApi, Link, useNavigate } from '@tanstack/react-router'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { ExerciseThumb } from '@/components/exercise/ExerciseMedia'
+import { ExerciseThumb } from '@/components/exercise/ExerciseThumb'
 import { PageHeader } from '@/components/PageHeader'
 import {
   Button,

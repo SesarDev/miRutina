@@ -1,6 +1,6 @@
 import { Link, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
-import { ExerciseThumb } from '@/components/exercise/ExerciseMedia'
+import { ExerciseThumb } from '@/components/exercise/ExerciseThumb'
 import { PageHeader } from '@/components/PageHeader'
 import { Button, buttonClassName, Icon, Sheet, type IconName } from '@/components/ui'
 import {
@@ -30,31 +30,34 @@ export function HoyPage() {
         title="Hoy"
         subtitle={<time dateTime={today}>{formatLongDay(new Date())}</time>}
       />
-      <div className={styles.page}>
-        <div className={styles.main}>
-          {openSession && (
-            <Link
-              to="/sesion/$sessionId"
-              params={{ sessionId: openSession.id }}
-              className={buttonClassName({ variant: 'primary', size: 'lg', block: true })}
-            >
-              <Icon name="play" size={20} />
-              Continuar entreno
-            </Link>
-          )}
+      {/* Rendered once today's data is read (a few ms from IndexedDB), so nothing jumps. */}
+      {planned !== undefined && openSession !== undefined && (
+        <div className={styles.page}>
+          <div className={styles.main}>
+            {openSession && (
+              <Link
+                to="/sesion/$sessionId"
+                params={{ sessionId: openSession.id }}
+                className={buttonClassName({ variant: 'primary', size: 'lg', block: true })}
+              >
+                <Icon name="play" size={20} />
+                Continuar entreno
+              </Link>
+            )}
 
-          {planned === undefined ? null : todayWorkouts.length > 0 ? (
-            todayWorkouts.map((w) => <TodayWorkout key={w.id} workout={w} />)
-          ) : (
-            <NothingToday />
-          )}
-        </div>
+            {todayWorkouts.length > 0 ? (
+              todayWorkouts.map((w) => <TodayWorkout key={w.id} workout={w} />)
+            ) : (
+              <NothingToday />
+            )}
+          </div>
 
-        <div className={styles.side}>
-          <WeekSummary />
-          <Sections />
+          <div className={styles.side}>
+            <WeekSummary />
+            <Sections />
+          </div>
         </div>
-      </div>
+      )}
     </>
   )
 }

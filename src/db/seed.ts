@@ -8,6 +8,7 @@ type SeedFile = {
 }
 
 const SEED_VERSION_KEY = 'seedVersion'
+const SEED_BATCH = 150
 
 /**
  * Loads the dataset catalogue on first launch, or when `npm run import:exercises`
@@ -19,14 +20,17 @@ export async function ensureSeed(load: () => Promise<SeedFile> = loadSeedFile): 
   const seed = await load()
   if (current?.value === seed.version) return false
 
-  const rows: Exercise[] = seed.exercises.map((e) => ({
-    ...e,
-    searchTokens: toSearchTokens(e.name, e.nameEs),
-  }))
-  await db.transaction('rw', db.exercises, db.meta, async () => {
+  // In batches that yield to the browser: 1.324 rows in one go is a long task on a phone.
+  for (let i = 0; i < seed.exercises.length; i += SEED_BATCH) {
+    const rows: Exercise[] = seed.exercises.slice(i, i + SEED_BATCH).map((e) => ({
+      ...e,
+      searchTokens: toSearchTokens(e.name, e.nameEs),
+    }))
     await db.exercises.bulkPut(rows)
-    await db.meta.put({ key: SEED_VERSION_KEY, value: seed.version })
-  })
+    await new Promise((resolve) => setTimeout(resolve, 0))
+  }
+  // The version is stored last: an interrupted load is simply repeated next time.
+  await db.meta.put({ key: SEED_VERSION_KEY, value: seed.version })
   return true
 }
 

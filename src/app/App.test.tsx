@@ -31,7 +31,10 @@ describe('shell', () => {
     ['/no-existe', 'Página no encontrada'],
   ])('%s muestra «%s»', async (path, title) => {
     renderAt(path)
-    expect(await screen.findByRole('heading', { level: 1, name: title })).toBeInTheDocument()
+    // Screens load on demand: the first import of a route can take a moment under jsdom.
+    expect(
+      await screen.findByRole('heading', { level: 1, name: title }, { timeout: 5000 }),
+    ).toBeInTheDocument()
   })
 
   it('la barra inferior navega y marca la pestaña activa', async () => {

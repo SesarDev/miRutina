@@ -6,7 +6,7 @@ import { finishSession } from '@/db/sessions'
 import type { Session, SetLog } from '@/db/types'
 import { formatDay } from '@/lib/dates'
 import { summarize } from '@/lib/session'
-import { syncEngine } from '@/sync'
+import { requestSync } from '@/sync'
 import { RecordMoment } from './RecordMoment'
 import { resetSessionUi } from './sessionStore'
 import styles from './Session.module.css'
@@ -32,7 +32,7 @@ export function FinishButton({ session, rows }: { session: Session; rows: SetLog
     await finishSession(session.id)
     resetSessionUi()
     // The summary replaces the session on this same screen.
-    void syncEngine?.sync()
+    void requestSync()
   }
 
   return (

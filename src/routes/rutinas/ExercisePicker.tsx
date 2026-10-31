@@ -1,6 +1,6 @@
 import { useDraggable } from '@dnd-kit/core'
 import { useDeferredValue, useMemo, useState } from 'react'
-import { ExerciseThumb } from '@/components/exercise/ExerciseMedia'
+import { ExerciseThumb } from '@/components/exercise/ExerciseThumb'
 import { Chip, IconButton, TextField } from '@/components/ui'
 import { BODY_PART_LABELS, EQUIPMENT_LABELS, label, MUSCLE_LABELS } from '@/db/labels'
 import { useExerciseIndex, useFavoriteIds } from '@/db/queries'

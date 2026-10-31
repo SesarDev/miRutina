@@ -1,7 +1,7 @@
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { useState } from 'react'
-import { ExerciseThumb } from '@/components/exercise/ExerciseMedia'
+import { ExerciseThumb } from '@/components/exercise/ExerciseThumb'
 import { Icon, IconButton, Stepper } from '@/components/ui'
 import { TECHNIQUE_LABELS, type Exercise, type RoutineItem, type SetTechnique } from '@/db/types'
 import { LIMITS, repsLabel } from '@/lib/routines'

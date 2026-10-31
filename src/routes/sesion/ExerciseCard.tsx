@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ExerciseThumb } from '@/components/exercise/ExerciseMedia'
+import { ExerciseThumb } from '@/components/exercise/ExerciseThumb'
 import { WeightStepPicker } from '@/components/exercise/WeightStepPicker'
 import { Button, Icon, IconButton, Sheet, showToast } from '@/components/ui'
 import { useLastSessions } from '@/db/queries'

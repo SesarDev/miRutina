@@ -1,7 +1,10 @@
 import { gsap } from 'gsap'
 import { CustomEase } from 'gsap/CustomEase'
+import { parseDuration } from './time'
 
 gsap.registerPlugin(CustomEase)
+
+export { parseDuration } from './time'
 
 /** Fallbacks mirror src/styles/tokens.css; used when CSS is not available (tests, SSR). */
 const FALLBACK = {
@@ -22,15 +25,6 @@ const FALLBACK = {
 export type DurationToken = 'instant' | 'fast' | 'base' | 'slow' | 'stagger'
 export type EaseToken = 'out' | 'in-out' | 'spring'
 export type DistanceToken = 'micro' | 'small' | 'base' | 'medium'
-
-/** Parses a CSS time ("250ms", "0.25s") into seconds, as GSAP expects. */
-export function parseDuration(value: string): number {
-  const v = value.trim()
-  if (v.endsWith('ms')) return Number.parseFloat(v) / 1000
-  if (v.endsWith('s')) return Number.parseFloat(v)
-  const n = Number.parseFloat(v)
-  return Number.isFinite(n) ? n / 1000 : 0
-}
 
 /** Extracts "x1,y1,x2,y2" from a CSS cubic-bezier(), the format CustomEase accepts. */
 export function parseCubicBezier(value: string): string | null {

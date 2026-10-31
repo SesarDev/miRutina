@@ -2,9 +2,8 @@ import { formatDistanceToNow } from 'date-fns'
 import { useState, type FormEvent } from 'react'
 import { Button, Icon, TextField } from '@/components/ui'
 import { DATE_OPTIONS } from '@/lib/dates'
-import { sendMagicLink, signOut, syncEngine, useAuthSession } from '@/sync'
+import { isSyncConfigured, requestSync, sendMagicLink, signOut, useAuthSession } from '@/sync'
 import { useSyncStore } from '@/sync/store'
-import { isSyncConfigured } from '@/sync/supabase'
 import { useSyncSummary } from '@/sync/useSyncSummary'
 import styles from './AjustesPage.module.css'
 
@@ -99,7 +98,7 @@ function SignedIn({ email }: { email: string }) {
 
   const syncNow = async () => {
     setBusy(true)
-    await syncEngine?.sync()
+    await requestSync()
     setBusy(false)
   }
 

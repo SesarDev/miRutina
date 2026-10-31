@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { parseDuration } from '@/motion/tokens'
+import { parseDuration } from '@/motion/time'
 import { dismissToast, useToastStore, type ToastState } from './toastStore'
 import styles from './Toast.module.css'
 

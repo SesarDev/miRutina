@@ -1,12 +1,46 @@
 import { fileURLToPath, URL } from 'node:url'
 import react from '@vitejs/plugin-react'
+import type { Plugin } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
+
+/**
+ * Inlines the entry CSS (~10 kB) into index.html so it no longer blocks the first paint, and
+ * preloads the two fonts the first screen uses. CSS of lazy screens still loads with them.
+ */
+function inlineEntryCss(): Plugin {
+  return {
+    name: 'mirutina:inline-entry-css',
+    apply: 'build',
+    enforce: 'post',
+    transformIndexHtml: {
+      order: 'post',
+      handler(html, ctx) {
+        const bundle = ctx.bundle
+        if (!bundle) return html
+        const fonts = Object.keys(bundle)
+          .filter((f) => /barlow-(latin-400|condensed-latin-700)-normal-.*\.woff2$/.test(f))
+          .map((f) => `<link rel="preload" href="/${f}" as="font" type="font/woff2" crossorigin>`)
+          .join('')
+        return html
+          .replace(
+            /<link rel="stylesheet"[^>]*href="\/(assets\/[^"]+\.css)"[^>]*>/g,
+            (tag, file) => {
+              const asset = bundle[file]
+              return asset?.type === 'asset' ? `<style>${String(asset.source)}</style>` : tag
+            },
+          )
+          .replace('</head>', `${fonts}</head>`)
+      },
+    },
+  }
+}
 import { configDefaults, defineConfig } from 'vitest/config'
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
     react(),
+    inlineEntryCss(),
     VitePWA({
       // Own service worker (src/sw/sw.ts): pinned GIF cache for favourites and routines.
       strategies: 'injectManifest',

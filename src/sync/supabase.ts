@@ -18,5 +18,3 @@ export const supabase: SupabaseClient | null =
         },
       })
     : null
-
-export const isSyncConfigured = supabase !== null
