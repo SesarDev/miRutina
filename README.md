@@ -37,3 +37,7 @@ fitness-app-kit/
 - Las fases largas (F1, F3) tienen sub-pasos; si la conversación se alarga, pide a Claude que termine el sub-paso actual, haz `/cerrar-fase` parcial o un commit, y continúa en otra conversación con `/fase F3 desde el paso 4`.
 - Si algo no te convence, dilo en el chat antes de cerrar la fase; los criterios de aceptación están al final de cada archivo de fase.
 - Las decisiones de producto ya están tomadas en `docs/PLANNING.md`. Si cambias alguna, edita ese archivo para que Claude la respete en las siguientes fases.
+
+## Despliegue
+
+Pasos para publicar la app en Vercel, configurar Supabase e instalarla en el móvil: [`docs/DESPLIEGUE.md`](docs/DESPLIEGUE.md).
