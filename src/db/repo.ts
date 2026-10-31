@@ -71,6 +71,19 @@ export async function saveMany<T extends SyncTable>(
   return rows
 }
 
+/**
+ * Stores rows exactly as given (their own `updatedAt` and `deletedAt`) and queues them for sync.
+ * Used by the backup import, so last-write-wins keeps comparing the original edit times.
+ */
+export async function putRaw<T extends SyncTable>(table: T, rows: SyncedRows[T][]): Promise<void> {
+  if (!rows.length) return
+  await db.transaction('rw', db.table(table), db.outbox, async () => {
+    await db.table(table).bulkPut(rows)
+    for (const row of rows) await enqueue(table, keyOf(table, row), row.updatedAt ?? nowIso())
+  })
+  notify(table)
+}
+
 /** Changes some fields of an existing row. Returns undefined if it does not exist. */
 export async function patch<T extends SyncTable>(
   table: T,

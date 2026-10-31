@@ -1,6 +1,7 @@
 import { PageHeader } from '@/components/PageHeader'
 import { ThemeSwitcher } from '@/components/ThemeSwitcher'
 import { AccountSection } from './AccountSection'
+import { BackupSection } from './BackupSection'
 import { WorkoutSection } from './WorkoutSection'
 import styles from './AjustesPage.module.css'
 
@@ -11,6 +12,7 @@ export function AjustesPage() {
       <div className={styles.page}>
         <AccountSection />
         <WorkoutSection />
+        <BackupSection />
         <section className={styles.section} aria-labelledby="ajustes-tema">
           <h2 id="ajustes-tema" className={styles.label}>
             Tema
