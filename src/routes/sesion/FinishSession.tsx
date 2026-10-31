@@ -1,20 +1,21 @@
 import { Link } from '@tanstack/react-router'
 import { useState } from 'react'
-import { Button, buttonClassName, Icon, Sheet } from '@/components/ui'
+import { Button, buttonClassName, Sheet } from '@/components/ui'
 import { useSessionRecords } from '@/db/queries'
 import { finishSession } from '@/db/sessions'
 import type { Session, SetLog } from '@/db/types'
 import { formatDay } from '@/lib/dates'
-import { formatRecord } from '@/lib/progress'
 import { summarize } from '@/lib/session'
 import { syncEngine } from '@/sync'
+import { RecordMoment } from './RecordMoment'
 import { resetSessionUi } from './sessionStore'
 import styles from './Session.module.css'
 
 const volumeFormat = new Intl.NumberFormat('es-ES')
 
-/** «45 min», «1 h 5 min». */
+/** «45 min», «1 h 5 min», «< 1 min». */
 function durationText(min: number) {
+  if (min < 1) return '< 1 min'
   const h = Math.floor(min / 60)
   const m = min % 60
   return h ? `${h} h${m ? ` ${m} min` : ''}` : `${m} min`
@@ -60,7 +61,7 @@ export function FinishButton({ session, rows }: { session: Session; rows: SetLog
   )
 }
 
-/** After «Terminar»: what was done, plainly, and the records it set (the celebration is F5). */
+/** After «Terminar»: the records it set (if any) first, then what was done, plainly. */
 export function SessionSummary({
   session,
   rows,
@@ -84,6 +85,7 @@ export function SessionSummary({
       <p className={styles.lastLabel}>{formatDay(session.date, "EEEE d 'de' MMMM")}</p>
       <h1 className={styles.summaryTitle}>{title}</h1>
       <p className={styles.summaryLead}>Entreno terminado.</p>
+      {session.endedAt && <RecordMoment records={records} endedAt={session.endedAt} />}
       <dl className={styles.summaryFacts}>
         {facts.map(([label, value]) => (
           <div key={label}>
@@ -92,24 +94,6 @@ export function SessionSummary({
           </div>
         ))}
       </dl>
-      {records.length > 0 && (
-        <section aria-labelledby="summary-records" className={styles.summaryRecords}>
-          <h2 id="summary-records" className={styles.lastLabel}>
-            {records.length === 1 ? 'Récord nuevo' : `${records.length} récords nuevos`}
-          </h2>
-          <ul>
-            {records.map((r) => (
-              <li key={`${r.exerciseId}-${r.kind}-${r.weight ?? ''}`}>
-                <Icon name="star" size={18} className={styles.summaryStar} />
-                <span>
-                  <span className={styles.summaryRecordName}>{r.name}</span>
-                  <span className={styles.summaryRecordText}>{formatRecord(r)}</span>
-                </span>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
       {session.notes && <p className={styles.itemNote}>{session.notes}</p>}
       <Link to="/" className={buttonClassName({ variant: 'primary', size: 'lg', block: true })}>
         Ir a Hoy
