@@ -13,7 +13,7 @@
 
 - **F2 · Rutinas y calendario:** cerrada el 29 oct 2026 (etiqueta `f2-done`). Editor de rutinas con técnicas y superseries, 12 predefinidas, calendario semana/mes y pantalla Hoy. Criterios 1, 2 y 5 verificados con Playwright en la app real (PC 1440 px y móvil 390 px); criterios 3 y 4 (PC → móvil) verificados a mano por el usuario.
 
-- **F3 · Sesión en curso:** pasos 1–6 hechos (31 oct 2026); falta la verificación a mano en el gimnasio y entre dispositivos, y `/cerrar-fase F3`. **Antes de probar la sincronización hay que ejecutar `supabase/migrations/2026-10-29-f3-sesion.sql` en Supabase** (columnas nuevas; sin ellas la subida de sesiones y series falla).
+- **F3 · Sesión en curso:** cerrada el 31 oct 2026 (etiqueta `f3-done`). Sesión en curso con «Última vez», registro de series con valoración, técnicas y superseries, descanso, robustez (Wake Lock, almacenamiento persistente, recarga sin pérdidas) y resumen; e2e en verde. Migración `supabase/migrations/2026-10-29-f3-sesion.sql` aplicada. **Pendiente de verificar a mano** (el usuario lo prueba después): sesión completa en modo avión en el gimnasio, descanso con el móvil bloqueado y que la sesión terminada en el móvil aparezca como «Hecho» en el PC (la primera prueba falló; ver Decisiones › F3 › sesiones de otro día).
 
 ## Decisiones técnicas
 
@@ -72,6 +72,7 @@
 - **Preferencias del dispositivo** (`src/lib/prefs.ts`, `localStorage` `mirutina:prefs`): descanso por defecto (para ejercicios añadidos en la sesión), vibración y pantalla encendida. No se sincronizan.
 - **Pantalla dedicada**: en `/sesion/…` no hay barra inferior ni indicador de sync compacto; el panel de controles es `sticky` abajo (en PC, columna derecha). Los toasts salen bajo la cabecera para no tapar el panel. La barra de descanso aparece en las demás pantallas.
 - **Terminar** guarda primero `endedAt` (la pantalla pasa al resumen sin estado intermedio), luego limpia filas y marca hecho el `plannedWorkout` del día (el enlazado o, si no, el de la misma rutina sin sesión) y lanza `syncEngine.sync()`.
+- **Sesiones abiertas de otro día** (fallo visto al cerrar F3: el entreno hecho en el móvil no salía «Hecho» en el PC): «Empezar» solo retoma la sesión enlazada si es de hoy, y al abrir la app (`closeStaleSessions` en `main.tsx`) las sesiones abiertas de días anteriores se terminan en su día si tienen series o se borran y desenlazan si están vacías. La causa probable era la sesión de prueba de F2 (29 oct) que seguía abierta: al terminarla se marcaba el entreno de su día, no el de hoy. No se ha podido ver el dato real del móvil.
 - **e2e**: `npm run test:e2e` (Playwright, 390×844, levanta Vite en el puerto 4180). Vitest excluye `e2e/`.
 - **Crítica de impeccable** completa con dos subagentes (28/40 antes de corregir); el informe está en `.impeccable/critique/`.
 
@@ -85,7 +86,6 @@
 - 71 nombres de ejercicio poco comunes conservan alguna palabra en inglés; ampliar el diccionario o las correcciones cuando aparezcan en rutinas.
 - El chunk del catálogo supera el aviso de 500 kB de Vite (se carga diferido; valorar dividirlo en F6).
 - Predefinidas: solo «Copiar a mis rutinas». «Usar» (planificar o empezar tal cual sin copiar) queda pendiente: el calendario necesita una rutina propia.
-- Las sesiones abiertas no se marcan como «Hecho» en el calendario hasta que F3 las termine.
 - Verificación manual de la sincronización entre dispositivos (criterios 5 y 6 de F1) pendiente; si falla, se arregla al inicio de F2.
 - El estado «Hecho» del calendario no se ha visto con datos reales: llega cuando F3 termine sesiones.
 - No hay script `test:e2e` ni tests de Playwright versionados; la verificación de F2 se hizo con un script suelto. Crear la suite e2e cuando haya flujo de sesión (F3).
@@ -95,6 +95,8 @@
 - F3: el brazalete cambia de fila sin desplazarse; el Flip (< 250 ms) es de F5. El resumen final no compara con la última vez (récords en F4).
 - F3: no hay deshacer al desmarcar una serie ni al borrar un calentamiento añadido por error (se puede quitar desde «Opciones»).
 - F3: `logType` `reps` y `time` no tienen interfaz propia en la sesión: todo se registra como peso × reps (peso vacío = peso corporal).
+- F3: si el entreno de prueba se terminó como la sesión antigua, sus series quedaron con la fecha de esa sesión (29 oct) y el entreno de hoy sigue «Planificado»; no hay forma en la app de corregir la fecha de una sesión ni de marcar un entreno como hecho a mano.
+- F3: una «Sesión libre» no marca ningún entreno planificado del día como hecho (no hay rutina con la que emparejarlo).
 - F3: las preferencias (descanso por defecto, vibración, pantalla encendida) son por dispositivo, no se sincronizan.
 
 ## Ideas para más adelante
