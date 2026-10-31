@@ -13,6 +13,8 @@
 
 - **F2 · Rutinas y calendario:** cerrada el 29 oct 2026 (etiqueta `f2-done`). Editor de rutinas con técnicas y superseries, 12 predefinidas, calendario semana/mes y pantalla Hoy. Criterios 1, 2 y 5 verificados con Playwright en la app real (PC 1440 px y móvil 390 px); criterios 3 y 4 (PC → móvil) verificados a mano por el usuario.
 
+- **F3 · Sesión en curso:** pasos 1–6 hechos (31 oct 2026); falta la verificación a mano en el gimnasio y entre dispositivos, y `/cerrar-fase F3`. **Antes de probar la sincronización hay que ejecutar `supabase/migrations/2026-10-29-f3-sesion.sql` en Supabase** (columnas nuevas; sin ellas la subida de sesiones y series falla).
+
 ## Decisiones técnicas
 
 - **TypeScript 6.0 en vez de 7.** La plantilla de Vite trae TS 7 (el compilador en Go), pero `typescript-eslint` aún no lo admite (`peer typescript <6.1`). Volver a TS 7 cuando lo soporte.
@@ -56,6 +58,23 @@
 - **Cierre (auditoría):** en la vista semana de PC la línea de estado de la píldora ocupa todo el ancho bajo icono + nombre (en columnas estrechas se cortaba). Los días de otros meses en la vista mes usan `--color-text-3` con peso normal (antes `--color-text-disabled`, 2,8:1). El toast «Añadido» lee el nombre de Dexie (el ejercicio aún no estaba en el mapa de la rutina y salía «ejercicio»).
 - **Falsos positivos del detector de impeccable** que se dejan: `side-tab` en la celda de hoy (es el brazalete de `DESIGN.md`) y `monotonous-spacing` (cuenta los huecos de 4 px de las celdas del mes). `--ease-spring` no lo usa ningún componente.
 
+### F3
+- **Filas de la sesión = `setLogs` desde el principio** (sin `completedAt` hasta marcarlas): cada tecla se guarda en Dexie y nada se pierde al cerrar la app. «Última vez» ignora las filas sin `completedAt` (no están en el índice `[exerciseId+completedAt]`). Al terminar, las no marcadas se borran (soft delete).
+- **Columnas nuevas** (migración `supabase/migrations/2026-10-29-f3-sesion.sql`, ya en `schema.sql`): `set_logs.drop_index` (0 = la serie, 1… = bajadas), `sessions.items` (jsonb: copia de la rutina editable en la sesión, con `skipped` y `note` por ejercicio) y `exercise_settings.weight_step`.
+- **`order` de un `setLog`** = posición de la serie dentro de su ejercicio en la sesión (los calentamientos cuentan); «la misma serie» de la última vez se busca por posición entre las series de trabajo. Quitar una serie renumera.
+- **Un ejercicio por sesión una sola vez** (las filas se agrupan por `exerciseId`); añadir uno que ya está no hace nada.
+- **Orden de ejecución** (`sequence` en `src/lib/session.ts`): superseries por rondas alternando, bajadas detrás de su serie, saltados fuera. Tras marcar, el brazalete va a la siguiente pendiente *después* de esa (la pareja en una superserie), no a la primera pendiente de la sesión.
+- **Descanso**: ninguno entre bajadas ni entre ejercicios de una ronda de superserie; tras la ronda, el de su último ejercicio. Calentamientos: 60 s fijos y sin valoración. Basado en la marca de fin (`endsAt`), persistido en `localStorage` (`mirutina:session-ui`); al reabrir pasados más de 5 s del final se descarta sin vibrar.
+- **Valoración**: espera 5 s (acordado; la fase decía 3) o hasta tocar un stepper. Los botones dicen qué serie valoran.
+- **«Serie hecha»** exige reps e ignora un segundo toque durante 600 ms (un toque de valoración o de stepper lo desbloquea).
+- **Copiar a las pendientes** (acordado): cambiar peso o reps de una serie copia ese valor a las series pendientes posteriores del ejercicio (mismo nivel de bajada, sin calentamientos). Es la decisión del usuario, no una sugerencia.
+- **Paso de los botones de peso** por equipo (barra y multipower 2,5 · mancuernas y kettlebell 2 · máquina, polea y trineo 5 · resto 1), editable por ejercicio en la ficha y en «Más opciones» de la sesión (`exerciseSettings.weightStep`, null = «Auto»). Opciones 0,5 / 1 / 2 / 2,5 / 5 (1,25 no cabe con un decimal).
+- **Preferencias del dispositivo** (`src/lib/prefs.ts`, `localStorage` `mirutina:prefs`): descanso por defecto (para ejercicios añadidos en la sesión), vibración y pantalla encendida. No se sincronizan.
+- **Pantalla dedicada**: en `/sesion/…` no hay barra inferior ni indicador de sync compacto; el panel de controles es `sticky` abajo (en PC, columna derecha). Los toasts salen bajo la cabecera para no tapar el panel. La barra de descanso aparece en las demás pantallas.
+- **Terminar** guarda primero `endedAt` (la pantalla pasa al resumen sin estado intermedio), luego limpia filas y marca hecho el `plannedWorkout` del día (el enlazado o, si no, el de la misma rutina sin sesión) y lanza `syncEngine.sync()`.
+- **e2e**: `npm run test:e2e` (Playwright, 390×844, levanta Vite en el puerto 4180). Vitest excluye `e2e/`.
+- **Crítica de impeccable** completa con dos subagentes (28/40 antes de corregir); el informe está en `.impeccable/critique/`.
+
 ## Deuda
 
 - El favicon sigue siendo el de Vite; los iconos de la PWA llegan en F6.
@@ -73,6 +92,11 @@
 
 - Probar en el móvil por `http://` en la red local es un contexto inseguro. Se adelanta el despliegue en Vercel (paso 3 de F6) para tener HTTPS; el resto de F6 (PWA, cabeceras de `sw.js`, exportar) sigue pendiente.
 
+- F3: el brazalete cambia de fila sin desplazarse; el Flip (< 250 ms) es de F5. El resumen final no compara con la última vez (récords en F4).
+- F3: no hay deshacer al desmarcar una serie ni al borrar un calentamiento añadido por error (se puede quitar desde «Opciones»).
+- F3: `logType` `reps` y `time` no tienen interfaz propia en la sesión: todo se registra como peso × reps (peso vacío = peso corporal).
+- F3: las preferencias (descanso por defecto, vibración, pantalla encendida) son por dispositivo, no se sincronizan.
+
 ## Ideas para más adelante
 
 - Marcar la pestaña «Más» como activa también mientras su panel está abierto (ahora solo se marca si la ruta actual es Rutinas, Cuerpo o Ajustes).
@@ -80,3 +104,7 @@
 - Enlace mágico + PWA instalada: el enlace se abre en el navegador, no en la PWA. Valorar en F6 el código de 6 dígitos (OTP) como alternativa.
 - La pestaña Biblioteca podría seguir marcada al abrir `/ejercicio/$id`.
 - Valorar `field-sizing: content` en otros campos numéricos; en navegadores sin soporte el Stepper usa un ancho fijo de 4,5 caracteres.
+- Sesión: explicar cada técnica (alemanas, descendentes…) con un toque en su nombre.
+- Sesión: preguntar la valoración solo en la última serie de cada ejercicio, como opción en Ajustes.
+- Resumen de sesión: comparación por ejercicio con la última vez («65 × 10 · antes 60 × 10»), sin sugerencias (F4/F5).
+- En PC, aprovechar el hueco bajo el panel de la sesión para las notas.
