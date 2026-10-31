@@ -6,7 +6,7 @@ import { buildIndex } from '@/lib/exerciseSearch'
 import { sortSets, type PastSession } from '@/lib/lastTime'
 import { estimateMinutes } from '@/lib/routines'
 import { db } from './schema'
-import type { PlannedWorkout } from './types'
+import type { ExerciseSettings, PlannedWorkout } from './types'
 
 const EMPTY: never[] = []
 
@@ -181,5 +181,29 @@ export function useLastSessions(exerciseId: string, excludeSessionId?: string) {
   return useLiveQuery(
     () => lastSessionsForExercise(exerciseId, { excludeSessionId }),
     [exerciseId, excludeSessionId],
+  )
+}
+
+/** Rows of a session (not deleted), by exercise and set. */
+export function useSessionRows(sessionId: string) {
+  return useLiveQuery(
+    async () =>
+      (await db.setLogs.where('sessionId').equals(sessionId).toArray())
+        .filter((r) => !r.deletedAt)
+        .sort((a, b) => a.order - b.order || a.dropIndex - b.dropIndex),
+    [sessionId],
+  )
+}
+
+/** Settings of some exercises (weight step, notes), by exercise id. */
+export function useExerciseSettingsById(ids: string[]) {
+  const key = [...new Set(ids)].sort().join(',')
+  return useLiveQuery(
+    async () => {
+      const rows = await db.exerciseSettings.bulkGet(key ? key.split(',') : [])
+      return new Map(rows.filter((r) => r !== undefined).map((r) => [r.exerciseId, r]))
+    },
+    [key],
+    new Map<string, ExerciseSettings>(),
   )
 }

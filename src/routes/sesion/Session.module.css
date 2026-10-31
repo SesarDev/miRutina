@@ -1,0 +1,828 @@
+/* Session in progress («Dorsal»): granate header band, figures as dorsals, one armband,
+   controls in the thumb zone. Mobile first; two columns from 64rem. */
+
+.session {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+/* ── Header band ── */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-raised);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 60px;
+  margin-inline: calc(var(--gutter) * -1);
+  padding: env(safe-area-inset-top) var(--gutter) 0 var(--space-2);
+  background: var(--color-band);
+  color: var(--color-on-band);
+}
+
+.headerBack {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: var(--hit-min);
+  height: var(--hit-min);
+  border-radius: var(--radius-md);
+  color: inherit;
+}
+
+.headerBack:active {
+  background: color-mix(in oklch, var(--color-on-band) 14%, transparent);
+}
+
+.headerText {
+  display: flex;
+  flex: 1;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.headerTitle {
+  overflow: hidden;
+  margin: 0;
+  font-family: var(--font-condensed);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-name);
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.elapsed {
+  flex: none;
+  color: var(--color-on-band-2);
+  font-family: var(--font-condensed);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-semibold);
+}
+
+/* ── Exercise list ── */
+.body {
+  flex: 1;
+  display: grid;
+  align-content: start;
+  gap: var(--space-5);
+  padding-block: var(--space-4) var(--space-8);
+}
+
+.emptyList {
+  padding: var(--space-8) 0 0;
+  color: var(--color-text-2);
+  text-align: center;
+}
+
+.exercises {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* A superset is one block: its exercises alternate round by round. */
+.superset {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-3);
+  border: 1px solid var(--color-line);
+  border-radius: calc(var(--radius-lg) + var(--space-2));
+}
+
+.supersetLabel {
+  margin: 0;
+  color: var(--color-text-2);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.card {
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.card[data-active] {
+  border-color: var(--color-line-strong);
+}
+
+.card[data-skipped] {
+  background: transparent;
+  border-style: dashed;
+}
+
+.cardHead {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-3);
+}
+
+.cardToggle {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+  min-height: var(--hit-min);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  text-align: start;
+}
+
+.cardToggle:disabled {
+  cursor: default;
+}
+
+.cardToggle > :first-child {
+  flex: none;
+  width: 44px;
+  height: 44px;
+}
+
+.card[data-skipped] .cardToggle > :first-child {
+  opacity: 0.5;
+}
+
+.cardText {
+  display: grid;
+  min-width: 0;
+}
+
+.cardName {
+  overflow: hidden;
+  font-weight: var(--weight-semibold);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card[data-active] .cardName {
+  white-space: normal;
+}
+
+.card[data-skipped] .cardName {
+  color: var(--color-text-2);
+  text-decoration: line-through;
+  text-decoration-color: var(--color-text-3);
+}
+
+.cardMeta {
+  color: var(--color-text-2);
+  font-size: var(--text-sm);
+}
+
+.cardDone {
+  flex: none;
+  color: var(--color-success);
+}
+
+.cardBody {
+  display: grid;
+  gap: var(--space-4);
+  padding: 0 0 var(--space-2);
+}
+
+.itemNote {
+  margin: 0 var(--space-4);
+  color: var(--color-text-2);
+  font-size: var(--text-sm);
+  white-space: pre-line;
+}
+
+/* ── «La espalda de la camiseta» ── */
+.lastTime {
+  min-height: 2rem;
+  padding: 0 var(--space-4);
+}
+
+.lastTime p {
+  margin: 0;
+}
+
+.firstTime {
+  margin: 0;
+  padding: 0 var(--space-4);
+  color: var(--color-text-2);
+  font-size: var(--text-sm);
+}
+
+.lastLabel {
+  color: var(--color-text-2);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.dorsal {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+  font-family: var(--font-condensed);
+  font-size: var(--text-dorsal);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-tight);
+  line-height: 0.95;
+}
+
+.dorsalUnit {
+  color: var(--color-text-2);
+  font-size: var(--text-3xl);
+}
+
+.lastLine {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-3);
+  margin-top: var(--space-1);
+  font-family: var(--font-condensed);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-semibold);
+}
+
+.lastLine[data-full] {
+  font-size: var(--text-xl);
+}
+
+.feelTag {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--feel, var(--color-text-2));
+  color: var(--color-on-feel);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+}
+
+.lastTime .previous {
+  margin-top: var(--space-2);
+  color: var(--color-text-3);
+  font-size: var(--text-sm);
+}
+
+[data-feel='demasiado'] {
+  --feel: var(--feel-demasiado);
+}
+
+[data-feel='justo'] {
+  --feel: var(--feel-justo);
+}
+
+[data-feel='bien'] {
+  --feel: var(--feel-bien);
+}
+
+[data-feel='puedo_mas'] {
+  --feel: var(--feel-puedo-mas);
+}
+
+[data-feel='poco'] {
+  --feel: var(--feel-poco);
+}
+
+/* ── Set rows (the captain's armband on the active one) ── */
+.sets {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--color-line);
+}
+
+.set {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr) auto 1.5rem;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  min-height: 52px;
+  padding: 0 var(--space-3) 0 var(--space-4);
+  border: 0;
+  border-bottom: 1px solid var(--color-line);
+  background: none;
+  color: var(--color-text);
+  text-align: start;
+  touch-action: manipulation;
+  transition: background-color var(--dur-fast) var(--ease-out);
+}
+
+.set[data-drop] {
+  min-height: 44px;
+}
+
+.setIndex {
+  color: var(--color-text-3);
+  font-family: var(--font-condensed);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+}
+
+.setNote {
+  overflow: hidden;
+  color: var(--color-text-2);
+  font-size: var(--text-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.setNote[data-feel] {
+  color: var(--color-text);
+}
+
+.setNote[data-feel]::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: var(--space-2);
+  border-radius: 50%;
+  background: var(--feel);
+  vertical-align: 1px;
+}
+
+/* La regla de la columna: weight × reps right-aligned in a rigid column. */
+.setValue {
+  font-family: var(--font-condensed);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-semibold);
+  text-align: end;
+  white-space: nowrap;
+}
+
+.setTimes {
+  color: var(--color-text-3);
+}
+
+.setTarget {
+  color: var(--color-text-3);
+  font-size: var(--text-lg);
+}
+
+.set:not([data-done]) .setValue {
+  color: var(--color-text-2);
+}
+
+.setCheck {
+  display: grid;
+  place-items: center;
+  color: var(--color-success);
+}
+
+.set[data-active] {
+  min-height: 64px;
+  border-bottom-color: transparent;
+  background: var(--color-armband);
+  box-shadow: inset 6px 0 0 var(--color-armband-stripe);
+  color: var(--color-on-armband);
+}
+
+.set[data-active] .setIndex,
+.set[data-active] .setNote,
+.set[data-active] .setValue,
+.set[data-active] .setTimes,
+.set[data-active] .setTarget,
+.set[data-active] .setCheck {
+  color: inherit;
+}
+
+.set[data-active] .setValue {
+  font-size: var(--text-3xl);
+}
+
+@media (hover: hover) {
+  .set:not([data-active]):hover {
+    background: var(--color-hover);
+  }
+}
+
+.listActions {
+  display: flex;
+  justify-content: center;
+}
+
+/* ── Notes ── */
+.note {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.noteLabel {
+  padding: 0;
+  color: var(--color-text-2);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.noteInput {
+  width: 100%;
+  min-height: 5rem;
+  padding: var(--space-3);
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  resize: vertical;
+}
+
+.noteInput::placeholder {
+  color: var(--color-text-3);
+}
+
+.noteInput:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+/* ── Exercise options (sheet) ── */
+.options {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.optionGroup {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.optionRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+}
+
+.up svg {
+  transform: rotate(90deg);
+}
+
+.down svg {
+  transform: rotate(90deg);
+}
+
+.stepChoice {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.stepChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.stepChip {
+  min-width: var(--hit-min);
+  min-height: var(--hit-min);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text);
+  font-weight: var(--weight-semibold);
+}
+
+.stepChip[aria-pressed='true'] {
+  border-color: var(--color-text);
+  background: var(--color-text);
+  color: var(--color-bg);
+}
+
+/* ── Control panel (thumb zone) ── */
+.panel {
+  position: sticky;
+  bottom: 0;
+  z-index: var(--z-raised);
+  display: grid;
+  gap: var(--space-3);
+  margin-inline: calc(var(--gutter) * -1);
+  padding: var(--space-3) var(--gutter) calc(var(--space-3) + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--color-line);
+  background: var(--color-dock);
+}
+
+.panelLabel {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin: 0;
+  font-size: var(--text-sm);
+}
+
+.panelExercise {
+  overflow: hidden;
+  color: var(--color-text-2);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.panelSet {
+  flex: none;
+  font-weight: var(--weight-semibold);
+}
+
+.optional {
+  color: var(--color-text-3);
+  font-weight: var(--weight-regular);
+}
+
+.steppers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+.stepper {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.stepperLabel {
+  color: var(--color-text-2);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.stepperControl {
+  display: grid;
+  grid-template-columns: var(--control-height) minmax(0, 1fr) var(--control-height);
+  align-items: center;
+  height: var(--control-height);
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.stepperControl:has(.stepperInput:focus-visible) {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.stepperButton {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: calc(var(--radius-md) - 1px);
+  background: transparent;
+  color: var(--color-text);
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-touch-callout: none;
+  transition:
+    transform var(--dur-instant) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out);
+}
+
+.stepperButton:active:not(:disabled) {
+  transform: scale(var(--scale-press));
+  background: var(--color-press);
+}
+
+.stepperButton:disabled {
+  color: var(--color-text-disabled);
+}
+
+.stepperInput {
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-text);
+  font-family: var(--font-condensed);
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-bold);
+  text-align: center;
+}
+
+.stepperInput::placeholder {
+  color: var(--color-text-3);
+  font-size: var(--text-xl);
+}
+
+.stepperInput:focus-visible {
+  outline: none;
+}
+
+/* «Serie hecha»: gold is what can be pressed right now. */
+.done {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--control-height);
+  border: 0;
+  border-radius: var(--radius-md);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  touch-action: manipulation;
+  transition:
+    transform var(--dur-instant) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out);
+}
+
+.done:active {
+  transform: scale(var(--scale-press));
+  background: var(--color-accent-press);
+}
+
+@media (hover: hover) {
+  .done:hover {
+    background: var(--color-accent-hover);
+  }
+}
+
+.allDone {
+  margin: 0;
+  padding: var(--space-2) 0;
+  color: var(--color-text-2);
+  text-align: center;
+}
+
+/* Feel: five big buttons, label always visible, colour as the border (filled when chosen). */
+.feelPrompt {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.feels {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--space-1);
+}
+
+.feel {
+  min-height: var(--control-height);
+  padding: 0 2px;
+  border: 2px solid var(--feel);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  line-height: 1.15;
+  touch-action: manipulation;
+  transition:
+    transform var(--dur-instant) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out);
+}
+
+.feel:active {
+  transform: scale(var(--scale-press));
+}
+
+.feel[aria-pressed='true'] {
+  background: var(--feel);
+  color: var(--color-on-feel);
+}
+
+/* The 3 s before the rest starts on its own. */
+.feelTimeout {
+  height: 2px;
+  border-radius: 1px;
+  background: var(--color-line-strong);
+  transform-origin: left;
+  animation: feel-timeout 3s linear forwards;
+}
+
+@keyframes feel-timeout {
+  to {
+    transform: scaleX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feelTimeout {
+    animation: none;
+  }
+}
+
+/* ── Rest timer: one row (ring + clock, then −15 / +15 / Saltar) ── */
+.rest {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.restRing {
+  width: 48px;
+  height: 48px;
+  transform: rotate(-90deg);
+}
+
+.restTrack,
+.restProgress {
+  fill: none;
+  stroke-width: 6;
+}
+
+.restTrack {
+  stroke: var(--color-line-strong);
+}
+
+.restProgress {
+  stroke: var(--color-accent);
+  stroke-linecap: round;
+  transition: stroke-dashoffset 250ms linear;
+}
+
+.restText {
+  display: grid;
+  min-width: 0;
+}
+
+.restLabel {
+  overflow: hidden;
+  color: var(--color-text-2);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-label);
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.restClock {
+  color: var(--color-accent-ink);
+  font-family: var(--font-condensed);
+  font-size: var(--text-4xl);
+  font-weight: var(--weight-bold);
+  line-height: 1;
+}
+
+.rest[data-ended] .restLabel {
+  color: var(--color-accent-ink);
+}
+
+.restActions {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.restActions > * {
+  min-width: var(--hit-min);
+  padding-inline: var(--space-3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .restProgress {
+    transition: none;
+  }
+}
+
+/* ── Desktop: list on the left, controls in a column on the right ── */
+@container main (min-width: 52rem) {
+  .session {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 22rem;
+    grid-template-rows: auto 1fr;
+    column-gap: var(--space-8);
+  }
+
+  .header {
+    grid-column: 1 / -1;
+  }
+
+  .panel {
+    position: sticky;
+    top: calc(60px + var(--space-6));
+    bottom: auto;
+    align-self: start;
+    margin: var(--space-6) 0 0;
+    padding: var(--space-4);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+  }
+}

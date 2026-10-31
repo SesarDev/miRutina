@@ -9,9 +9,11 @@ export function RootLayout() {
   const [moreOpen, setMoreOpen] = useState(false)
   const pathname = useRouterState({ select: (s) => s.location.pathname })
   const moreActive = MORE_NAV_ITEMS.some((item) => pathname.startsWith(item.to))
+  // The session in progress is a dedicated screen: no bottom bar, its own control panel.
+  const focus = pathname.startsWith('/sesion/')
 
   return (
-    <div className={styles.shell}>
+    <div className={styles.shell} data-focus={focus || undefined}>
       <a href="#contenido" className={styles.skipLink}>
         Saltar al contenido
       </a>
@@ -42,7 +44,7 @@ export function RootLayout() {
         </div>
       </aside>
 
-      <SyncIndicator compact />
+      {!focus && <SyncIndicator compact />}
       <Toaster />
 
       <main id="contenido" className={styles.main} tabIndex={-1}>

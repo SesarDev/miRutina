@@ -116,6 +116,13 @@ export type PlannedWorkout = {
   sessionId: string | null
 } & SyncFields
 
+/** An exercise of a session: a copy of the routine item, editable during the session. */
+export type SessionItem = RoutineItem & {
+  skipped: boolean
+  /** Free note for this exercise in this session. */
+  note: string | null
+}
+
 export type Session = {
   id: string
   /** YYYY-MM-DD */
@@ -124,6 +131,8 @@ export type Session = {
   startedAt: string
   endedAt: string | null
   notes: string | null
+  /** Exercises in performance order (rows from before F3 may lack it). */
+  items: SessionItem[]
 } & SyncFields
 
 export type SetLog = {

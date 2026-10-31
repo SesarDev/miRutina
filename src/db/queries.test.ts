@@ -17,6 +17,7 @@ async function session(id: string, date: string) {
     startedAt: `${date}T10:00:00.000Z`,
     endedAt: `${date}T11:00:00.000Z`,
     notes: null,
+    items: [],
   })
 }
 

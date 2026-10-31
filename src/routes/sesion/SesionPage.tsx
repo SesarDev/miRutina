@@ -1,19 +1,48 @@
 import { getRouteApi, Link } from '@tanstack/react-router'
-import { format } from 'date-fns'
+import { useEffect, useMemo, useState } from 'react'
 import { PageHeader } from '@/components/PageHeader'
-import { buttonClassName, EmptyState } from '@/components/ui'
-import { useRoutine, useSession } from '@/db/queries'
-import { DATE_OPTIONS } from '@/lib/dates'
+import { Button, buttonClassName, EmptyState, Sheet } from '@/components/ui'
+import {
+  useExerciseSettingsById,
+  useExercisesById,
+  useRoutine,
+  useSession,
+  useSessionRows,
+} from '@/db/queries'
+import { addExerciseToSession, itemsOf } from '@/db/sessions'
+import { usePrefs } from '@/lib/prefs'
+import { blocksOf, defaultWeightStep, sequence } from '@/lib/session'
+import { ExercisePicker } from '@/routes/rutinas/ExercisePicker'
+import { ControlPanel } from './ControlPanel'
+import { ExerciseCard } from './ExerciseCard'
+import { SessionHeader } from './SessionHeader'
+import { SessionNotes } from './SessionNotes'
+import { selectRow, useSessionUi } from './sessionStore'
+import styles from './Session.module.css'
 
 const route = getRouteApi('/sesion/$sessionId')
 
-/** Placeholder until F3 builds the session screen. */
 export function SesionPage() {
   const { sessionId } = route.useParams()
   const session = useSession(sessionId)
+  const rows = useSessionRows(sessionId)
   const routine = useRoutine(session?.routineId ?? '')
+  const items = useMemo(() => (session ? itemsOf(session) : []), [session])
+  const exerciseIds = items.map((i) => i.exerciseId)
+  const exercises = useExercisesById(exerciseIds)
+  const settings = useExerciseSettingsById(exerciseIds)
+  const selectedRowId = useSessionUi((s) => s.selectedRowId)
+  const defaultRestSec = usePrefs((s) => s.defaultRestSec)
+  const [adding, setAdding] = useState(false)
 
-  if (session === undefined) return null
+  // A selection from another session (or a deleted row) falls back to «next set».
+  useEffect(() => {
+    if (rows && selectedRowId && !rows.some((r) => r.id === selectedRowId)) selectRow(null)
+  }, [rows, selectedRowId])
+
+  const steps = useMemo(() => sequence(items, rows ?? []), [items, rows])
+
+  if (session === undefined || rows === undefined) return null
   if (!session || session.deletedAt) {
     return (
       <>
@@ -32,22 +61,89 @@ export function SesionPage() {
     )
   }
 
+  const next = steps.find((s) => !s.row.completedAt)
+  const active = steps.find((s) => s.row.id === selectedRowId) ?? next
+  const activeItem = items.find((i) => i.id === active?.itemId)
+  const activeExercise = activeItem ? exercises.get(activeItem.exerciseId) : undefined
+  const weightStep = activeItem
+    ? (settings.get(activeItem.exerciseId)?.weightStep ??
+      defaultWeightStep(activeExercise?.equipment ?? ''))
+    : 1
+  const title = session.routineId ? (routine?.name ?? 'Entreno') : 'Sesión libre'
+
   return (
-    <>
-      <PageHeader
-        title={routine?.name ?? 'Sesión libre'}
-        subtitle={`Empezada a las ${format(new Date(session.startedAt), 'HH:mm', DATE_OPTIONS)}`}
+    <div className={styles.session}>
+      <SessionHeader session={session} title={title} />
+
+      <div className={styles.body}>
+        {items.length === 0 ? (
+          <div className={styles.emptyList}>
+            <p>Añade el primer ejercicio y empieza a registrar.</p>
+          </div>
+        ) : (
+          <ol className={styles.exercises} aria-label="Ejercicios">
+            {blocksOf(items).map((block) => {
+              const cards = block.map((item) => (
+                <ExerciseCard
+                  key={item.id}
+                  sessionId={session.id}
+                  item={item}
+                  index={items.indexOf(item)}
+                  count={items.length}
+                  exercise={exercises.get(item.exerciseId)}
+                  rows={rows.filter((r) => r.exerciseId === item.exerciseId)}
+                  active={item.id === activeItem?.id}
+                  activeRowId={active?.row.id ?? null}
+                  weightStep={
+                    settings.get(item.exerciseId)?.weightStep ??
+                    defaultWeightStep(exercises.get(item.exerciseId)?.equipment ?? '')
+                  }
+                />
+              ))
+              if (block.length === 1) return cards
+              const rounds = block.at(-1)!.sets
+              return (
+                <li key={block[0]!.groupId} className={styles.superset}>
+                  <p className={styles.supersetLabel} id={`ss-${block[0]!.groupId}`}>
+                    Superserie · <span className="num">{rounds}</span> rondas, alternando
+                  </p>
+                  <ol className={styles.exercises} aria-labelledby={`ss-${block[0]!.groupId}`}>
+                    {cards}
+                  </ol>
+                </li>
+              )
+            })}
+          </ol>
+        )}
+
+        <div className={styles.listActions}>
+          <Button icon="plus" onClick={() => setAdding(true)}>
+            Añadir ejercicio
+          </Button>
+        </div>
+
+        <SessionNotes session={session} />
+      </div>
+
+      <ControlPanel
+        session={session}
+        items={items}
+        rows={rows}
+        step={active}
+        exerciseName={activeExercise?.nameEs ?? ''}
+        weightStep={weightStep}
+        allDone={!next && rows.length > 0}
       />
-      <EmptyState
-        icon="today"
-        title="El registro de series llega en la próxima versión"
-        description="La sesión ya está guardada y enlazada al calendario. Pronto podrás registrar aquí cada serie con su peso, sus repeticiones y cómo te sentiste."
-        actions={
-          <Link to="/" className={buttonClassName({ variant: 'secondary' })}>
-            Volver a Hoy
-          </Link>
-        }
-      />
-    </>
+
+      <Sheet open={adding} onClose={() => setAdding(false)} title="Añadir ejercicio">
+        <ExercisePicker
+          added={new Set(exerciseIds)}
+          onAdd={(exerciseId) => {
+            setAdding(false)
+            void addExerciseToSession(session.id, exerciseId, defaultRestSec)
+          }}
+        />
+      </Sheet>
+    </div>
   )
 }

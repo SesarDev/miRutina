@@ -36,6 +36,16 @@
   margin: 0 auto;
 }
 
+/* Session in progress: the page owns the whole height (header band and control panel). */
+.shell[data-focus] .bottomNav {
+  display: none;
+}
+
+.shell[data-focus] .main {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
 /* ── Mobile bottom bar ── */
 .bottomNav {
   position: fixed;
@@ -160,6 +170,11 @@
 
   .main {
     padding: var(--space-10) var(--gutter) var(--space-16);
+  }
+
+  .shell[data-focus] .main {
+    padding-top: 0;
+    padding-bottom: 0;
   }
 
   /* The column stretches with the page; its content stays put while scrolling. */

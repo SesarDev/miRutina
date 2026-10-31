@@ -54,6 +54,34 @@ export async function save<T extends SyncTable>(table: T, input: Input<T>): Prom
   return row
 }
 
+/** Inserts or replaces several rows of one table in a single transaction. */
+export async function saveMany<T extends SyncTable>(
+  table: T,
+  inputs: Input<T>[],
+): Promise<SyncedRows[T][]> {
+  if (!inputs.length) return []
+  const updatedAt = nowIso()
+  const rows = inputs.map((input) => ({ deletedAt: null, ...input, updatedAt }) as SyncedRows[T])
+
+  await db.transaction('rw', db.table(table), db.outbox, async () => {
+    await db.table(table).bulkPut(rows)
+    for (const row of rows) await enqueue(table, keyOf(table, row), updatedAt)
+  })
+  notify(table)
+  return rows
+}
+
+/** Changes some fields of an existing row. Returns undefined if it does not exist. */
+export async function patch<T extends SyncTable>(
+  table: T,
+  id: string,
+  changes: Partial<Input<T>>,
+): Promise<SyncedRows[T] | undefined> {
+  const current = (await db.table(table).get(id)) as SyncedRows[T] | undefined
+  if (!current) return undefined
+  return save(table, { ...current, ...changes } as Input<T>)
+}
+
 /** Marks a row as deleted; it stays in the table and syncs the deletion. */
 export async function softDelete(table: SyncTable, id: string): Promise<void> {
   const deletedAt = nowIso()
