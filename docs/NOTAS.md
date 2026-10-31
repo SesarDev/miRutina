@@ -19,6 +19,8 @@
 
 - **F5 · Motion y pulido:** cerrada el 31 oct 2026 (etiqueta `f5-done`). Micro-interacciones CSS con tokens (check de serie, valoración escalonada, cifra del stepper, pulso del descanso, píldora deslizante, toast, icon swap, shake, skeleton, acordeón), Flip (semana ↔ mes, miniatura → ficha, brazalete y reordenar en la sesión), ScrollTrigger con moderación (historial, Progreso, líneas de las gráficas), momento de récord y Hoy reorganizado. Criterios 2–6 verificados (Playwright: medición de animaciones, «reducir movimiento» emulado, 0 ScrollTriggers/tweens tras navegar, detector de impeccable limpio, `refine` sin valores sueltos). **Pendiente de verificar a mano** (el usuario lo prueba después): que marcar y valorar se sienta instantáneo en el móvil real y los 60 fps con DevTools remoto (medido solo con la CPU emulada 4× en Chromium).
 
+- **F6 · PWA y lanzamiento:** implementada el 31 oct 2026 en una ejecución programada (sin el usuario delante); **sin cerrar** hasta que el usuario la confirme. PWA instalable y offline, exportar/importar, despliegue preparado (guía en `docs/DESPLIEGUE.md`) y Lighthouse móvil 90–92 / accesibilidad 100 / buenas prácticas 100 en local. Pendiente del usuario: variables en Vercel, URLs en Supabase, instalar en el móvil y la prueba de extremo a extremo.
+
 ## F5 · Auditoría de partida (31 oct 2026)
 
 ### transitions.dev (elegido con el usuario)
@@ -131,20 +133,30 @@ Menores: comentario «3 s» en `ControlPanel.tsx:52` (son 5 s); «0 de 0 días e
 - **Stepper de la sesión** con container query: en columnas estrechas (panel de PC) los extremos bajan a 44 px y la cifra no se corta.
 - **Verificación**: «reducir movimiento» comprobado en Playwright (nada se desplaza ni escala durante la sesión ni en el calendario). Tras navegar por todas las pantallas con GSAP quedan 0 ScrollTriggers y 0 tweens activos, sin avisos. CPU 4× más lenta (Chromium emulado): mediana de 16,7 ms por fotograma; 8 de 128 por encima de 33 ms, todos en los toques (Dexie + render), no en las animaciones.
 
+### F6
+- **Preguntas de la fase resueltas sin preguntar** (ejecución programada): despliegue en **Vercel** (ya estaba adelantado y el repositorio en GitHub); nombre **«miRutina»** (también el corto); icono propio con el lenguaje de `DESIGN.md`: el brazalete (banda vinilo con franja dorada) sobre marino con una mancuerna (`public/icon.svg`, iconos generados con `npx pwa-assets-generator`). La media sigue en el repositorio (138 MB, privado); no se mueve a Supabase Storage.
+- **Service worker propio** (`src/sw/sw.ts`, `injectManifest`) en vez del generado, para tener dos cachés de GIF: la **fijada** (favoritos + ejercicios de mis rutinas, la gestiona la app en `src/sync/offlineGifs.ts`, se reconcilia al cambiar favoritos o rutinas, también por sync, y al volver la red) y la de **vistos** (CacheFirst, 80 como máximo, 60 días). Precache: shell, todos los chunks (incluido el del catálogo) y las 1.324 imágenes (≈ 11,4 MB, 1.394 entradas). Supabase no pasa por el service worker.
+- **Actualizaciones** con `registerType: 'prompt'`: aviso «Nueva versión disponible · Recargar» (`src/app/UpdatePrompt.tsx`), oculto en `/sesion/…` y mientras haya una sesión abierta; busca versión nueva cada hora.
+- **Copia de seguridad** (`src/db/backup.ts`): JSON `{ app, format, schemaVersion, exportedAt, tables }` con todas las tablas de usuario y las filas borradas; del catálogo solo los ejercicios propios. La importación conserva el `updatedAt` del archivo (`repo.putRaw`) y encola las filas para sync, de modo que last-write-wins sigue comparando los momentos reales de edición. Recordatorio informativo a los 30 días (`meta.lastExportAt`, por dispositivo).
+- **Rendimiento de carga** (Lighthouse móvil pasó de 63 a 90–92): todas las pantallas salvo Hoy se cargan bajo demanda (`lazyRouteComponent`); GSAP fuera del primer bundle (`ExerciseThumb` separado de `ExerciseMedia`, `parseDuration` en `motion/time.ts`, la captura del brazalete se registra desde `SesionPage`); el cliente de Supabase va en `sync/client.ts` y se carga tras la carga de la página (o enseguida si la URL trae el token del enlace mágico); el catálogo se siembra después, en lotes de 150 que ceden el hilo; el CSS de entrada va en línea en `index.html` y se precargan las dos fuentes del primer pintado; arranque estático (`.boot`) para pintar antes del JS; Hoy no se pinta hasta tener los datos del día (CLS 0).
+- **Vercel**: los archivos de la PWA (`sw.js`, `workbox-*`, manifest, iconos) quedan fuera del reescrito a `index.html`; `sw.js`, el manifest e `index.html` sin caché.
+- **Medición**: Lighthouse 12 en local con `serve` (HTTP/1.1, gzip): rendimiento 90–92, accesibilidad 100, buenas prácticas 100; instalable sin errores (`Page.getInstallabilityErrors`). Lighthouse 12 ya no tiene categoría PWA.
+
 ## Deuda
 
-- El favicon sigue siendo el de Vite; los iconos de la PWA llegan en F6.
 - `impeccable critique` se ejecutó en un solo contexto (sin subagentes); repetir la crítica completa al cerrar F3, cuando haya una pantalla real de sesión.
 - La sección «Brazalete» de `DESIGN.md` describe un componente que de momento solo existe como muestra en `/dev/ui`.
 - Auditoría de impeccable hecha sin el overlay del navegador (detector por CLI + Playwright); el overlay en vivo queda pendiente.
 - 71 nombres de ejercicio poco comunes conservan alguna palabra en inglés; ampliar el diccionario o las correcciones cuando aparezcan en rutinas.
-- El chunk del catálogo supera el aviso de 500 kB de Vite (se carga diferido; valorar dividirlo en F6).
+- El chunk del catálogo supera el aviso de 500 kB de Vite; se carga diferido y en segundo plano, así que no se divide.
+- F6 (lo hace el usuario fuera del repositorio): variables `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` en Vercel, Site URL y Redirect URLs en Supabase, instalar en el móvil y la prueba de extremo a extremo (ver `docs/DESPLIEGUE.md`). Lighthouse medido en local, no contra la URL de producción.
+- F6: el chunk de Recharts (≈ 100 kB gzip) se descarga al abrir la ficha, Progreso o Cuerpo; offline no importa (está precacheado).
+- F6: la primera instalación descarga ≈ 11,4 MB de precache; con datos móviles conviene hacerlo con wifi (lo dice la guía).
 - Predefinidas: solo «Copiar a mis rutinas». «Usar» (planificar o empezar tal cual sin copiar) queda pendiente: el calendario necesita una rutina propia.
 - Verificación manual de la sincronización entre dispositivos (criterios 5 y 6 de F1) pendiente; si falla, se arregla al inicio de F2.
 - El estado «Hecho» del calendario no se ha visto con datos reales: llega cuando F3 termine sesiones.
 - No hay script `test:e2e` ni tests de Playwright versionados; la verificación de F2 se hizo con un script suelto. Crear la suite e2e cuando haya flujo de sesión (F3).
 
-- Probar en el móvil por `http://` en la red local es un contexto inseguro. Se adelanta el despliegue en Vercel (paso 3 de F6) para tener HTTPS; el resto de F6 (PWA, cabeceras de `sw.js`, exportar) sigue pendiente.
 
 - F3: el resumen final no compara con la última vez (solo lista los récords).
 - F3: no hay deshacer al desmarcar una serie ni al borrar un calentamiento añadido por error (se puede quitar desde «Opciones»).
