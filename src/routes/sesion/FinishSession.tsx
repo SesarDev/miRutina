@@ -1,9 +1,11 @@
 import { Link } from '@tanstack/react-router'
 import { useState } from 'react'
-import { Button, buttonClassName, Sheet } from '@/components/ui'
+import { Button, buttonClassName, Icon, Sheet } from '@/components/ui'
+import { useSessionRecords } from '@/db/queries'
 import { finishSession } from '@/db/sessions'
 import type { Session, SetLog } from '@/db/types'
 import { formatDay } from '@/lib/dates'
+import { formatRecord } from '@/lib/progress'
 import { summarize } from '@/lib/session'
 import { syncEngine } from '@/sync'
 import { resetSessionUi } from './sessionStore'
@@ -58,7 +60,7 @@ export function FinishButton({ session, rows }: { session: Session; rows: SetLog
   )
 }
 
-/** After «Terminar»: what was done, plainly. Records and celebrations arrive later (F4/F5). */
+/** After «Terminar»: what was done, plainly, and the records it set (the celebration is F5). */
 export function SessionSummary({
   session,
   rows,
@@ -69,6 +71,7 @@ export function SessionSummary({
   title: string
 }) {
   const summary = summarize(session, rows)
+  const records = useSessionRecords(session.id) ?? []
   const facts: [string, string][] = [
     ['Duración', durationText(summary.durationMin)],
     ['Ejercicios', String(summary.exercises)],
@@ -89,6 +92,24 @@ export function SessionSummary({
           </div>
         ))}
       </dl>
+      {records.length > 0 && (
+        <section aria-labelledby="summary-records" className={styles.summaryRecords}>
+          <h2 id="summary-records" className={styles.lastLabel}>
+            {records.length === 1 ? 'Récord nuevo' : `${records.length} récords nuevos`}
+          </h2>
+          <ul>
+            {records.map((r) => (
+              <li key={`${r.exerciseId}-${r.kind}-${r.weight ?? ''}`}>
+                <Icon name="star" size={18} className={styles.summaryStar} />
+                <span>
+                  <span className={styles.summaryRecordName}>{r.name}</span>
+                  <span className={styles.summaryRecordText}>{formatRecord(r)}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
       {session.notes && <p className={styles.itemNote}>{session.notes}</p>}
       <Link to="/" className={buttonClassName({ variant: 'primary', size: 'lg', block: true })}>
         Ir a Hoy

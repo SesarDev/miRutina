@@ -1,5 +1,10 @@
 import 'fake-indexeddb/auto'
-import { exerciseHistory, lastSessionsForExercise, progressOverview } from './queries'
+import {
+  exerciseHistory,
+  lastSessionsForExercise,
+  progressOverview,
+  sessionRecords,
+} from './queries'
 import { save, softDelete } from './repo'
 import { db } from './schema'
 import type { SetLog } from './types'
@@ -123,5 +128,22 @@ describe('progressOverview', () => {
     // El récord del 20 sep queda fuera de los 30 días; el de 20 oct, dentro.
     expect(new Set(records.map((r) => r.date))).toEqual(new Set(['2026-10-20']))
     expect(records.map((r) => r.kind)).toContain('weight')
+  })
+})
+
+describe('sessionRecords', () => {
+  it('los récords de la sesión contra las anteriores, no contra las posteriores', async () => {
+    await session('a', '2026-10-01')
+    await session('b', '2026-10-05')
+    await session('c', '2026-10-09')
+    await log('a', '2026-10-01', 0, { weight: 60 })
+    await log('b', '2026-10-05', 0, { weight: 62.5 })
+    await log('c', '2026-10-09', 0, { weight: 70 })
+    expect((await sessionRecords('b')).map((r) => r.kind).sort()).toEqual([
+      'e1rm',
+      'volume',
+      'weight',
+    ])
+    expect(await sessionRecords('a')).toEqual([])
   })
 })

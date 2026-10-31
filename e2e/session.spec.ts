@@ -89,3 +89,33 @@ test('un doble toque marca una sola serie y una serie sin reps no se puede marca
   await page.mouse.click(done!.x + done!.width / 2, done!.y + done!.height / 2)
   await expect(doneRows(page)).toHaveCount(1)
 })
+
+test('un récord aparece en el resumen de la sesión y en la ficha del ejercicio', async ({
+  page,
+}) => {
+  const freeSession = async (weight: string) => {
+    await page.goto('/')
+    await page.getByRole('button', { name: 'Entrenar algo hoy' }).click()
+    await page.getByRole('button', { name: /^Sesión libre/ }).click()
+    await page.getByRole('button', { name: 'Añadir ejercicio' }).click()
+    await page.getByLabel('Buscar ejercicio para añadir').fill('press de banca con barra')
+    await page.getByRole('button', { name: 'Añadir Press de banca con barra', exact: true }).click()
+    await page.getByRole('button', { name: /^Serie 1:/ }).click()
+    await logSet(page, weight, '10', 'Bien')
+    await page.getByRole('button', { name: 'Terminar' }).click()
+    await page.getByRole('button', { name: 'Terminar entreno' }).click()
+    await expect(page.getByText('Entreno terminado.')).toBeVisible()
+  }
+
+  await freeSession('60')
+  await expect(page.getByText(/récords? nuevos?/i)).toHaveCount(0)
+
+  await freeSession('62,5')
+  await expect(page.getByRole('heading', { name: '3 récords nuevos' })).toBeVisible()
+  await expect(page.getByText('Más peso: 62,5 kg (antes 60 kg)')).toBeVisible()
+
+  await page.goto('/ejercicio/0025?tab=historial')
+  await expect(page.getByText('Más peso: 62,5 kg (antes 60 kg)')).toBeVisible()
+  await expect(page.getByRole('img', { name: 'Récord' })).toHaveCount(1)
+  await expect(page.getByRole('list', { name: 'Sesiones' }).getByText('Bien')).toHaveCount(2)
+})

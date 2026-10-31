@@ -4,7 +4,13 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { useMemo } from 'react'
 import { buildIndex } from '@/lib/exerciseSearch'
 import { sortSets, summarizeSets, summaryFeel, type PastSession } from '@/lib/lastTime'
-import { recordsBySession, sessionStats, workSets, type ExerciseRecord } from '@/lib/progress'
+import {
+  detectRecords,
+  recordsBySession,
+  sessionStats,
+  workSets,
+  type ExerciseRecord,
+} from '@/lib/progress'
 import { estimateMinutes } from '@/lib/routines'
 import { db } from './schema'
 import { addDaysKey, type DateKey } from '@/lib/dates'
@@ -324,4 +330,28 @@ export async function progressOverview(today: DateKey) {
 
 export function useProgressOverview(today: DateKey) {
   return useLiveQuery(() => progressOverview(today), [today])
+}
+
+/** New records of a session, each against the sessions before it, in performance order. */
+export async function sessionRecords(sessionId: string): Promise<RecentRecord[]> {
+  const rows = (await db.setLogs.where('sessionId').equals(sessionId).toArray()).filter(
+    (r) => !r.deletedAt && r.completedAt,
+  )
+  const ids = [...new Set(rows.map((r) => r.exerciseId))]
+  const names = new Map(
+    (await db.exercises.bulkGet(ids)).filter((e) => e !== undefined).map((e) => [e.id, e.nameEs]),
+  )
+  const out: RecentRecord[] = []
+  for (const exerciseId of ids) {
+    const history = await exerciseHistory(exerciseId)
+    const current = history.find((h) => h.sessionId === sessionId)
+    if (!current) continue
+    const name = names.get(exerciseId) ?? 'Ejercicio'
+    for (const r of detectRecords(exerciseId, current, history)) out.push({ ...r, name })
+  }
+  return out
+}
+
+export function useSessionRecords(sessionId: string) {
+  return useLiveQuery(() => sessionRecords(sessionId), [sessionId])
 }

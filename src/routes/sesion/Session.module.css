@@ -151,6 +151,45 @@
   line-height: 1;
 }
 
+.summaryRecords {
+  display: grid;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.summaryRecords ul {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--color-line);
+}
+
+.summaryRecords li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-3);
+  padding-block: var(--space-3);
+  border-bottom: 1px solid var(--color-line);
+}
+
+.summaryStar {
+  margin-top: 2px;
+  fill: currentColor;
+}
+
+.summaryRecordName {
+  display: block;
+  font-weight: var(--weight-semibold);
+}
+
+.summaryRecordText {
+  display: block;
+  color: var(--color-text-2);
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+}
+
 /* ── Exercise list ── */
 .body {
   flex: 1;
