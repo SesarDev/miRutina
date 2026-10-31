@@ -1,0 +1,246 @@
+import {
+  detectRecords,
+  estimated1RM,
+  personalRecords,
+  recordsBySession,
+  sessionStats,
+  workSets,
+  type ExerciseSession,
+  type ProgressSet,
+} from './progress'
+
+const DONE = '2026-10-25T10:00:00.000Z'
+
+const set = (
+  weight: number | null,
+  reps: number | null,
+  opts: Partial<ProgressSet> = {},
+): ProgressSet => ({ weight, reps, isWarmup: false, completedAt: DONE, dropIndex: 0, ...opts })
+
+const warmup = (weight: number, reps: number) => set(weight, reps, { isWarmup: true })
+
+let n = 0
+const session = (
+  date: string,
+  sets: ProgressSet[],
+  startedAt = `${date}T10:00:00.000Z`,
+): ExerciseSession => ({
+  sessionId: `s${++n}-${date}`,
+  date,
+  startedAt,
+  sets,
+})
+
+const kinds = (records: { kind: string }[]) => records.map((r) => r.kind).sort()
+
+describe('estimated1RM', () => {
+  it('aplica Epley con un decimal', () => {
+    expect(estimated1RM(100, 10)).toBe(133.3)
+    expect(estimated1RM(60, 5)).toBe(70)
+    expect(estimated1RM(80, 1)).toBe(82.7)
+  })
+
+  it('12 reps aún cuenta; 13 o más no', () => {
+    expect(estimated1RM(50, 12)).toBe(70)
+    expect(estimated1RM(50, 13)).toBeNull()
+    expect(estimated1RM(50, 20)).toBeNull()
+  })
+
+  it('null en calentamientos, sin peso o sin reps', () => {
+    expect(estimated1RM(60, 10, true)).toBeNull()
+    expect(estimated1RM(null, 10)).toBeNull()
+    expect(estimated1RM(0, 10)).toBeNull()
+    expect(estimated1RM(60, null)).toBeNull()
+    expect(estimated1RM(60, 0)).toBeNull()
+  })
+})
+
+describe('workSets', () => {
+  it('quita calentamientos, filas sin marcar y series sin reps', () => {
+    const sets = [
+      warmup(40, 10),
+      set(60, 10),
+      set(60, 8, { completedAt: null }),
+      set(60, 0),
+      set(60, null),
+    ]
+    expect(workSets(sets)).toEqual([set(60, 10)])
+  })
+})
+
+describe('sessionStats', () => {
+  it('mejor serie, volumen y 1RM', () => {
+    const stats = sessionStats([warmup(40, 10), set(60, 10), set(62.5, 8), set(62.5, 6)])
+    expect(stats.bestSet).toEqual({ weight: 62.5, reps: 8 })
+    expect(stats.volume).toBe(600 + 500 + 375)
+    expect(stats.best1RM).toBe(80) // 60 × (1 + 10/30) = 80; 62,5 × 8 → 79,2
+    expect(stats.maxWeight).toBe(62.5)
+    expect(stats.maxReps).toBe(10)
+  })
+
+  it('los calentamientos no cuentan para nada', () => {
+    const stats = sessionStats([warmup(100, 5), set(60, 10)])
+    expect(stats.maxWeight).toBe(60)
+    expect(stats.volume).toBe(600)
+  })
+
+  it('las series de más de 12 reps suman volumen pero no 1RM', () => {
+    const stats = sessionStats([set(30, 15), set(30, 14)])
+    expect(stats.best1RM).toBeNull()
+    expect(stats.volume).toBe(870)
+    expect(stats.bestSet).toEqual({ weight: 30, reps: 15 })
+  })
+
+  it('las bajadas suman volumen pero no definen la mejor serie', () => {
+    const stats = sessionStats([set(60, 8), set(40, 15, { dropIndex: 1 })])
+    expect(stats.volume).toBe(480 + 600)
+    expect(stats.maxReps).toBe(8)
+  })
+
+  it('peso corporal: mejor serie por reps, sin peso ni 1RM', () => {
+    const stats = sessionStats([set(null, 10), set(null, 12)])
+    expect(stats.bestSet).toEqual({ weight: null, reps: 12 })
+    expect(stats.maxWeight).toBeNull()
+    expect(stats.best1RM).toBeNull()
+    expect(stats.volume).toBe(0)
+  })
+
+  it('sin series de trabajo', () => {
+    expect(sessionStats([warmup(40, 10)])).toEqual({
+      bestSet: null,
+      volume: 0,
+      best1RM: null,
+      maxWeight: null,
+      maxReps: null,
+    })
+  })
+})
+
+describe('detectRecords', () => {
+  const a = session('2026-10-01', [set(60, 10), set(60, 10), set(60, 9)])
+
+  it('la primera sesión no tiene récords', () => {
+    expect(detectRecords('ex', a, [])).toEqual([])
+    expect(detectRecords('ex', a, [a])).toEqual([])
+  })
+
+  it('más peso, mejor 1RM y más volumen', () => {
+    const b = session('2026-10-05', [set(65, 10), set(65, 10), set(65, 9)])
+    const records = detectRecords('ex', b, [a])
+    expect(kinds(records)).toEqual(['e1rm', 'volume', 'weight'])
+    expect(records.find((r) => r.kind === 'weight')).toMatchObject({ value: 65, previous: 60 })
+    expect(records.find((r) => r.kind === 'volume')).toMatchObject({ value: 1885, previous: 1740 })
+    expect(records.find((r) => r.kind === 'e1rm')).toMatchObject({ value: 86.7, previous: 80 })
+  })
+
+  it('más reps al mismo peso', () => {
+    const b = session('2026-10-05', [set(60, 11), set(60, 8)])
+    const records = detectRecords('ex', b, [a])
+    expect(records.find((r) => r.kind === 'reps')).toMatchObject({
+      value: 11,
+      previous: 10,
+      weight: 60,
+    })
+  })
+
+  it('un peso nuevo no es récord de reps (no hay con qué comparar)', () => {
+    const b = session('2026-10-05', [set(55, 15)])
+    expect(kinds(detectRecords('ex', b, [a]))).toEqual([])
+  })
+
+  it('igualar no es récord', () => {
+    const b = session('2026-10-05', [set(60, 10), set(60, 10), set(60, 9)])
+    expect(detectRecords('ex', b, [a])).toEqual([])
+  })
+
+  it('solo compara con sesiones anteriores', () => {
+    const later = session('2026-10-20', [set(100, 10)])
+    const b = session('2026-10-05', [set(65, 10)])
+    expect(kinds(detectRecords('ex', b, [a, later]))).toContain('weight')
+  })
+
+  it('en el mismo día, ordena por hora de inicio', () => {
+    const morning = session('2026-10-05', [set(60, 10)], '2026-10-05T08:00:00.000Z')
+    const evening = session('2026-10-05', [set(62.5, 10)], '2026-10-05T19:00:00.000Z')
+    expect(kinds(detectRecords('ex', evening, [morning]))).toContain('weight')
+    expect(detectRecords('ex', morning, [evening])).toEqual([])
+  })
+
+  it('ignora los calentamientos de ambos lados', () => {
+    const withWarmup = session('2026-10-01', [warmup(100, 5), set(60, 10)])
+    const b = session('2026-10-05', [warmup(110, 5), set(62.5, 10)])
+    const weight = detectRecords('ex', b, [withWarmup]).find((r) => r.kind === 'weight')
+    expect(weight).toMatchObject({ value: 62.5, previous: 60 })
+  })
+
+  it('una sesión anterior solo de calentamiento no cuenta como precedente', () => {
+    const onlyWarmup = session('2026-10-01', [warmup(40, 10)])
+    expect(detectRecords('ex', session('2026-10-05', [set(60, 10)]), [onlyWarmup])).toEqual([])
+  })
+
+  it('con más de 12 reps no hay récord de 1RM, pero sí de reps y volumen', () => {
+    const prev = session('2026-10-01', [set(30, 13)])
+    const b = session('2026-10-05', [set(30, 15)])
+    expect(kinds(detectRecords('ex', b, [prev]))).toEqual(['reps', 'volume'])
+  })
+
+  it('una serie de 13 reps no bate un 1RM aunque su Epley fuera mayor', () => {
+    const prev = session('2026-10-01', [set(50, 10)]) // 66,7
+    const b = session('2026-10-05', [set(50, 20)]) // Epley 83,3, pero no cuenta
+    expect(kinds(detectRecords('ex', b, [prev]))).not.toContain('e1rm')
+  })
+
+  it('peso corporal: récord de reps sin peso', () => {
+    const prev = session('2026-10-01', [set(null, 10)])
+    const b = session('2026-10-05', [set(null, 12)])
+    const records = detectRecords('ex', b, [prev])
+    expect(kinds(records)).toEqual(['reps'])
+    expect(records[0]).toMatchObject({ value: 12, previous: 10, weight: null })
+  })
+
+  it('las bajadas no dan récords de reps ni de peso', () => {
+    const prev = session('2026-10-01', [set(60, 8), set(40, 10)])
+    const b = session('2026-10-05', [set(60, 8), set(40, 14, { dropIndex: 1 })])
+    expect(kinds(detectRecords('ex', b, [prev]))).not.toContain('reps')
+  })
+
+  it('apunta a la serie que lo consiguió', () => {
+    const b = session('2026-10-05', [set(60, 10, { id: 'x' }), set(70, 5, { id: 'y' })])
+    expect(detectRecords('ex', b, [a]).find((r) => r.kind === 'weight')?.setId).toBe('y')
+  })
+})
+
+describe('recordsBySession', () => {
+  it('cada sesión contra las anteriores', () => {
+    const s1 = session('2026-10-01', [set(60, 10)])
+    const s2 = session('2026-10-05', [set(62.5, 10)])
+    const s3 = session('2026-10-09', [set(62.5, 10)])
+    const map = recordsBySession('ex', [s3, s1, s2])
+    expect(map.has(s1.sessionId)).toBe(false)
+    expect(kinds(map.get(s2.sessionId)!)).toEqual(['e1rm', 'volume', 'weight'])
+    expect(map.has(s3.sessionId)).toBe(false)
+  })
+})
+
+describe('personalRecords', () => {
+  it('mejores marcas con la fecha en que se consiguieron', () => {
+    const records = personalRecords([
+      session('2026-10-09', [set(62.5, 8)]),
+      session('2026-10-01', [warmup(100, 3), set(60, 12)]),
+      session('2026-10-05', [set(62.5, 8), set(62.5, 8)]),
+    ])
+    expect(records.maxWeight).toEqual({ value: 62.5, reps: 8, date: '2026-10-05' })
+    expect(records.best1RM).toEqual({ value: 84, date: '2026-10-01' })
+    expect(records.bestVolume).toEqual({ value: 1000, date: '2026-10-05' })
+    expect(records.maxReps).toEqual({ value: 12, weight: 60, date: '2026-10-01' })
+  })
+
+  it('sin sesiones', () => {
+    expect(personalRecords([])).toEqual({
+      maxWeight: null,
+      best1RM: null,
+      bestVolume: null,
+      maxReps: null,
+    })
+  })
+})
