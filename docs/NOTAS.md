@@ -182,3 +182,4 @@ Menores: comentario «3 s» en `ControlPanel.tsx:52` (son 5 s); «0 de 0 días e
 - El anillo de descanso lleno al empezar puede leerse como «terminado»; valorar otra forma de empezar.
 - Sesión: atajos de teclado en PC (Intro para «Serie hecha», flechas para cambiar de serie).
 - El punto de «planificado» en la semana de Hoy es dorado; según la regla del oro debería ser neutro.
+- **F6 (acordado el 31 oct 2026):** sin conexión, precachear la app y las 1.324 imágenes fijas (12 MB), no los 127 MB de GIF. Los GIF se descargan bajo demanda a una caché propia: los de los **favoritos** y los de los ejercicios de **mis rutinas**, al marcarlos o añadirlos (también los que lleguen por sincronización). Se borran cuando el ejercicio deja de ser favorito y no está en ninguna rutina. El dataset no trae vídeos: la carpeta `videos/` solo tiene GIF de 180 × 180.
