@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- miRutina: the captain's armband (vinyl band, gold stripe) on kit navy, with a dumbbell. -->
+  <rect width="512" height="512" fill="#0c1626"/>
+  <g transform="translate(256 256) scale(1.25) translate(-256 -256)">
+  <rect x="96" y="188" width="320" height="136" rx="10" fill="#f3eee3"/>
+  <rect x="96" y="188" width="26" height="136" rx="10" fill="#e9af41"/>
+  <rect x="116" y="188" width="10" height="136" fill="#e9af41"/>
+  <g fill="#0c1626">
+    <rect x="212" y="249" width="112" height="14" rx="3"/>
+    <rect x="192" y="216" width="22" height="80" rx="5"/>
+    <rect x="166" y="230" width="20" height="52" rx="5"/>
+    <rect x="322" y="216" width="22" height="80" rx="5"/>
+    <rect x="350" y="230" width="20" height="52" rx="5"/>
+  </g>
+  </g>
+</svg>

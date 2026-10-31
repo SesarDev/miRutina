@@ -2,9 +2,12 @@ import { Link, Outlet, useRouterState } from '@tanstack/react-router'
 import { useState } from 'react'
 import { SyncIndicator } from '@/components/SyncIndicator'
 import { Icon, Sheet, Toaster } from '@/components/ui'
+import { useOpenSession } from '@/db/queries'
 import { RestBar } from '@/routes/sesion/RestBar'
+import { useOfflineGifs } from '@/sync/offlineGifs'
 import { useSessionUi } from '@/routes/sesion/sessionStore'
 import { BOTTOM_NAV_ITEMS, MORE_NAV_ITEMS, NAV_ITEMS } from './nav'
+import { UpdatePrompt } from './UpdatePrompt'
 import styles from './RootLayout.module.css'
 
 export function RootLayout() {
@@ -15,6 +18,8 @@ export function RootLayout() {
   const focus = pathname.startsWith('/sesion/')
   // Room at the bottom for the rest bar shown on the other screens.
   const restBar = useSessionUi((s) => s.rest !== null) && !focus
+  const sessionOpen = !!useOpenSession()
+  useOfflineGifs()
 
   return (
     <div
@@ -55,6 +60,7 @@ export function RootLayout() {
       {!focus && <SyncIndicator compact />}
       <Toaster />
       <RestBar />
+      <UpdatePrompt hidden={focus || sessionOpen} />
 
       <main id="contenido" className={styles.main} tabIndex={-1}>
         <div className={styles.content}>
