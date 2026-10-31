@@ -108,6 +108,9 @@ export function ControlPanel({
         <div className={styles.feelPrompt}>
           <p className={styles.panelLabel} id="feel-title">
             {promptLabel} · ¿Cómo ha ido? <span className={styles.optional}>Opcional</span>
+            <span className="visually-hidden">
+              . Si no eliges, el descanso empieza solo en {FEEL_TIMEOUT_MS / 1000} segundos.
+            </span>
           </p>
           <div className={styles.feels} role="group" aria-labelledby="feel-title">
             {FEELS.map((feel) => (

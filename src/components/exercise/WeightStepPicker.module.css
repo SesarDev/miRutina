@@ -42,9 +42,9 @@
 }
 
 .option[aria-pressed='true'] {
-  border-color: var(--color-text);
-  background: var(--color-text);
-  color: var(--color-bg);
+  border-color: var(--color-band);
+  background: var(--color-band);
+  color: var(--color-on-band);
 }
 
 @media (hover: hover) {

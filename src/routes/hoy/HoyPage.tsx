@@ -31,50 +31,41 @@ export function HoyPage() {
         subtitle={<time dateTime={today}>{formatLongDay(new Date())}</time>}
       />
       <div className={styles.page}>
-        <Sections />
+        <div className={styles.main}>
+          {openSession && (
+            <Link
+              to="/sesion/$sessionId"
+              params={{ sessionId: openSession.id }}
+              className={buttonClassName({ variant: 'primary', size: 'lg', block: true })}
+            >
+              <Icon name="play" size={20} />
+              Continuar entreno
+            </Link>
+          )}
 
-        {openSession && (
-          <Link
-            to="/sesion/$sessionId"
-            params={{ sessionId: openSession.id }}
-            className={buttonClassName({ variant: 'primary', size: 'lg', block: true })}
-          >
-            <Icon name="play" size={20} />
-            Continuar entreno
-          </Link>
-        )}
+          {planned === undefined ? null : todayWorkouts.length > 0 ? (
+            todayWorkouts.map((w) => <TodayWorkout key={w.id} workout={w} />)
+          ) : (
+            <NothingToday />
+          )}
+        </div>
 
-        {planned === undefined ? null : todayWorkouts.length > 0 ? (
-          todayWorkouts.map((w) => <TodayWorkout key={w.id} workout={w} />)
-        ) : (
-          <NothingToday />
-        )}
-
-        <WeekSummary />
+        <div className={styles.side}>
+          <WeekSummary />
+          <Sections />
+        </div>
       </div>
     </>
   )
 }
 
-// ── Section shortcuts ──
+// ── Section shortcuts: a quiet row at the end; today's workout comes first ──
 
-const SECTIONS: { label: string; hint: string; icon: IconName; to: string; search?: object }[] = [
-  { label: 'Rutinas', hint: 'Tuyas y predefinidas', icon: 'routines', to: '/rutinas', search: {} },
-  {
-    label: 'Calendario',
-    hint: 'Planifica la semana',
-    icon: 'calendar',
-    to: '/calendario',
-    search: {},
-  },
-  {
-    label: 'Favoritos',
-    hint: 'Tus ejercicios',
-    icon: 'star',
-    to: '/biblioteca',
-    search: { fav: true },
-  },
-  { label: 'Biblioteca', hint: '1324 ejercicios', icon: 'library', to: '/biblioteca', search: {} },
+const SECTIONS: { label: string; icon: IconName; to: string; search?: object }[] = [
+  { label: 'Rutinas', icon: 'routines', to: '/rutinas', search: {} },
+  { label: 'Calendario', icon: 'calendar', to: '/calendario', search: {} },
+  { label: 'Favoritos', icon: 'star', to: '/biblioteca', search: { fav: true } },
+  { label: 'Biblioteca', icon: 'library', to: '/biblioteca', search: {} },
 ]
 
 function Sections() {
@@ -84,9 +75,9 @@ function Sections() {
         {SECTIONS.map((s) => (
           <li key={s.label}>
             <Link to={s.to} search={s.search} className={styles.section}>
-              <Icon name={s.icon} size={24} className={styles.sectionIcon} />
+              <Icon name={s.icon} size={20} className={styles.sectionIcon} />
               <span className={styles.sectionLabel}>{s.label}</span>
-              <span className={styles.sectionHint}>{s.hint}</span>
+              <Icon name="chevronRight" size={18} className={styles.sectionChevron} />
             </Link>
           </li>
         ))}
@@ -112,14 +103,32 @@ function TodayWorkout({ workout }: { workout: PlannedEntry }) {
 
   return (
     <section className={styles.today} aria-labelledby={`today-${workout.id}`}>
-      <p className={styles.kicker}>{done ? 'Hecho hoy' : 'Toca hoy'}</p>
       <h2 id={`today-${workout.id}`} className={styles.routineName}>
         {workout.routineName}
       </h2>
-      {routine && (
-        <p className={`${styles.routineMeta} num`}>
-          {routine.items.length} ejercicios · ≈ {estimateMinutes(routine.items)} min
-        </p>
+      <p className={`${styles.routineMeta} num`}>
+        <span className={styles.state} data-done={done || undefined}>
+          {done && <Icon name="check" size={16} />}
+          {done ? 'Hecho hoy' : 'Toca hoy'}
+        </span>
+        {routine && (
+          <>
+            {' · '}
+            {routine.items.length} ejercicios · ≈ {estimateMinutes(routine.items)} min
+          </>
+        )}
+      </p>
+      {!done && (
+        <Button
+          variant="primary"
+          size="lg"
+          block
+          icon="play"
+          onClick={() => void start()}
+          disabled={starting}
+        >
+          Empezar
+        </Button>
       )}
       {routine && routine.items.length > 0 && (
         <ol className={styles.exercises}>
@@ -136,18 +145,6 @@ function TodayWorkout({ workout }: { workout: PlannedEntry }) {
             )
           })}
         </ol>
-      )}
-      {!done && (
-        <Button
-          variant="primary"
-          size="lg"
-          block
-          icon="play"
-          onClick={() => void start()}
-          disabled={starting}
-        >
-          Empezar
-        </Button>
       )}
     </section>
   )
@@ -232,6 +229,7 @@ function WeekSummary() {
   const trainedDays = new Set(sessions.filter((s) => s.endedAt).map((s) => s.date))
   const plannedDays = new Set(planned.filter((p) => p.status !== 'skipped').map((p) => p.date))
   const today = todayKey()
+  const total = Math.max(plannedDays.size, trainedDays.size)
 
   return (
     <section className={styles.week} aria-labelledby="week-title">
@@ -239,8 +237,14 @@ function WeekSummary() {
         Esta semana
       </h2>
       <p className={`${styles.weekCount} num`}>
-        <strong>{trainedDays.size}</strong> de {Math.max(plannedDays.size, trainedDays.size)}{' '}
-        {plannedDays.size === 1 ? 'día entrenado' : 'días entrenados'}
+        {total === 0 ? (
+          'Sin entrenos planificados ni hechos'
+        ) : (
+          <>
+            <strong>{trainedDays.size}</strong> de {total}{' '}
+            {total === 1 ? 'día entrenado' : 'días entrenados'}
+          </>
+        )}
       </p>
       <ol className={styles.weekDays}>
         {days.map((d, i) => {

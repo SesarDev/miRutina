@@ -1,62 +1,84 @@
-.page {
+/* Mobile: today's workout, then the week and the shortcuts. Desktop (container ≥ 60rem): the
+   workout on the left, the week and the shortcuts in a column on the right. */
+.page,
+.main,
+.side {
   display: grid;
   gap: var(--space-8);
+  align-content: start;
+}
+
+.page {
   max-width: 44rem;
 }
 
-/* ── Sections ── */
+@container main (min-width: 60rem) {
+  .page {
+    grid-template-columns: minmax(0, 3fr) minmax(18rem, 2fr);
+    align-items: start;
+    max-width: var(--content-max);
+  }
+}
+
+/* ── Sections: a quiet list of links at the end of the page ── */
 .sections {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-2);
   margin: 0;
   padding: 0;
   list-style: none;
+  border-top: 1px solid var(--color-line);
 }
 
 @container main (min-width: 40rem) {
   .sections {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--space-6);
   }
+}
+
+/* In the desktop side column the list is narrow again: one link per row. */
+@container main (min-width: 60rem) {
+  .sections {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sections li {
+  border-bottom: 1px solid var(--color-line);
 }
 
 .section {
   display: grid;
-  gap: 2px;
-  min-height: 92px;
-  padding: var(--space-3) var(--space-4);
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-lg);
-  background: var(--color-surface);
-  color: inherit;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--control-height);
+  margin-inline: calc(var(--space-2) * -1);
+  padding-inline: var(--space-2);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-2);
   text-decoration: none;
-  transition:
-    background-color var(--dur-fast) var(--ease-out),
-    transform var(--dur-instant) var(--ease-out);
+  transition: background-color var(--dur-fast) var(--ease-out);
 }
 
 .section:active {
-  transform: scale(var(--scale-press));
+  background: var(--color-press);
 }
 
 @media (hover: hover) {
   .section:hover {
-    background: var(--color-surface-2);
+    background: var(--color-hover);
+    color: var(--color-text);
   }
 }
 
-.sectionIcon {
-  margin-bottom: var(--space-1);
-  color: var(--color-accent-ink);
+.sectionIcon,
+.sectionChevron {
+  color: var(--color-text-3);
 }
 
 .sectionLabel {
   font-weight: var(--weight-semibold);
-}
-
-.sectionHint {
-  color: var(--color-text-2);
-  font-size: var(--text-sm);
 }
 
 /* ── Today ── */
@@ -65,12 +87,16 @@
   gap: var(--space-3);
 }
 
-.kicker {
-  color: var(--color-accent-ink);
-  font-size: var(--text-xs);
-  font-weight: var(--weight-bold);
-  letter-spacing: var(--tracking-label);
-  text-transform: uppercase;
+.state {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--color-text);
+  font-weight: var(--weight-semibold);
+}
+
+.state[data-done] {
+  color: var(--color-success);
 }
 
 .routineName {

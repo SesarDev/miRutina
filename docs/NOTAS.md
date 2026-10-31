@@ -113,12 +113,27 @@ Menores: comentario «3 s» en `ControlPanel.tsx:52` (son 5 s); «0 de 0 días e
 - **Cuerpo**: un registro por fecha. «Registrar» abre el de hoy si existe y elegir una fecha con registro pasa a editarlo. Rangos: peso 20–300 kg, cintura y pecho 30–250, brazo 10–100, muslo 20–150 cm. La media móvil de 7 días usa los días previos al rango antes de recortarlo. Borrar = soft delete con «Deshacer».
 - **Recharts 3** (`recharts@3.10`) con colores por CSS (clases sobre `.recharts-*`), `accessibilityLayer` desactivado porque la tabla es la alternativa accesible.
 
+### F5
+- **Selección en granate**: la píldora del `Segmented` (que se desliza, «tabs sliding»), los chips neutros seleccionados, el selector de tema y el paso de peso usan `--color-band`, como el elemento activo de la navegación. El relleno vinilo queda solo para el brazalete (P2 de la crítica). Las celdas de constancia entrenadas pasan a `--color-text-2`.
+- **Animaciones compartidas** en `global.css` con clases `t-*` adaptadas a los tokens: `t-num-pop` (cifra de los steppers, `useNumberPop`), `t-success-check` (check de la serie marcada hace < 2 s), `t-icon-swap`/`t-icon-enter` (favorito, indicador de sync) y `t-shake` (`motion/shake.ts`, formulario de Cuerpo). Todas con alternativa propia para «reducir movimiento».
+- **Fuera el recorte global** de animaciones a 1 ms con «reducir movimiento» (deuda de F0): cada animación declara su alternativa, y los tokens de distancia y escala ya bajan a 0.
+- **Tokens nuevos**: `--dur-second` (pulso de los últimos 3 s del descanso), `--dur-spin` (giro del indicador de sync) y `--distance-small`. La cuenta atrás de la valoración lee `--feel-timeout` desde `FEEL_TIMEOUT_MS`. `transitions refine` ya no encuentra valores sueltos.
+- **Toast** con salida: el último toast se queda montado mientras se funde (`--dur-fast`); «Deshacer» se desactiva durante la salida.
+- **GSAP**: plugins registrados solo en `src/motion/gsap.ts` (useGSAP, Flip, ScrollTrigger); `motion/tokens.ts` añade `distance()`. Con «reducir movimiento» no se captura ningún Flip ni se crea ningún ScrollTrigger.
+- **Flip** (`motion/flip.ts`): semana ↔ mes con `Flip.from` (`absolute`, `nested`; las celdas nuevas entran con un fundido). Miniatura → ficha con FLIP manual (`gsap.from` desde el rectángulo capturado): el estado de `Flip.getState` no se puede reutilizar si React monta dos veces (StrictMode), así que se guardan datos simples y se borran al terminar.
+- **Brazalete** (`sesion/sessionFlip.ts`): las acciones del store que lo mueven (`selectRow`, `askFeel`) y «Subir/Bajar» capturan la disposición; `SesionPage` la anima tras el commit (250 ms). El fondo, la franja y la tinta del brazalete hacen un fundido en CSS: GSAP no sabe interpolar `oklch()` (salía rojo).
+- **Reordenar en el editor de rutinas**: lo animaba ya dnd-kit (transformaciones de `useSortable`); no se añade Flip encima.
+- **ScrollTrigger** (`motion/scroll.ts`): `useRevealBatch` (historial y Progreso; `ScrollTrigger.batch` una vez) y `useDrawLines` (líneas `.t-draw` de las gráficas, se dibujan la primera vez que entran). `ScrollTrigger.refresh()` cuando el contenedor cambia de tamaño. Sin pin ni scrub.
+- **Momento de récord** (`sesion/RecordMoment.tsx`): el récord principal (más peso > 1RM > reps > volumen) lleva el brazalete con la cifra en tamaño dorsal; los demás van en lista. La timeline (~650 ms) y la vibración (20-60-20 ms, si está activada) solo se ven si la sesión terminó hace menos de 15 s. El resumen dice «< 1 min» en vez de «0 min».
+- **Hoy**: el entreno del día y «Empezar» arriba del todo, el estado («Toca hoy» / «Hecho hoy») en la línea de datos en vez de un rótulo encima del título, y las secciones al final como lista de enlaces (decidido con el usuario). En PC, dos columnas. «0 de 0 días» pasa a «Sin entrenos planificados ni hechos».
+- **Stepper de la sesión** con container query: en columnas estrechas (panel de PC) los extremos bajan a 44 px y la cifra no se corta.
+- **Verificación**: «reducir movimiento» comprobado en Playwright (nada se desplaza ni escala durante la sesión ni en el calendario). Tras navegar por todas las pantallas con GSAP quedan 0 ScrollTriggers y 0 tweens activos, sin avisos. CPU 4× más lenta (Chromium emulado): mediana de 16,7 ms por fotograma; 8 de 128 por encima de 33 ms, todos en los toques (Dexie + render), no en las animaciones.
+
 ## Deuda
 
 - El favicon sigue siendo el de Vite; los iconos de la PWA llegan en F6.
 - `impeccable critique` se ejecutó en un solo contexto (sin subagentes); repetir la crítica completa al cerrar F3, cuando haya una pantalla real de sesión.
 - La sección «Brazalete» de `DESIGN.md` describe un componente que de momento solo existe como muestra en `/dev/ui`.
-- `global.css` reduce las animaciones con keyframes a 1 ms con «reducir movimiento»; hoy no hay ninguna. Cuando lleguen (F5), darles una alternativa propia en lugar de depender de ese recorte global.
 - Auditoría de impeccable hecha sin el overlay del navegador (detector por CLI + Playwright); el overlay en vivo queda pendiente.
 - 71 nombres de ejercicio poco comunes conservan alguna palabra en inglés; ampliar el diccionario o las correcciones cuando aparezcan en rutinas.
 - El chunk del catálogo supera el aviso de 500 kB de Vite (se carga diferido; valorar dividirlo en F6).
@@ -129,15 +144,18 @@ Menores: comentario «3 s» en `ControlPanel.tsx:52` (son 5 s); «0 de 0 días e
 
 - Probar en el móvil por `http://` en la red local es un contexto inseguro. Se adelanta el despliegue en Vercel (paso 3 de F6) para tener HTTPS; el resto de F6 (PWA, cabeceras de `sw.js`, exportar) sigue pendiente.
 
-- F3: el brazalete cambia de fila sin desplazarse; el Flip (< 250 ms) es de F5. El resumen final no compara con la última vez (récords en F4).
+- F3: el resumen final no compara con la última vez (solo lista los récords).
 - F3: no hay deshacer al desmarcar una serie ni al borrar un calentamiento añadido por error (se puede quitar desde «Opciones»).
 - F3: `logType` `reps` y `time` no tienen interfaz propia en la sesión: todo se registra como peso × reps (peso vacío = peso corporal).
 - F3: si el entreno de prueba se terminó como la sesión antigua, sus series quedaron con la fecha de esa sesión (29 oct) y el entreno de hoy sigue «Planificado»; no hay forma en la app de corregir la fecha de una sesión ni de marcar un entreno como hecho a mano.
 - F3: una «Sesión libre» no marca ningún entreno planificado del día como hecho (no hay rutina con la que emparejarlo).
 - F3: las preferencias (descanso por defecto, vibración, pantalla encendida) son por dispositivo, no se sincronizan.
 - F4: Recharts va en el chunk principal (375 kB gzip en total). Cargar las gráficas de forma diferida en F6.
-- F4: las gráficas no dibujan la línea al entrar ni tienen entrada escalonada en el historial (ScrollTrigger con moderación en F5).
 - F4: la gráfica del ejercicio no tiene métrica de reps: en ejercicios de peso corporal sale vacía (el historial y las tarjetas sí muestran las reps).
+- F5: el rendimiento se midió en Chromium con la CPU emulada 4× más lenta, no en un móvil real; queda probarlo en el teléfono (DevTools remoto → Performance).
+- F5: no hay enlace de la rutina (editor o sesión) a la ficha del ejercicio, así que el Flip miniatura → ficha solo sale desde la Biblioteca.
+- F5: la Biblioteca usa una variante ligera de «skeleton reveal» (la lista se funde al aparecer; el esqueleto no hace la mitad del fundido porque la lista es virtual).
+- F5: el acordeón de «Ver los datos» anima la altura solo donde hay `::details-content` (Chromium); en Safari y Firefox se abre sin animación.
 - F4: las gráficas no son navegables con teclado (`accessibilityLayer` desactivado); la alternativa es la tabla «Ver los datos» y la tabla de Cuerpo.
 
 ## Ideas para más adelante
@@ -155,3 +173,10 @@ Menores: comentario «3 s» en `ControlPanel.tsx:52` (son 5 s); «0 de 0 días e
 - Progreso: filtrar la lista por grupo muscular cuando haya muchos ejercicios.
 - Progreso: distinguir mejor los días futuros de la semana en la cuadrícula de constancia (ahora solo un filete tenue).
 - Récords: valorar si «Más reps» debería contar también con un peso mayor (60 × 10 tras 57,5 × 10), no solo con el mismo.
+- Ajustes y Rutinas en dos columnas en PC (menor de la crítica).
+- Progreso: agrupar los récords de 30 días por ejercicio (ahora el mismo ejercicio puede salir varias veces).
+- Sesión: dejar dos líneas al nombre del ejercicio en la tarjeta recogida (ahora se corta).
+- Cuerpo: dar más peso visual al último peso que a la media de 7 días.
+- El anillo de descanso lleno al empezar puede leerse como «terminado»; valorar otra forma de empezar.
+- Sesión: atajos de teclado en PC (Intro para «Serie hecha», flechas para cambiar de serie).
+- El punto de «planificado» en la semana de Hoy es dorado; según la regla del oro debería ser neutro.

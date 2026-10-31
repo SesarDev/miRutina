@@ -30,9 +30,10 @@
     color var(--dur-fast) var(--ease-out);
 }
 
+/* Selected in granate, like every other selection (the vinyl fill is the armband's). */
 .option[aria-checked='true'] {
-  background: var(--color-text);
-  color: var(--color-bg);
+  background: var(--color-band);
+  color: var(--color-on-band);
 }
 
 @media (hover: hover) {
