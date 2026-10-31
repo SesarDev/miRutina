@@ -15,6 +15,8 @@
 
 - **F3 · Sesión en curso:** cerrada el 31 oct 2026 (etiqueta `f3-done`). Sesión en curso con «Última vez», registro de series con valoración, técnicas y superseries, descanso, robustez (Wake Lock, almacenamiento persistente, recarga sin pérdidas) y resumen; e2e en verde. Migración `supabase/migrations/2026-10-29-f3-sesion.sql` aplicada. **Pendiente de verificar a mano** (el usuario lo prueba después): sesión completa en modo avión en el gimnasio, descanso con el móvil bloqueado y que la sesión terminada en el móvil aparezca como «Hecho» en el PC (la primera prueba falló; ver Decisiones › F3 › sesiones de otro día).
 
+- **F4 · Historial, progreso y cuerpo:** cerrada el 31 oct 2026 (etiqueta `f4-done`). Cálculos de 1RM y récords con tests, pestañas Historial y Gráfica en la ficha, pantalla Progreso (90 días, constancia de 12 semanas, récords de 30 días), récords en el resumen de sesión y Cuerpo (peso y medidas con media de 7 días). Criterios 1, 2, 3 y 5 verificados (tests, e2e y capturas en 390 y 1440 px, oscuro y claro). **Pendiente de verificar a mano** (el usuario lo prueba después): registrar peso y medidas en el PC y verlos en el móvil.
+
 ## Decisiones técnicas
 
 - **TypeScript 6.0 en vez de 7.** La plantilla de Vite trae TS 7 (el compilador en Go), pero `typescript-eslint` aún no lo admite (`peer typescript <6.1`). Volver a TS 7 cuando lo soporte.
@@ -107,6 +109,10 @@
 - F3: si el entreno de prueba se terminó como la sesión antigua, sus series quedaron con la fecha de esa sesión (29 oct) y el entreno de hoy sigue «Planificado»; no hay forma en la app de corregir la fecha de una sesión ni de marcar un entreno como hecho a mano.
 - F3: una «Sesión libre» no marca ningún entreno planificado del día como hecho (no hay rutina con la que emparejarlo).
 - F3: las preferencias (descanso por defecto, vibración, pantalla encendida) son por dispositivo, no se sincronizan.
+- F4: Recharts va en el chunk principal (375 kB gzip en total). Cargar las gráficas de forma diferida en F6.
+- F4: las gráficas no dibujan la línea al entrar ni tienen entrada escalonada en el historial (ScrollTrigger con moderación en F5).
+- F4: la gráfica del ejercicio no tiene métrica de reps: en ejercicios de peso corporal sale vacía (el historial y las tarjetas sí muestran las reps).
+- F4: las gráficas no son navegables con teclado (`accessibilityLayer` desactivado); la alternativa es la tabla «Ver los datos» y la tabla de Cuerpo.
 
 ## Ideas para más adelante
 
