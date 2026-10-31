@@ -146,9 +146,11 @@ function Editor({ routine }: { routine: Routine }) {
     commit(next)
     setExpanded(null)
     // The exercise is new to the routine, so it is not in `exercises` yet.
-    void db.exercises.get(exerciseId).then((exercise) =>
-      showToast({ message: `Añadido: ${exercise?.nameEs ?? 'ejercicio'}`, durationMs: 2000 }),
-    )
+    void db.exercises
+      .get(exerciseId)
+      .then((exercise) =>
+        showToast({ message: `Añadido: ${exercise?.nameEs ?? 'ejercicio'}`, durationMs: 2000 }),
+      )
   }
 
   const patchItem = (id: string, patch: Partial<RoutineItem>) =>

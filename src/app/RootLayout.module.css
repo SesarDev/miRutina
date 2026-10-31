@@ -36,6 +36,12 @@
   margin: 0 auto;
 }
 
+.shell[data-rest-bar] .main {
+  padding-bottom: calc(
+    var(--bottom-nav-height) + env(safe-area-inset-bottom) + var(--space-8) + 64px
+  );
+}
+
 /* Session in progress: the page owns the whole height (header band and control panel). */
 .shell[data-focus] .bottomNav {
   display: none;

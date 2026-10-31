@@ -76,3 +76,34 @@
   flex-wrap: wrap;
   gap: var(--space-2);
 }
+
+.field {
+  display: grid;
+  gap: var(--space-2);
+  max-width: 20rem;
+}
+
+.fieldLabel {
+  font-weight: var(--weight-semibold);
+}
+
+.toggle {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  min-height: var(--hit-min);
+  cursor: pointer;
+}
+
+.toggle input {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  margin: 1px 0 0;
+  accent-color: var(--color-accent);
+}
+
+.toggle > span {
+  display: grid;
+  gap: 2px;
+}

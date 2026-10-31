@@ -2,6 +2,8 @@ import { Link, Outlet, useRouterState } from '@tanstack/react-router'
 import { useState } from 'react'
 import { SyncIndicator } from '@/components/SyncIndicator'
 import { Icon, Sheet, Toaster } from '@/components/ui'
+import { RestBar } from '@/routes/sesion/RestBar'
+import { useSessionUi } from '@/routes/sesion/sessionStore'
 import { BOTTOM_NAV_ITEMS, MORE_NAV_ITEMS, NAV_ITEMS } from './nav'
 import styles from './RootLayout.module.css'
 
@@ -11,9 +13,15 @@ export function RootLayout() {
   const moreActive = MORE_NAV_ITEMS.some((item) => pathname.startsWith(item.to))
   // The session in progress is a dedicated screen: no bottom bar, its own control panel.
   const focus = pathname.startsWith('/sesion/')
+  // Room at the bottom for the rest bar shown on the other screens.
+  const restBar = useSessionUi((s) => s.rest !== null) && !focus
 
   return (
-    <div className={styles.shell} data-focus={focus || undefined}>
+    <div
+      className={styles.shell}
+      data-focus={focus || undefined}
+      data-rest-bar={restBar || undefined}
+    >
       <a href="#contenido" className={styles.skipLink}>
         Saltar al contenido
       </a>
@@ -46,6 +54,7 @@ export function RootLayout() {
 
       {!focus && <SyncIndicator compact />}
       <Toaster />
+      <RestBar />
 
       <main id="contenido" className={styles.main} tabIndex={-1}>
         <div className={styles.content}>

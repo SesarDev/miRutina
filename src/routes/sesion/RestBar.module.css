@@ -1,0 +1,59 @@
+/* Rest running while on another screen: a slim bar above the bottom navigation. */
+.bar {
+  position: fixed;
+  inset: auto var(--space-3)
+    calc(var(--bottom-nav-height) + env(safe-area-inset-bottom) + var(--space-2));
+  z-index: var(--z-nav);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 52px;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-lg);
+  background: var(--color-dock);
+  box-shadow: var(--shadow-float);
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.icon {
+  flex: none;
+  color: var(--color-accent-ink);
+}
+
+.label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--color-text-2);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.clock {
+  color: var(--color-accent-ink);
+  font-family: var(--font-condensed);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+}
+
+.bar[data-ended] .label {
+  color: var(--color-accent-ink);
+}
+
+@media (min-width: 64rem) {
+  .bar {
+    inset: auto var(--space-6) var(--space-6) auto;
+    min-width: 20rem;
+  }
+}
