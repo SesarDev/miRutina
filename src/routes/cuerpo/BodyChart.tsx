@@ -7,9 +7,11 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+import { useRef } from 'react'
 import { movingAverage, type BodyPoint } from '@/lib/body'
 import { formatDay, fromDateKey, toDateKey, type DateKey } from '@/lib/dates'
 import { formatWeight } from '@/lib/numbers'
+import { useDrawLines } from '@/motion/scroll'
 import styles from './Cuerpo.module.css'
 
 type Datum = { t: number; date: DateKey; value: number; average?: number }
@@ -32,6 +34,8 @@ export function BodyChart({ label, unit, points, from, withAverage = false, size
     .filter((p) => !from || p.date >= from)
     .map((p) => ({ ...p, t: fromDateKey(p.date).getTime() }))
   const values = data.map((p) => p.value)
+  const chart = useRef<HTMLDivElement>(null)
+  useDrawLines(chart, data.length > 0)
   const description = data.length
     ? `${label}: ${data.length} ${data.length === 1 ? 'registro' : 'registros'}, entre ` +
       `${formatWeight(Math.min(...values))} y ${formatWeight(Math.max(...values))} ${unit}` +
@@ -54,6 +58,7 @@ export function BodyChart({ label, unit, points, from, withAverage = false, size
         <p className={styles.chartEmpty}>Sin registros en este periodo.</p>
       ) : (
         <div
+          ref={chart}
           className={`${styles.chart} ${size === 'sm' ? styles.chartSm : ''}`}
           role="img"
           aria-label={description}
@@ -108,7 +113,7 @@ export function BodyChart({ label, unit, points, from, withAverage = false, size
               />
               <Line
                 dataKey="value"
-                className={withAverage ? styles.lineRaw : styles.lineMain}
+                className={withAverage ? styles.lineRaw : `${styles.lineMain} t-draw`}
                 isAnimationActive={false}
                 dot={{ r: withAverage ? 2.5 : 3.5 }}
                 activeDot={{ r: 5 }}
@@ -116,7 +121,7 @@ export function BodyChart({ label, unit, points, from, withAverage = false, size
               {withAverage && (
                 <Line
                   dataKey="average"
-                  className={styles.lineAvg}
+                  className={`${styles.lineAvg} t-draw`}
                   isAnimationActive={false}
                   dot={false}
                   activeDot={false}

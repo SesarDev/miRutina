@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router'
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
 import { ConsistencyGrid } from '@/components/progress/ConsistencyGrid'
 import { Sparkline } from '@/components/progress/Sparkline'
 import { PageHeader } from '@/components/PageHeader'
@@ -9,6 +9,7 @@ import { formatDay, todayKey, type DateKey } from '@/lib/dates'
 import { relativeDay } from '@/lib/lastTime'
 import { formatWeight } from '@/lib/numbers'
 import { consistencyWeeks, formatRecord } from '@/lib/progress'
+import { useRevealBatch } from '@/motion/scroll'
 import styles from './ProgresoPage.module.css'
 
 export function ProgresoPage() {
@@ -18,6 +19,8 @@ export function ProgresoPage() {
     () => consistencyWeeks(overview?.trainedDates ?? [], today),
     [overview?.trainedDates, today],
   )
+  const page = useRef<HTMLDivElement>(null)
+  useRevealBatch(page, '[data-reveal]', !!overview?.exercises.length)
 
   if (overview === undefined) return <PageHeader title="Progreso" />
 
@@ -37,7 +40,7 @@ export function ProgresoPage() {
   return (
     <>
       <PageHeader title="Progreso" />
-      <div className={styles.page}>
+      <div ref={page} className={styles.page}>
         <section className={styles.exercises} aria-labelledby="prog-ejercicios">
           <h2 id="prog-ejercicios" className={styles.title}>
             Ejercicios · últimos 90 días
@@ -79,7 +82,7 @@ function ExerciseRow({ exercise: e, today }: { exercise: RecentExercise; today: 
       : null
 
   return (
-    <li>
+    <li data-reveal>
       <Link
         to="/ejercicio/$exerciseId"
         params={{ exerciseId: e.exerciseId }}
@@ -121,7 +124,7 @@ function RecentRecords({ records }: { records: RecentRecord[] }) {
       {[...groups.entries()].map(([key, list]) => {
         const { exerciseId, name, date } = list[0]!
         return (
-          <li key={key}>
+          <li key={key} data-reveal>
             <Link
               to="/ejercicio/$exerciseId"
               params={{ exerciseId }}

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import {
   CartesianGrid,
   Line,
@@ -25,6 +25,7 @@ import {
   type ChartMetric,
   type ChartRange,
 } from '@/lib/progress'
+import { useDrawLines } from '@/motion/scroll'
 import styles from './Progress.module.css'
 
 type Point = {
@@ -75,6 +76,9 @@ export function ProgressChart({ sessions, today }: { sessions: HistorySession[];
     return out
   }, [sessions, metric, range, today])
 
+  const chart = useRef<HTMLDivElement>(null)
+  useDrawLines(chart, points.length > 0)
+
   const labelled = points.length <= MAX_LABELLED_POINTS
   const feelsShown = FEELS.filter((f) => points.some((p) => p.feel === f))
   const unit = 'kg'
@@ -112,7 +116,7 @@ export function ProgressChart({ sessions, today }: { sessions: HistorySession[];
         </p>
       ) : (
         <figure>
-          <div className={styles.chart} role="img" aria-label={description}>
+          <div ref={chart} className={styles.chart} role="img" aria-label={description}>
             <ResponsiveContainer width="100%" height="100%">
               <LineChart
                 data={points}
@@ -154,6 +158,7 @@ export function ProgressChart({ sessions, today }: { sessions: HistorySession[];
                 />
                 <Line
                   dataKey="value"
+                  className="t-draw"
                   type="linear"
                   isAnimationActive={false}
                   dot={({ cx, cy, payload, index }: DotItemDotProps) => (

@@ -13,10 +13,15 @@ const FALLBACK = {
   '--ease-out': 'cubic-bezier(0.22, 1, 0.36, 1)',
   '--ease-in-out': 'cubic-bezier(0.65, 0, 0.35, 1)',
   '--ease-spring': 'cubic-bezier(0.34, 1.36, 0.64, 1)',
+  '--distance-micro': '4px',
+  '--distance-small': '6px',
+  '--distance-base': '8px',
+  '--distance-medium': '12px',
 } as const
 
 export type DurationToken = 'instant' | 'fast' | 'base' | 'slow' | 'stagger'
 export type EaseToken = 'out' | 'in-out' | 'spring'
+export type DistanceToken = 'micro' | 'small' | 'base' | 'medium'
 
 /** Parses a CSS time ("250ms", "0.25s") into seconds, as GSAP expects. */
 export function parseDuration(value: string): number {
@@ -47,6 +52,12 @@ function readToken(name: keyof typeof FALLBACK): string {
 export function duration(token: DurationToken): number {
   if (prefersReducedMotion() && token !== 'instant') return 0
   return parseDuration(readToken(`--dur-${token}`))
+}
+
+/** Travel in px; 0 with reduced motion (tokens.css zeroes the distances). */
+export function distance(token: DistanceToken): number {
+  if (prefersReducedMotion()) return 0
+  return Number.parseFloat(readToken(`--distance-${token}`)) || 0
 }
 
 const easeCache = new Map<EaseToken, string>()

@@ -1,8 +1,10 @@
+import { useRef } from 'react'
 import { Chip, Icon } from '@/components/ui'
 import type { HistorySession } from '@/db/queries'
 import { formatDay, type DateKey } from '@/lib/dates'
 import { relativeDay } from '@/lib/lastTime'
 import { formatRecord, formatSet, workSets, type ExerciseRecord } from '@/lib/progress'
+import { useRevealBatch } from '@/motion/scroll'
 import styles from './Progress.module.css'
 
 type Props = {
@@ -14,6 +16,9 @@ type Props = {
 /** Sessions of an exercise, most recent first: each work set with its feel, records marked. */
 export function HistoryList({ sessions, records, today }: Props) {
   const shown = sessions.filter((s) => workSets(s.sets).length > 0)
+  const list = useRef<HTMLOListElement>(null)
+  useRevealBatch(list, ':scope > li', shown.length > 0)
+
   if (!shown.length) {
     return (
       <p className={styles.empty}>
@@ -24,7 +29,7 @@ export function HistoryList({ sessions, records, today }: Props) {
   }
 
   return (
-    <ol className={styles.history} aria-label="Sesiones">
+    <ol ref={list} className={styles.history} aria-label="Sesiones">
       {shown.map((s) => (
         <HistorySessionItem
           key={s.sessionId}
