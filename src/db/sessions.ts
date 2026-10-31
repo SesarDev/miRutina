@@ -165,6 +165,25 @@ export function updateSetRow(
   return patch('setLogs', id, changes)
 }
 
+/**
+ * Sets the weight or reps of a set and copies the same value to the later pending sets of the
+ * exercise (same drop level, no warm-ups). It spreads the user's own choice, never computes one.
+ */
+export async function setSetValue(id: string, changes: Partial<Pick<SetLog, 'weight' | 'reps'>>) {
+  const row = await db.setLogs.get(id)
+  if (!row) return
+  if (row.isWarmup) return patch('setLogs', id, changes)
+  const later = (await rowsOf(row.sessionId, row.exerciseId)).filter(
+    (r) =>
+      r.id !== id &&
+      r.order > row.order &&
+      r.dropIndex === row.dropIndex &&
+      !r.isWarmup &&
+      !r.completedAt,
+  )
+  await saveMany('setLogs', [{ ...row, ...changes }, ...later.map((r) => ({ ...r, ...changes }))])
+}
+
 /** Marks a set as done. */
 export function completeSet(id: string) {
   return patch('setLogs', id, { completedAt: nowIso() })
@@ -201,15 +220,29 @@ export async function addWarmup(sessionId: string, exerciseId: string) {
   return warmup
 }
 
-/** Removes a set (and its drops) and renumbers the rest so «the same set» keeps matching. */
-export async function removeSet(id: string) {
+/**
+ * Removes a set (and its drops) and renumbers the rest so «the same set» keeps matching.
+ * Returns the undo (for «Deshacer»).
+ */
+export async function removeSet(id: string): Promise<(() => Promise<void>) | undefined> {
   const row = await db.setLogs.get(id)
   if (!row) return
   const rows = await rowsOf(row.sessionId, row.exerciseId)
   const chain = rows.filter((r) => r.order === row.order)
   for (const r of chain) await softDelete('setLogs', r.id)
-  const later = rows.filter((r) => r.order > row.order).map((r) => ({ ...r, order: r.order - 1 }))
-  await saveMany('setLogs', later)
+  const later = rows.filter((r) => r.order > row.order)
+  await saveMany(
+    'setLogs',
+    later.map((r) => ({ ...r, order: r.order - 1 })),
+  )
+
+  return async () => {
+    const current = await rowsOf(row.sessionId, row.exerciseId)
+    const shifted = current
+      .filter((r) => r.order >= row.order)
+      .map((r) => ({ ...r, order: r.order + 1 }))
+    await saveMany('setLogs', [...chain.map((r) => ({ ...r, deletedAt: null })), ...shifted])
+  }
 }
 
 /**

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { Button, Icon } from '@/components/ui'
-import { completeSet, setFeel, uncompleteSet, updateSetRow } from '@/db/sessions'
+import { completeSet, setFeel, setSetValue, uncompleteSet } from '@/db/sessions'
 import { FEEL_LABELS, FEELS, type Session, type SessionItem, type SetLog } from '@/db/types'
 import {
   FEEL_TIMEOUT_MS,
@@ -58,6 +58,11 @@ export function ControlPanel({
   // «Serie hecha» stays in the same place for the next set: a sweaty double tap must not mark
   // two sets.
   const lockedUntil = useRef(0)
+  // Any deliberate action in between (a feel, a stepper) shows intent and lifts the lock.
+  const onEdit = () => {
+    lockedUntil.current = 0
+    closeFeelPrompt()
+  }
 
   const markDone = async () => {
     if (!row || row.reps === null || Date.now() < lockedUntil.current) return
@@ -113,7 +118,7 @@ export function ControlPanel({
                 data-feel={feel}
                 onClick={() => {
                   void setFeel(promptRow.id, feel)
-                  closeFeelPrompt()
+                  onEdit()
                 }}
               >
                 {FEEL_LABELS[feel]}
@@ -155,8 +160,8 @@ export function ControlPanel({
               value={row.weight}
               step={weightStep}
               decimals={1}
-              onEdit={closeFeelPrompt}
-              onChange={(weight) => void updateSetRow(row.id, { weight })}
+              onEdit={onEdit}
+              onChange={(weight) => void setSetValue(row.id, { weight })}
             />
             <SessionStepper
               label="reps"
@@ -165,8 +170,8 @@ export function ControlPanel({
               step={1}
               max={200}
               placeholder={targetReps(item, workIndex, row.dropIndex)}
-              onEdit={closeFeelPrompt}
-              onChange={(reps) => void updateSetRow(row.id, { reps })}
+              onEdit={onEdit}
+              onChange={(reps) => void setSetValue(row.id, { reps })}
             />
           </div>
 

@@ -13,8 +13,8 @@ type RowLike = Pick<SetLog, 'id' | 'order' | 'dropIndex' | 'isWarmup' | 'complet
 /** Rest after a warm-up set (they carry no feel and do not count). */
 export const WARMUP_REST_SEC = 60
 
-/** Seconds to wait for a feel before the rest starts on its own. */
-export const FEEL_TIMEOUT_MS = 3000
+/** Wait for a feel before the rest starts on its own (agreed in F3: 5 s, time to rack the bar). */
+export const FEEL_TIMEOUT_MS = 5000
 
 export function dropsOf(item: Pick<RoutineItem, 'technique' | 'drops'>): number {
   return item.technique === 'descendente' ? (item.drops ?? 0) : 0

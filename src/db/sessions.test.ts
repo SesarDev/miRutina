@@ -14,6 +14,7 @@ import {
   moveSessionItem,
   removeSet,
   setFeel,
+  setSetValue,
   startSession,
   uncompleteSet,
   updateSetRow,
@@ -108,6 +109,31 @@ describe('series', () => {
     expect((await rowsOf(s.id, 'remo')).map((r) => [r.order, r.weight])).toEqual([
       [0, 40],
       [1, 40],
+    ])
+  })
+
+  it('cambiar el peso copia el valor a las series pendientes, no a las hechas', async () => {
+    const s = await startSession({ routineId: (await routine()).id })
+    const rows = await rowsOf(s.id, 'press')
+    await setSetValue(rows[0]!.id, { weight: 60 })
+    await completeSet(rows[0]!.id)
+    await setSetValue(rows[1]!.id, { weight: 65 })
+    expect((await rowsOf(s.id, 'press')).map((r) => r.weight)).toEqual([60, 65, 65])
+    await setSetValue(rows[1]!.id, { reps: 8 })
+    expect((await rowsOf(s.id, 'press')).map((r) => r.reps)).toEqual([null, 8, 8])
+  })
+
+  it('quitar una serie se puede deshacer', async () => {
+    const s = await startSession({ routineId: (await routine()).id })
+    const rows = await rowsOf(s.id, 'press')
+    for (const [i, r] of rows.entries()) await updateSetRow(r.id, { reps: 10 - i })
+    const undo = await removeSet(rows[1]!.id)
+    expect((await rowsOf(s.id, 'press')).map((r) => r.reps)).toEqual([10, 8])
+    await undo!()
+    expect((await rowsOf(s.id, 'press')).map((r) => [r.order, r.reps])).toEqual([
+      [0, 10],
+      [1, 9],
+      [2, 8],
     ])
   })
 

@@ -549,6 +549,39 @@
   gap: var(--space-2);
 }
 
+.more {
+  border-top: 1px solid var(--color-line);
+}
+
+.moreSummary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: var(--hit-min);
+  color: var(--color-text-2);
+  font-weight: var(--weight-semibold);
+  cursor: pointer;
+  list-style: none;
+}
+
+.moreSummary::-webkit-details-marker {
+  display: none;
+}
+
+.moreSummary svg {
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.more[open] .moreSummary svg {
+  transform: rotate(180deg);
+}
+
+.moreBody {
+  display: grid;
+  gap: var(--space-5);
+  padding-top: var(--space-3);
+}
+
 .optionRow {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -766,13 +799,13 @@
   color: var(--color-on-feel);
 }
 
-/* The 3 s before the rest starts on its own. */
+/* The 5 s before the rest starts on its own (FEEL_TIMEOUT_MS). */
 .feelTimeout {
   height: 2px;
   border-radius: 1px;
   background: var(--color-line-strong);
   transform-origin: left;
-  animation: feel-timeout 3s linear forwards;
+  animation: feel-timeout 5s linear forwards;
 }
 
 @keyframes feel-timeout {

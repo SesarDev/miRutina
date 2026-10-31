@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { ExerciseThumb } from '@/components/exercise/ExerciseMedia'
 import { WeightStepPicker } from '@/components/exercise/WeightStepPicker'
-import { Button, Icon, IconButton, Sheet } from '@/components/ui'
+import { Button, Icon, IconButton, Sheet, showToast } from '@/components/ui'
 import { useLastSessions } from '@/db/queries'
 import {
   addSet,
@@ -281,6 +281,24 @@ function ExerciseOptions({
     void action()
   }
 
+  const removeSelected = async (row: SetLog, label: string) => {
+    const undo = await removeSet(row.id)
+    if (undo)
+      showToast({
+        message: `Quitada ${label}`,
+        actionLabel: 'Deshacer',
+        onAction: () => void undo(),
+      })
+  }
+  const skip = async () => {
+    await setItemSkipped(sessionId, item.id, true)
+    showToast({
+      message: 'Ejercicio saltado',
+      actionLabel: 'Deshacer',
+      onAction: () => void setItemSkipped(sessionId, item.id, false),
+    })
+  }
+
   return (
     <div className={styles.options}>
       <div className={styles.optionGroup}>
@@ -305,14 +323,20 @@ function ExerciseOptions({
                 ? 'Convertir el calentamiento en serie'
                 : `Marcar ${selectedLabel} como calentamiento`}
             </Button>
-            <Button block variant="ghost" icon="trash" onClick={run(() => removeSet(selected.id))}>
+            <Button
+              block
+              variant="ghost"
+              icon="trash"
+              onClick={run(() => removeSelected(selected, selectedLabel ?? 'la serie'))}
+            >
               Quitar {selectedLabel}
             </Button>
           </>
         )}
+        <Button block variant="ghost" icon="skip" onClick={run(skip)}>
+          Saltar ejercicio
+        </Button>
       </div>
-
-      {exercise && <WeightStepPicker exercise={exercise} />}
 
       <NoteField
         label="Nota del ejercicio en esta sesión"
@@ -321,35 +345,35 @@ function ExerciseOptions({
         onSave={(text) => void setItemNote(sessionId, item.id, text)}
       />
 
-      <div className={styles.optionRow}>
-        <Button
-          variant="secondary"
-          icon="chevronLeft"
-          disabled={index === 0}
-          className={styles.up}
-          onClick={run(() => moveSessionItem(sessionId, item.id, -1))}
-        >
-          Subir
-        </Button>
-        <Button
-          variant="secondary"
-          icon="chevronRight"
-          disabled={index === count - 1}
-          className={styles.down}
-          onClick={run(() => moveSessionItem(sessionId, item.id, 1))}
-        >
-          Bajar
-        </Button>
-      </div>
-
-      <Button
-        block
-        variant="ghost"
-        icon="skip"
-        onClick={run(() => setItemSkipped(sessionId, item.id, true))}
-      >
-        Saltar ejercicio
-      </Button>
+      <details className={styles.more}>
+        <summary className={styles.moreSummary}>
+          Más opciones
+          <Icon name="chevronDown" size={20} />
+        </summary>
+        <div className={styles.moreBody}>
+          <div className={styles.optionRow}>
+            <Button
+              variant="secondary"
+              icon="chevronLeft"
+              disabled={index === 0}
+              className={styles.up}
+              onClick={run(() => moveSessionItem(sessionId, item.id, -1))}
+            >
+              Subir
+            </Button>
+            <Button
+              variant="secondary"
+              icon="chevronRight"
+              disabled={index === count - 1}
+              className={styles.down}
+              onClick={run(() => moveSessionItem(sessionId, item.id, 1))}
+            >
+              Bajar
+            </Button>
+          </div>
+          {exercise && <WeightStepPicker exercise={exercise} />}
+        </div>
+      </details>
     </div>
   )
 }
