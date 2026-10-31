@@ -4,12 +4,18 @@ import '@/styles/global.css'
 import { App } from '@/app/App'
 import { ensureRoutineTemplates } from '@/db/routines'
 import { ensureSeed } from '@/db/seed'
+import { closeStaleSessions } from '@/db/sessions'
 import { startSync } from '@/sync'
 
 // Load the exercise catalogue in the background on first launch (or when it changed).
 void ensureSeed().catch((error: unknown) => console.error('No se pudo cargar el catálogo', error))
 void ensureRoutineTemplates().catch((error: unknown) =>
   console.error('No se pudieron cargar las rutinas predefinidas', error),
+)
+
+// A session left open on an earlier day must not be resumed as today's workout.
+void closeStaleSessions().catch((error: unknown) =>
+  console.error('No se pudieron cerrar las sesiones antiguas', error),
 )
 
 // Ask the browser not to evict local data (sessions are never lost).

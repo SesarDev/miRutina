@@ -52,7 +52,9 @@ export async function startSession(
   const planned = options.plannedId ? await db.plannedWorkouts.get(options.plannedId) : undefined
   if (planned?.sessionId) {
     const existing = await db.sessions.get(planned.sessionId)
-    if (existing && !existing.endedAt && !existing.deletedAt) return existing
+    // Only today's open session is resumed; one left open on another day is not today's workout.
+    if (existing && !existing.endedAt && !existing.deletedAt && existing.date === todayKey())
+      return existing
   }
 
   const routineId = options.routineId ?? planned?.routineId ?? null
@@ -81,6 +83,28 @@ export async function startSession(
 export async function findOpenSession(): Promise<Session | undefined> {
   const open = (await db.sessions.toArray()).filter((s) => !s.endedAt && !s.deletedAt)
   return open.sort((a, b) => b.startedAt.localeCompare(a.startedAt))[0]
+}
+
+/**
+ * Sessions left open on an earlier day are closed when the app starts, so «Continuar entreno»
+ * and «Empezar» never pick them up for today. With completed sets they are finished on their
+ * own day; empty ones (e.g. «Empezar» tried and abandoned) are deleted and unlinked.
+ */
+export async function closeStaleSessions(today = todayKey()) {
+  const stale = (await db.sessions.toArray()).filter(
+    (s) => !s.endedAt && !s.deletedAt && s.date < today,
+  )
+  for (const session of stale) {
+    const rows = await db.setLogs.where('sessionId').equals(session.id).toArray()
+    if (rows.some((r) => r.completedAt && !r.deletedAt)) {
+      await finishSession(session.id)
+      continue
+    }
+    for (const row of rows) if (!row.deletedAt) await softDelete('setLogs', row.id)
+    const linked = (await db.plannedWorkouts.toArray()).filter((p) => p.sessionId === session.id)
+    for (const p of linked) await save('plannedWorkouts', { ...p, sessionId: null })
+    await softDelete('sessions', session.id)
+  }
 }
 
 async function updateItems(sessionId: string, update: (items: SessionItem[]) => SessionItem[]) {

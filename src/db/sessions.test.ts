@@ -6,6 +6,7 @@ import { createRoutine } from './routines'
 import { db } from './schema'
 import {
   addExerciseToSession,
+  closeStaleSessions,
   addSet,
   addWarmup,
   completeSet,
@@ -216,5 +217,46 @@ describe('terminar', () => {
     await addExerciseToSession(s.id, 'curl')
     const ended = await finishSession(s.id)
     expect(ended?.endedAt).not.toBeNull()
+  })
+})
+
+describe('sesiones abiertas de otro día', () => {
+  /** A session left open on an earlier day (e.g. «Empezar» tried in F2, never finished). */
+  async function staleSession(routineId: string, date: string) {
+    const [planned] = await planWorkout(date, routineId)
+    const s = await startSession({ plannedId: planned!.id })
+    await db.sessions.update(s.id, { date, startedAt: `${date}T10:00:00.000Z` })
+    return { planned: planned!, session: s }
+  }
+
+  it('Empezar el entreno de hoy no reutiliza una sesión abierta de otro día', async () => {
+    const r = await routine()
+    const old = await staleSession(r.id, '2026-10-01')
+    // The same planned row moved to today (or a weekly repeat linked by mistake).
+    await db.plannedWorkouts.update(old.planned.id, { date: todayKey() })
+    const s = await startSession({ plannedId: old.planned.id })
+    expect(s.id).not.toBe(old.session.id)
+    expect(s.date).toBe(todayKey())
+  })
+
+  it('al abrir la app se cierran: con series se terminan en su día, vacías se borran', async () => {
+    const r = await routine()
+    const withSets = await staleSession(r.id, '2026-10-01')
+    const [row] = await rowsOf(withSets.session.id, 'press')
+    await updateSetRow(row!.id, { weight: 60, reps: 10 })
+    await completeSet(row!.id)
+    const empty = await staleSession(r.id, '2026-10-02')
+    const today = await startSession({ routineId: r.id })
+
+    await closeStaleSessions()
+
+    expect((await db.sessions.get(withSets.session.id))?.endedAt).not.toBeNull()
+    expect((await db.plannedWorkouts.get(withSets.planned.id))?.status).toBe('done')
+    expect((await db.sessions.get(empty.session.id))?.deletedAt).not.toBeNull()
+    expect(await db.plannedWorkouts.get(empty.planned.id)).toMatchObject({
+      status: 'planned',
+      sessionId: null,
+    })
+    expect((await findOpenSession())?.id).toBe(today.id)
   })
 })
