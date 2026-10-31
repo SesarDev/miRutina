@@ -112,6 +112,6 @@
   color: var(--color-accent-ink);
 }
 
-.favoriteOn svg {
-  fill: currentColor;
+.favoriteIcon {
+  margin-left: calc(var(--space-1) * -1);
 }

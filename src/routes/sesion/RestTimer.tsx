@@ -5,15 +5,24 @@ import styles from './Session.module.css'
 
 const RADIUS = 26
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS
+const ENDING_SEC = 3
 
 export function RestTimer({ rest }: { rest: Rest }) {
   const now = useNow(250)
   const ended = useRestEnd(rest, now)
   const left = restRemaining(rest, now)
   const progress = Math.min(1, left / rest.totalSec)
+  // The last seconds pulse once per tick, so a glance tells the rest is about to end.
+  const ending = !ended && left > 0 && left <= ENDING_SEC
 
   return (
-    <div className={styles.rest} data-ended={ended || undefined} role="timer" aria-label="Descanso">
+    <div
+      className={styles.rest}
+      data-ended={ended || undefined}
+      data-ending={ending || undefined}
+      role="timer"
+      aria-label="Descanso"
+    >
       <svg className={styles.restRing} viewBox="0 0 64 64" aria-hidden="true">
         <circle className={styles.restTrack} cx="32" cy="32" r={RADIUS} />
         <circle

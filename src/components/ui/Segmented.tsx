@@ -1,4 +1,4 @@
-import { useRef, type KeyboardEvent } from 'react'
+import { useLayoutEffect, useRef, type KeyboardEvent } from 'react'
 import styles from './Segmented.module.css'
 
 type Option<T extends string> = { value: T; label: string }
@@ -19,7 +19,10 @@ type SegmentedProps<T extends string> = {
   className?: string
 }
 
-/** Segmented control: one option on, arrow keys move between options (roving tab index). */
+/**
+ * Segmented control: one option on, arrow keys move between options (roving tab index). The
+ * highlight is one pill that slides to the selected option (transitions.dev «tabs sliding»).
+ */
 export function Segmented<T extends string>({
   label,
   options,
@@ -31,15 +34,42 @@ export function Segmented<T extends string>({
   className,
 }: SegmentedProps<T>) {
   const ref = useRef<HTMLDivElement>(null)
+  const pill = useRef<HTMLSpanElement>(null)
+  const placed = useRef(false)
   const tabs = kind === 'tabs'
+  const selected = options.findIndex((o) => o.value === value)
+
+  // Measure the selected option and move the pill there. The first placement and every resize
+  // snap without a transition; only a change of option slides.
+  useLayoutEffect(() => {
+    const group = ref.current
+    const el = pill.current
+    if (!group || !el) return
+    const move = (animate: boolean) => {
+      const target = group.querySelectorAll<HTMLButtonElement>('button')[selected]
+      if (!target) return
+      if (!animate) el.style.transition = 'none'
+      el.style.transform = `translate(${target.offsetLeft}px, ${target.offsetTop}px)`
+      el.style.width = `${target.offsetWidth}px`
+      el.style.height = `${target.offsetHeight}px`
+      if (!animate) {
+        void el.offsetWidth
+        el.style.transition = ''
+      }
+    }
+    move(placed.current)
+    placed.current = true
+    const observer = new ResizeObserver(() => move(false))
+    observer.observe(group)
+    return () => observer.disconnect()
+  }, [selected])
 
   const onKeyDown = (e: KeyboardEvent) => {
     const step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key]
     const edge = e.key === 'Home' ? 0 : e.key === 'End' ? options.length - 1 : null
     if (step === undefined && edge === null) return
     e.preventDefault()
-    const current = options.findIndex((o) => o.value === value)
-    const next = edge ?? (current + step! + options.length) % options.length
+    const next = edge ?? (selected + step! + options.length) % options.length
     onChange(options[next]!.value)
     ref.current?.querySelectorAll<HTMLButtonElement>('button')[next]?.focus()
   }
@@ -52,6 +82,7 @@ export function Segmented<T extends string>({
       className={[styles.group, size === 'sm' && styles.sm, className].filter(Boolean).join(' ')}
       onKeyDown={onKeyDown}
     >
+      <span ref={pill} className={styles.pill} aria-hidden="true" />
       {options.map((o) => {
         const on = o.value === value
         return (

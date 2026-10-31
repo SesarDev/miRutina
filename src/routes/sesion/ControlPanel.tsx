@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, type CSSProperties } from 'react'
 import { Button, Icon } from '@/components/ui'
 import { completeSet, setFeel, setSetValue, uncompleteSet } from '@/db/sessions'
 import { FEEL_LABELS, FEELS, type Session, type SessionItem, type SetLog } from '@/db/types'
@@ -48,7 +48,7 @@ export function ControlPanel({
   const item = items.find((i) => i.id === step?.itemId)
   const promptRow = feelPrompt ? rows.find((r) => r.id === feelPrompt.rowId) : undefined
 
-  // No feel in 3 s: the rest starts anyway.
+  // No feel in FEEL_TIMEOUT_MS: the rest starts anyway.
   useEffect(() => {
     if (!feelPrompt) return
     const id = window.setTimeout(closeFeelPrompt, FEEL_TIMEOUT_MS)
@@ -125,7 +125,11 @@ export function ControlPanel({
               </button>
             ))}
           </div>
-          <div className={styles.feelTimeout} aria-hidden="true" />
+          <div
+            className={styles.feelTimeout}
+            style={{ '--feel-timeout': `${FEEL_TIMEOUT_MS}ms` } as CSSProperties}
+            aria-hidden="true"
+          />
         </div>
       )}
 

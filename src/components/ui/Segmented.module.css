@@ -1,4 +1,7 @@
+/* The selected option is marked in granate, like the active navigation item: the inverted
+   vinyl fill belongs only to the armband (DESIGN.md · la regla del bloque único). */
 .group {
+  position: relative;
   display: inline-flex;
   flex-wrap: wrap;
   max-width: 100%;
@@ -9,7 +12,27 @@
   background: var(--color-surface);
 }
 
+/* transitions.dev «tabs sliding»: transform and size are written by Segmented.tsx. */
+.pill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  width: 0;
+  height: 0;
+  border-radius: calc(var(--radius-md) - 3px);
+  background: var(--color-band);
+  pointer-events: none;
+  transition:
+    transform var(--dur-base) var(--ease-out),
+    width var(--dur-base) var(--ease-out),
+    height var(--dur-base) var(--ease-out);
+  will-change: transform, width;
+}
+
 .option {
+  position: relative;
+  z-index: 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -24,7 +47,7 @@
   touch-action: manipulation;
   transition:
     background-color var(--dur-fast) var(--ease-out),
-    color var(--dur-fast) var(--ease-out);
+    color var(--dur-base) var(--ease-out);
 }
 
 .sm .option {
@@ -34,13 +57,19 @@
 
 .option[aria-selected='true'],
 .option[aria-checked='true'] {
-  background: var(--color-text);
-  color: var(--color-bg);
+  color: var(--color-on-band);
 }
 
 @media (hover: hover) {
   .option:not([aria-selected='true'], [aria-checked='true']):hover {
     background: var(--color-hover);
     color: var(--color-text);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pill,
+  .option {
+    transition: none !important;
   }
 }

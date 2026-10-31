@@ -129,7 +129,7 @@ function HowTo({
         <div>
           <dt>Músculo principal</dt>
           <dd>
-            <Chip selected>{label(MUSCLE_LABELS, exercise.target)}</Chip>
+            <Chip>{label(MUSCLE_LABELS, exercise.target)}</Chip>
             <Chip>{label(BODY_PART_LABELS, exercise.bodyPart)}</Chip>
           </dd>
         </div>

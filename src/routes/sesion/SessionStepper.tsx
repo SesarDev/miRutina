@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { Icon } from '@/components/ui'
+import { useNumberPop } from '@/motion/useNumberPop'
 import { clamp, parseDecimal, roundTo } from '@/lib/numbers'
 import styles from './Session.module.css'
 
@@ -39,6 +40,8 @@ export function SessionStepper({
 }: Props) {
   const id = useId()
   const [draft, setDraft] = useState<string | null>(null)
+  const input = useRef<HTMLInputElement>(null)
+  useNumberPop(input, value)
   const format = new Intl.NumberFormat('es-ES', {
     maximumFractionDigits: decimals,
     useGrouping: false,
@@ -62,6 +65,7 @@ export function SessionStepper({
           onChange={onChange}
         />
         <input
+          ref={input}
           className={`${styles.stepperInput} num`}
           aria-label={name}
           inputMode={decimals > 0 ? 'decimal' : 'numeric'}

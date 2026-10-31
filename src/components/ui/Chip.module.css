@@ -51,10 +51,12 @@ button.chip[aria-pressed='true'] {
   color: var(--color-on-feel);
 }
 
+/* Selected neutral chips use granate, like the active navigation item and the segmented pill:
+   the vinyl fill belongs to the armband only. */
 .neutral.selected,
 .neutral[aria-pressed='true'] {
-  --chip-color: var(--color-text);
-  color: var(--color-bg);
+  --chip-color: var(--color-band);
+  color: var(--color-on-band);
 }
 
 .demasiado {

@@ -235,7 +235,7 @@ function SetRows({
                 {row.reps ?? <span className={styles.setTarget}>{target}</span>}
               </span>
               <span className={styles.setCheck}>
-                {row.completedAt && <Icon name="check" size={18} />}
+                {row.completedAt && <SetCheck completedAt={row.completedAt} />}
               </span>
             </button>
           </li>
@@ -375,5 +375,17 @@ function ExerciseOptions({
         </div>
       </details>
     </div>
+  )
+}
+
+/** A set marked just now draws its check (transitions.dev «success check»); older ones are still. */
+const FRESH_MS = 2000
+
+function SetCheck({ completedAt }: { completedAt: string }) {
+  const [fresh] = useState(() => Date.now() - Date.parse(completedAt) < FRESH_MS)
+  return (
+    <span className="t-success-check" data-state={fresh ? 'in' : 'static'}>
+      <Icon name="check" size={18} />
+    </span>
   )
 }

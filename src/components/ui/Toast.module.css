@@ -32,7 +32,26 @@
   color: var(--color-on-armband);
   box-shadow: var(--shadow-lift);
   pointer-events: auto;
-  animation: toast-in var(--dur-base) var(--ease-out);
+  /* transitions.dev «toast»: rises in, leaves faster and with less travel than it came. */
+  transition:
+    opacity var(--dur-base) var(--ease-out),
+    transform var(--dur-base) var(--ease-out),
+    filter var(--dur-base) var(--ease-out);
+}
+
+@starting-style {
+  .toast {
+    opacity: 0;
+    transform: translateY(var(--distance-medium));
+    filter: blur(var(--blur-small));
+  }
+}
+
+.toast[data-closing] {
+  opacity: 0;
+  transform: translateY(var(--distance-micro));
+  pointer-events: none;
+  transition-duration: var(--dur-fast);
 }
 
 .message {
@@ -56,9 +75,4 @@
   background: color-mix(in oklch, currentColor 12%, transparent);
 }
 
-@keyframes toast-in {
-  from {
-    opacity: 0;
-    transform: translateY(var(--distance-medium));
-  }
-}
+/* The distance and blur tokens are 0 with reduced motion: only the fade remains. */

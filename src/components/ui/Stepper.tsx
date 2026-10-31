@@ -1,5 +1,6 @@
-import { useId, useState } from 'react'
+import { useId, useRef, useState } from 'react'
 import { clamp, parseDecimal, roundTo } from '@/lib/numbers'
+import { useNumberPop } from '@/motion/useNumberPop'
 import { Icon } from './Icon'
 import styles from './Stepper.module.css'
 
@@ -35,6 +36,8 @@ export function Stepper({
   })
   // Text being typed; null when the field shows the committed value.
   const [draft, setDraft] = useState<string | null>(null)
+  const input = useRef<HTMLInputElement>(null)
+  useNumberPop(input, value)
   const unitSuffix = unit ? ` ${unit}` : ''
 
   const commit = (next: number) => {
@@ -66,6 +69,7 @@ export function Stepper({
         </button>
         <label className={styles.value}>
           <input
+            ref={input}
             className={styles.input}
             aria-label={unit ? `${label} (${unit})` : label}
             inputMode={decimals > 0 ? 'decimal' : 'numeric'}

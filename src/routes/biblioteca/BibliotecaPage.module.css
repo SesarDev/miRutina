@@ -188,12 +188,33 @@
   background-size: 100% 40px;
   background-position: 0 center;
   background-repeat: no-repeat;
-  animation: pulse 1s ease-in-out infinite alternate;
+  animation: pulse var(--dur-second) var(--ease-in-out) infinite alternate;
 }
 
 @keyframes pulse {
   from {
     opacity: 0.5;
+  }
+}
+
+/* transitions.dev «skeleton reveal», content side: the list resolves out of a soft blur when it
+   replaces the skeleton (only on insertion; filtering does not replay it). */
+.reveal {
+  transition:
+    opacity var(--dur-base) var(--ease-in-out),
+    filter var(--dur-base) var(--ease-in-out);
+}
+
+@starting-style {
+  .reveal {
+    opacity: 0;
+    filter: blur(var(--blur-small));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeletonRow {
+    animation: none;
   }
 }
 

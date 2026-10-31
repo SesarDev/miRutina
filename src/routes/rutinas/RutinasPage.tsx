@@ -9,6 +9,7 @@ import {
   EmptyState,
   Icon,
   IconButton,
+  Segmented,
   showToast,
 } from '@/components/ui'
 import { BODY_PART_LABELS, label } from '@/db/labels'
@@ -32,6 +33,11 @@ import styles from './RutinasPage.module.css'
 
 const route = getRouteApi('/rutinas')
 
+const TAB_OPTIONS = [
+  { value: 'mias', label: 'Mis rutinas' },
+  { value: 'predefinidas', label: 'Predefinidas' },
+] as const
+
 export function RutinasPage() {
   const { tab } = route.useSearch()
   const navigate = useNavigate()
@@ -51,30 +57,22 @@ export function RutinasPage() {
           </Button>
         }
       />
-      <div className={styles.tabs} role="tablist" aria-label="Tipo de rutinas">
-        {(
-          [
-            [undefined, 'Mis rutinas'],
-            ['predefinidas', 'Predefinidas'],
-          ] as const
-        ).map(([value, text]) => (
-          <button
-            key={text}
-            type="button"
-            role="tab"
-            id={`tab-${value ?? 'mias'}`}
-            aria-selected={tab === value}
-            aria-controls="rutinas-panel"
-            className={styles.tab}
-            onClick={() =>
-              void navigate({ to: '/rutinas', search: value ? { tab: value } : {}, replace: true })
-            }
-          >
-            {text}
-          </button>
-        ))}
-      </div>
-      <div id="rutinas-panel" role="tabpanel" aria-labelledby={`tab-${tab ?? 'mias'}`}>
+      <Segmented
+        kind="tabs"
+        idPrefix="rutinas"
+        label="Tipo de rutinas"
+        options={TAB_OPTIONS}
+        value={tab ?? 'mias'}
+        onChange={(next) =>
+          void navigate({
+            to: '/rutinas',
+            search: next === 'predefinidas' ? { tab: next } : {},
+            replace: true,
+          })
+        }
+        className={styles.tabs}
+      />
+      <div id="rutinas-panel" role="tabpanel" aria-labelledby={`rutinas-tab-${tab ?? 'mias'}`}>
         {tab === 'predefinidas' ? <Templates /> : <MyRoutines onCreate={() => void create()} />}
       </div>
     </>

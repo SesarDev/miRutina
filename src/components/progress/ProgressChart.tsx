@@ -9,7 +9,7 @@ import {
   YAxis,
   type DotItemDotProps,
 } from 'recharts'
-import { Chip, Segmented } from '@/components/ui'
+import { Chip, Icon, Segmented } from '@/components/ui'
 import type { HistorySession } from '@/db/queries'
 import { FEEL_LABELS, FEELS, type Feel } from '@/db/types'
 import { formatDay, fromDateKey, toDateKey, type DateKey } from '@/lib/dates'
@@ -189,7 +189,10 @@ export function ProgressChart({ sessions, today }: { sessions: HistorySession[];
 
       {points.length > 0 && (
         <details className={styles.data}>
-          <summary>Ver los datos</summary>
+          <summary>
+            Ver los datos
+            <Icon name="chevronDown" size={18} className={styles.chevron} />
+          </summary>
           <table className={styles.table}>
             <thead>
               <tr>

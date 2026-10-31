@@ -137,15 +137,201 @@ table {
   border: 0;
 }
 
+/* Reduced motion: every animation declares its own alternative (fades, no travel or scale);
+   the distance and scale tokens also drop to zero in tokens.css. */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
+}
 
-  *,
-  *::before,
-  *::after {
-    animation-duration: 1ms !important;
-    animation-iteration-count: 1 !important;
+/* ── Motion shared by components (transitions.dev, adapted to the tokens) ── */
+
+/* «Number pop-in» on a figure that changed (src/motion/useNumberPop.ts). */
+.t-num-pop {
+  --num-pop-from: var(--distance-small);
+
+  animation: t-num-pop var(--dur-fast) var(--ease-out);
+}
+
+.t-num-pop[data-pop='down'] {
+  --num-pop-from: calc(var(--distance-small) * -1);
+}
+
+@keyframes t-num-pop {
+  from {
+    opacity: 0.35;
+    transform: translateY(var(--num-pop-from));
+    filter: blur(var(--blur-small));
+  }
+}
+
+/* «Success check» for a set marked just now. Shortened to the session budget (< 300 ms) and
+   never blocks a tap: it is decoration on a row that is already marked. */
+.t-success-check {
+  display: inline-grid;
+  transform-origin: center;
+}
+
+.t-success-check svg {
+  display: block;
+  overflow: visible;
+}
+
+.t-success-check[data-state='in'] {
+  animation:
+    t-check-fade var(--dur-base) var(--ease-out) both,
+    t-check-rotate var(--dur-base) var(--ease-out) both,
+    t-check-blur var(--dur-base) var(--ease-out) both,
+    t-check-bob var(--dur-base) var(--ease-spring) both;
+}
+
+/* Path length of the «check» icon (m5 12.5 4.5 4.5L19 7.5 ≈ 19.8), rounded up. */
+.t-success-check[data-state='in'] svg path {
+  stroke-dasharray: 21;
+  stroke-dashoffset: 21;
+  animation: t-check-draw var(--dur-base) var(--ease-out) var(--duration-micro) forwards;
+}
+
+@keyframes t-check-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes t-check-rotate {
+  from {
+    rotate: var(--check-rotate-from, 45deg);
+  }
+}
+
+@keyframes t-check-blur {
+  from {
+    filter: blur(var(--blur-small));
+  }
+}
+
+@keyframes t-check-bob {
+  from {
+    translate: 0 var(--distance-small);
+  }
+}
+
+@keyframes t-check-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .t-num-pop {
+    animation-name: t-fade-in;
+  }
+
+  .t-success-check[data-state='in'] {
+    animation: t-fade-in var(--dur-fast) var(--ease-out) both;
+  }
+
+  .t-success-check[data-state='in'] svg path {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes t-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* «Icon swap»: two icons share one slot and cross-fade with blur and scale.
+   Markup: .t-icon-swap[data-state='a'|'b'] > .t-icon[data-icon='a'|'b']. */
+.t-icon-swap {
+  position: relative;
+  display: inline-grid;
+}
+
+.t-icon-swap .t-icon {
+  grid-area: 1 / 1;
+  transition:
+    opacity var(--dur-base) var(--ease-out),
+    filter var(--dur-base) var(--ease-out),
+    transform var(--dur-base) var(--ease-out);
+}
+
+.t-icon-swap[data-state='a'] .t-icon[data-icon='b'],
+.t-icon-swap[data-state='b'] .t-icon[data-icon='a'] {
+  opacity: 0;
+  filter: blur(var(--blur-small));
+  transform: scale(0.25);
+}
+
+/* A single icon that changes (keyed by name) enters the same way; the old one just leaves. */
+.t-icon-enter {
+  transition:
+    opacity var(--dur-base) var(--ease-out),
+    filter var(--dur-base) var(--ease-out),
+    transform var(--dur-base) var(--ease-out);
+}
+
+@starting-style {
+  .t-icon-enter {
+    opacity: 0;
+    filter: blur(var(--blur-small));
+    transform: scale(0.25);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .t-icon-swap .t-icon,
+  .t-icon-enter {
+    transition-property: opacity;
+  }
+
+  .t-icon-swap[data-state] .t-icon {
+    transform: none;
+  }
+
+  @starting-style {
+    .t-icon-enter {
+      transform: none;
+    }
+  }
+}
+
+/* «Error state shake» (src/motion/shake.ts): four legs of --duration-micro. */
+.t-shake {
+  animation: t-shake calc(var(--duration-micro) * 4) linear;
+}
+
+@keyframes t-shake {
+  0% {
+    transform: translateX(0);
+    animation-timing-function: var(--ease-out);
+  }
+
+  25% {
+    transform: translateX(var(--distance-small));
+    animation-timing-function: var(--ease-out);
+  }
+
+  50% {
+    transform: translateX(calc(var(--distance-small) * -1));
+    animation-timing-function: var(--ease-out);
+  }
+
+  75% {
+    transform: translateX(var(--distance-micro));
+    animation-timing-function: var(--ease-out);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .t-shake {
+    animation: none;
   }
 }

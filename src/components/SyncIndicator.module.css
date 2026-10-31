@@ -55,7 +55,7 @@
 }
 
 .spin {
-  animation: spin 1.2s linear infinite;
+  animation: spin var(--dur-spin) var(--ease-linear) infinite;
 }
 
 @keyframes spin {
@@ -68,4 +68,8 @@
   .spin {
     animation: none;
   }
+}
+
+.iconSlot {
+  display: inline-grid;
 }

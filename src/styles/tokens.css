@@ -81,6 +81,10 @@
   --dur-base: 250ms;
   --dur-slow: 400ms;
   --dur-stagger: 40ms;
+  /* One tick of the rest clock: its last seconds pulse once per second. */
+  --dur-second: 1000ms;
+  /* One turn of a spinner (sync in progress). */
+  --dur-spin: 1200ms;
 
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
@@ -88,6 +92,7 @@
   --ease-linear: linear;
 
   --distance-micro: 4px;
+  --distance-small: 6px;
   --distance-base: 8px;
   --distance-medium: 12px;
   --scale-press: 0.96;
@@ -115,6 +120,7 @@
   /* Keep opacity/colour feedback, remove travel and scale. */
   :root {
     --distance-micro: 0px;
+    --distance-small: 0px;
     --distance-base: 0px;
     --distance-medium: 0px;
     --scale-press: 1;

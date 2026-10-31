@@ -684,6 +684,7 @@
   display: grid;
   gap: var(--space-1);
   min-width: 0;
+  container: session-stepper / inline-size;
 }
 
 .stepperLabel {
@@ -757,6 +758,17 @@
 
 .stepperInput:focus-visible {
   outline: none;
+}
+
+/* Narrow column (desktop panel, small phones): slimmer ends so «77,5» is never cut. */
+@container session-stepper (max-width: 11.5rem) {
+  .stepperControl {
+    grid-template-columns: var(--hit-min) minmax(0, 1fr) var(--hit-min);
+  }
+
+  .stepperInput {
+    font-size: var(--text-2xl);
+  }
 }
 
 /* «Serie hecha»: gold is what can be pressed right now. */
@@ -833,6 +845,35 @@
   transform: scale(var(--scale-press));
 }
 
+/* The five buttons arrive one after another (40 ms apart, all in place within 260 ms). They
+   take taps from the first frame: the entrance never delays a rating. */
+.feel {
+  animation: feel-in var(--dur-instant) var(--ease-out) both;
+}
+
+.feel:nth-child(2) {
+  animation-delay: var(--dur-stagger);
+}
+
+.feel:nth-child(3) {
+  animation-delay: calc(var(--dur-stagger) * 2);
+}
+
+.feel:nth-child(4) {
+  animation-delay: calc(var(--dur-stagger) * 3);
+}
+
+.feel:nth-child(5) {
+  animation-delay: calc(var(--dur-stagger) * 4);
+}
+
+@keyframes feel-in {
+  from {
+    opacity: 0;
+    translate: 0 var(--distance-micro);
+  }
+}
+
 .feel[aria-pressed='true'] {
   background: var(--feel);
   color: var(--color-on-feel);
@@ -841,10 +882,17 @@
 /* The 5 s before the rest starts on its own (FEEL_TIMEOUT_MS). */
 .feelTimeout {
   height: 2px;
-  border-radius: 1px;
+  border-radius: var(--radius-pill);
   background: var(--color-line-strong);
   transform-origin: left;
-  animation: feel-timeout 5s linear forwards;
+  /* --feel-timeout comes from FEEL_TIMEOUT_MS (ControlPanel.tsx). */
+  animation: feel-timeout var(--feel-timeout) var(--ease-linear) forwards;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
 }
 
 @keyframes feel-timeout {
@@ -854,6 +902,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .feel {
+    animation-name: fade-in;
+  }
+
   .feelTimeout {
     animation: none;
   }
@@ -886,7 +938,8 @@
 .restProgress {
   stroke: var(--color-accent);
   stroke-linecap: round;
-  transition: stroke-dashoffset 250ms linear;
+  /* One step per clock tick (useNow(250)), linear so the ring drains at a constant pace. */
+  transition: stroke-dashoffset var(--dur-base) var(--ease-linear);
 }
 
 .restText {
@@ -932,6 +985,18 @@
   padding-inline: var(--space-3);
 }
 
+.rest[data-ending] .restClock,
+.rest[data-ending] .restRing {
+  animation: rest-pulse var(--dur-second) var(--ease-in-out) infinite;
+}
+
+@keyframes rest-pulse {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+/* Opacity only: the pulse stays (it is a fade), the ring stops easing. */
 @media (prefers-reduced-motion: reduce) {
   .restProgress {
     transition: none;

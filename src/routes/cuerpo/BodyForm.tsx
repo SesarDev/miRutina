@@ -1,10 +1,11 @@
-import { useState, type FormEvent } from 'react'
+import { useLayoutEffect, useRef, useState, type FormEvent } from 'react'
 import { Button, showToast, TextField } from '@/components/ui'
 import { deleteBodyMetric, restoreBodyMetric, saveBodyMetric } from '@/db/body'
 import type { BodyMetric } from '@/db/types'
 import { BODY_FIELDS, parseBodyValue, type BodyField } from '@/lib/body'
 import { formatDay, isValidDateKey, todayKey, type DateKey } from '@/lib/dates'
 import { formatWeight } from '@/lib/numbers'
+import { shake } from '@/motion/shake'
 import styles from './Cuerpo.module.css'
 
 type Values = Record<BodyField, string>
@@ -31,6 +32,16 @@ export function BodyForm({ initial, metrics, onDone }: Props) {
   const [values, setValues] = useState<Values>(() => toValues(start))
   const [notes, setNotes] = useState(start?.notes ?? '')
   const [errors, setErrors] = useState<Partial<Record<BodyField | 'form', string>>>({})
+  const form = useRef<HTMLFormElement>(null)
+  // Bumped on every rejected «Guardar», so the shake replays even if the errors are the same.
+  const [attempt, setAttempt] = useState(0)
+
+  useLayoutEffect(() => {
+    if (!attempt || !form.current) return
+    const invalid = form.current.querySelectorAll('[aria-invalid="true"]')
+    shake([...invalid].map((input) => input.parentElement!))
+    shake(form.current.querySelectorAll('[data-form-error]'))
+  }, [attempt])
 
   const changeDate = (next: string) => {
     setDate(next)
@@ -54,7 +65,10 @@ export function BodyForm({ initial, metrics, onDone }: Props) {
       next.form = 'Apunta al menos el peso o una medida.'
     }
     setErrors(next)
-    if (Object.keys(next).length) return
+    if (Object.keys(next).length) {
+      setAttempt((n) => n + 1)
+      return
+    }
 
     await saveBodyMetric({
       id: editing?.id,
@@ -81,7 +95,7 @@ export function BodyForm({ initial, metrics, onDone }: Props) {
   }
 
   return (
-    <form className={styles.form} onSubmit={(e) => void submit(e)} noValidate>
+    <form ref={form} className={styles.form} onSubmit={(e) => void submit(e)} noValidate>
       <TextField
         label="Fecha"
         type="date"
@@ -115,7 +129,7 @@ export function BodyForm({ initial, metrics, onDone }: Props) {
         placeholder="Opcional"
       />
       {errors.form && (
-        <p className={styles.formError} role="alert">
+        <p className={styles.formError} role="alert" data-form-error>
           {errors.form}
         </p>
       )}

@@ -13,7 +13,7 @@ import {
 import { getRouteApi, Link } from '@tanstack/react-router'
 import { useState } from 'react'
 import { PageHeader } from '@/components/PageHeader'
-import { Button, buttonClassName, Icon, IconButton, showToast } from '@/components/ui'
+import { Button, buttonClassName, Icon, IconButton, Segmented, showToast } from '@/components/ui'
 import { usePlannedBetween, useRoutines, type PlannedEntry } from '@/db/queries'
 import { moveWorkout, planWorkout } from '@/db/planning'
 import type { Routine } from '@/db/types'
@@ -38,6 +38,11 @@ import { WorkoutPill } from './WorkoutPill'
 import styles from './Calendario.module.css'
 
 const route = getRouteApi('/calendario')
+
+const VIEW_OPTIONS = [
+  { value: 'semana', label: 'Semana' },
+  { value: 'mes', label: 'Mes' },
+] as const
 const MAX_PILLS = 2
 
 export type CalendarView = 'semana' | 'mes'
@@ -146,20 +151,12 @@ export function CalendarioPage() {
             onClick={() => step(1)}
           />
         </div>
-        <div className={styles.viewSwitch} role="radiogroup" aria-label="Vista">
-          {(['semana', 'mes'] as const).map((v) => (
-            <button
-              key={v}
-              type="button"
-              role="radio"
-              aria-checked={view === v}
-              className={styles.viewOption}
-              onClick={() => go({ vista: v })}
-            >
-              {v === 'semana' ? 'Semana' : 'Mes'}
-            </button>
-          ))}
-        </div>
+        <Segmented
+          label="Vista"
+          options={VIEW_OPTIONS}
+          value={view}
+          onChange={(vista) => go({ vista })}
+        />
       </div>
 
       {view === 'semana' ? (

@@ -119,7 +119,9 @@ export function BibliotecaPage() {
             ) : results.length === 0 ? (
               <NoResults filters={filters} onClear={clear} />
             ) : (
-              <ExerciseList exercises={results} favorites={favorites} selectInPlace={desktop} />
+              <div className={styles.reveal}>
+                <ExerciseList exercises={results} favorites={favorites} selectInPlace={desktop} />
+              </div>
             )}
           </div>
         </div>

@@ -19,11 +19,14 @@ export function SyncIndicator({ compact = false }: { compact?: boolean }) {
 
   return (
     <Link to="/ajustes" className={classes} title={summary.label} aria-live="polite">
-      <Icon
-        name={summary.icon}
-        size={20}
-        className={summary.icon === 'sync' ? styles.spin : undefined}
-      />
+      {/* Keyed by name: a new state's icon enters with the «icon swap» fade. */}
+      <span key={summary.icon} className={`t-icon-enter ${styles.iconSlot}`}>
+        <Icon
+          name={summary.icon}
+          size={20}
+          className={summary.icon === 'sync' ? styles.spin : undefined}
+        />
+      </span>
       <span className={styles.label}>{summary.label}</span>
     </Link>
   )

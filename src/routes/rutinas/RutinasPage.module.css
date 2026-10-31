@@ -1,41 +1,5 @@
 .tabs {
-  display: inline-flex;
-  flex-wrap: wrap;
-  max-width: 100%;
-  gap: 2px;
   margin-bottom: var(--space-6);
-  padding: 3px;
-  border: 1px solid var(--color-line-strong);
-  border-radius: var(--radius-md);
-  background: var(--color-surface);
-}
-
-.tab {
-  border: 0;
-  background: none;
-  display: inline-flex;
-  align-items: center;
-  min-height: var(--hit-min);
-  padding: 0 var(--space-4);
-  border-radius: calc(var(--radius-md) - 3px);
-  color: var(--color-text-2);
-  font-weight: var(--weight-semibold);
-  text-decoration: none;
-  transition:
-    background-color var(--dur-fast) var(--ease-out),
-    color var(--dur-fast) var(--ease-out);
-}
-
-.tab[aria-selected='true'] {
-  background: var(--color-text);
-  color: var(--color-bg);
-}
-
-@media (hover: hover) {
-  .tab:not([data-status='active']):hover {
-    background: var(--color-hover);
-    color: var(--color-text);
-  }
 }
 
 /* ── Mis rutinas ── */
