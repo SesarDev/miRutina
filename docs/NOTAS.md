@@ -17,6 +17,32 @@
 
 - **F4 · Historial, progreso y cuerpo:** cerrada el 31 oct 2026 (etiqueta `f4-done`). Cálculos de 1RM y récords con tests, pestañas Historial y Gráfica en la ficha, pantalla Progreso (90 días, constancia de 12 semanas, récords de 30 días), récords en el resumen de sesión y Cuerpo (peso y medidas con media de 7 días). Criterios 1, 2, 3 y 5 verificados (tests, e2e y capturas en 390 y 1440 px, oscuro y claro). **Pendiente de verificar a mano** (el usuario lo prueba después): registrar peso y medidas en el PC y verlos en el móvil.
 
+## F5 · Auditoría de partida (31 oct 2026)
+
+### transitions.dev (elegido con el usuario)
+Lo que pide la fase:
+1. «Serie hecha» (`ControlPanel.tsx`) → **success check** + escala 0,96 al pulsar.
+2. Botones de valoración → entrada escalonada (texts reveal adaptado, 35 ms).
+3. Cifra de los steppers → **number pop-in** (desplazamiento vertical sutil).
+4. Anillo de descanso → ya en CSS; añadir pulso en los últimos 3 s.
+5. Sheets → la salida, más rápida que la entrada.
+
+Extras elegidos: **tabs sliding** (Segmented, semana/mes, pestañas de Rutinas), **toast** con salida, **icon swap** (favorito e indicador de sync), **error shake** (formulario de Cuerpo), **skeleton reveal** (Biblioteca) y **accordion** («Ver los datos»).
+
+`transitions refine`: el anillo usa `250ms linear` suelto → `var(--dur-base) var(--ease-linear)`; el pulso de la Biblioteca (`1s ease-in-out`) desaparece con el skeleton. Se quedan como están el giro del indicador de sync (`1.2s linear`, ningún token tiene ese uso) y la cuenta atrás de 5 s de la valoración (ligada a `FEEL_TIMEOUT_MS`).
+
+### impeccable critique (dos evaluaciones independientes; heurísticas 30/40)
+Detector: 1 aviso en la CLI (radio de 1 px en la barra de la valoración) y en el navegador, sobre 7 rutas: «kicker» encima del título en Hoy (verdadero positivo), paleta crema del tema claro y franja lateral del calendario (falsos positivos aceptados: son de `DESIGN.md`), `--ease-spring` sin usar y espaciado monótono (aviso). Sin desbordamiento horizontal ni errores de consola.
+
+Prioridades:
+1. **[P1] Hoy entierra «Empezar»** bajo la cuadrícula de 4 tarjetas de secciones (antirreferencia de `PRODUCT.md`); en 390 px el botón queda fuera de pantalla. → paso 6 (decidir con el usuario).
+2. **[P1] El stepper de peso se corta en la sesión de PC** («77,» en vez de 77,5): `SessionStepper` no tiene la container query del `Stepper`. → paso 2 (cifra del stepper).
+3. **[P1] El brazalete salta sin movimiento** al marcar una serie y la tarjeta del ejercicio cambia de golpe; la valoración aparece y empuja los steppers ~70 px. → pasos 2 y 3 (Flip).
+4. **[P2] El resumen de sesión es un final plano**: «0 min» en sesiones cortas, sin cifra protagonista. → paso 5.
+5. **[P2] La regla del bloque invertido único se diluye**: el Segmented activo, los chips seleccionados y las celdas de constancia usan relleno vinilo como el brazalete. → paso 2 (con la píldora deslizante).
+
+Menores: comentario «3 s» en `ControlPanel.tsx:52` (son 5 s); «0 de 0 días entrenados» en Hoy; nombres largos cortados en la tarjeta recogida de la sesión; récords repetidos del mismo ejercicio en Progreso; números de la constancia sin rótulo; etiqueta «Bien» en todos los puntos de la gráfica; en Cuerpo «Peso» y «Media 7 días» con el mismo peso visual; Ajustes y Rutinas sin 2 columnas en PC; el anillo de descanso lleno al empezar parece «terminado»; el lector de pantalla no sabe que el descanso empieza solo; texto de «Anterior» a ~11 px.
+
 ## Decisiones técnicas
 
 - **TypeScript 6.0 en vez de 7.** La plantilla de Vite trae TS 7 (el compilador en Go), pero `typescript-eslint` aún no lo admite (`peer typescript <6.1`). Volver a TS 7 cuando lo soporte.
