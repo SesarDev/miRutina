@@ -4,8 +4,8 @@
  * they never turn into a suggestion of today's weight.
  */
 import type { SetLog } from '@/db/types'
-import type { DateKey } from './dates'
-import { roundTo } from './numbers'
+import { addDaysKey, addMonthsKey, type DateKey } from './dates'
+import { formatWeight, roundTo } from './numbers'
 
 /** Epley is unreliable above this many reps, so those sets have no estimate. */
 export const MAX_1RM_REPS = 12
@@ -253,4 +253,63 @@ export function personalRecords(sessions: ExerciseSession[]): PersonalRecords {
     }
   }
   return out
+}
+
+// ── Text ──
+
+/** «60 kg × 10», «12 reps» (bodyweight). */
+export function formatSet(set: Pick<SetLog, 'weight' | 'reps'>): string {
+  if (set.weight === null || set.weight <= 0) return `${set.reps ?? 0} reps`
+  return `${formatWeight(set.weight)} kg × ${set.reps ?? 0}`
+}
+
+const kg = (n: number) => `${formatWeight(n)} kg`
+const volumeFormat = new Intl.NumberFormat('es-ES')
+
+/** «Más peso: 65 kg (antes 60 kg)», «Más reps con 60 kg: 11 (antes 10)». */
+export function formatRecord(record: ExerciseRecord): string {
+  switch (record.kind) {
+    case 'weight':
+      return `Más peso: ${kg(record.value)} (antes ${kg(record.previous)})`
+    case 'reps': {
+      const at = record.weight ? kg(record.weight) : 'peso corporal'
+      return `Más reps con ${at}: ${record.value} (antes ${record.previous})`
+    }
+    case 'e1rm':
+      return `Mejor 1RM estimado: ${kg(record.value)} (antes ${kg(record.previous)})`
+    case 'volume':
+      return `Más volumen: ${volumeFormat.format(record.value)} kg (antes ${volumeFormat.format(record.previous)} kg)`
+  }
+}
+
+// ── Chart ──
+
+export type ChartMetric = 'weight' | 'e1rm' | 'volume'
+
+export const CHART_METRIC_LABELS: Record<ChartMetric, string> = {
+  weight: 'Peso máximo',
+  e1rm: '1RM estimado',
+  volume: 'Volumen',
+}
+
+export function metricOf(stats: SessionStats, metric: ChartMetric): number | null {
+  if (metric === 'weight') return stats.maxWeight
+  if (metric === 'e1rm') return stats.best1RM
+  return stats.volume > 0 ? stats.volume : null
+}
+
+export type ChartRange = '1m' | '3m' | '1y' | 'all'
+
+export const CHART_RANGE_LABELS: Record<ChartRange, string> = {
+  '1m': '1 mes',
+  '3m': '3 meses',
+  '1y': '1 año',
+  all: 'Todo',
+}
+
+/** First day shown by a range (inclusive), or null for «Todo». */
+export function rangeStart(range: ChartRange, today: DateKey): DateKey | null {
+  if (range === 'all') return null
+  const months = { '1m': 1, '3m': 3, '1y': 12 }[range]
+  return addDaysKey(addMonthsKey(today, -months), 1)
 }

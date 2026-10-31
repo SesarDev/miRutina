@@ -1,4 +1,4 @@
-import { getRouteApi, Link, useRouter } from '@tanstack/react-router'
+import { getRouteApi, Link, useNavigate, useRouter } from '@tanstack/react-router'
 import { ExerciseDetail } from '@/components/exercise/ExerciseDetail'
 import { PageHeader } from '@/components/PageHeader'
 import { buttonClassName, EmptyState } from '@/components/ui'
@@ -10,6 +10,8 @@ const route = getRouteApi('/ejercicio/$exerciseId')
 
 export function EjercicioPage() {
   const { exerciseId } = route.useParams()
+  const { tab } = route.useSearch()
+  const navigate = useNavigate()
   const exercise = useExercise(exerciseId)
   const favorites = useFavoriteIds()
   const router = useRouter()
@@ -55,7 +57,20 @@ export function EjercicioPage() {
   return (
     <>
       {back}
-      <ExerciseDetail exercise={exercise} favorite={favorites.has(exercise.id)} as="h1" />
+      <ExerciseDetail
+        exercise={exercise}
+        favorite={favorites.has(exercise.id)}
+        as="h1"
+        tab={tab ?? 'como'}
+        onTabChange={(next) =>
+          void navigate({
+            to: '/ejercicio/$exerciseId',
+            params: { exerciseId },
+            search: next === 'como' ? {} : { tab: next },
+            replace: true,
+          })
+        }
+      />
     </>
   )
 }

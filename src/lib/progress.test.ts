@@ -1,6 +1,10 @@
 import {
   detectRecords,
   estimated1RM,
+  formatRecord,
+  formatSet,
+  metricOf,
+  rangeStart,
   personalRecords,
   recordsBySession,
   sessionStats,
@@ -242,5 +246,47 @@ describe('personalRecords', () => {
       bestVolume: null,
       maxReps: null,
     })
+  })
+})
+
+describe('formatRecord', () => {
+  const base = { exerciseId: 'ex', sessionId: 's', date: '2026-10-05' }
+  it.each([
+    [{ kind: 'weight', value: 62.5, previous: 60 }, 'Más peso: 62,5 kg (antes 60 kg)'],
+    [{ kind: 'reps', value: 11, previous: 10, weight: 60 }, 'Más reps con 60 kg: 11 (antes 10)'],
+    [
+      { kind: 'reps', value: 12, previous: 10, weight: null },
+      'Más reps con peso corporal: 12 (antes 10)',
+    ],
+    [{ kind: 'e1rm', value: 86.7, previous: 80 }, 'Mejor 1RM estimado: 86,7 kg (antes 80 kg)'],
+    [{ kind: 'volume', value: 1885, previous: 1740 }, 'Más volumen: 1885 kg (antes 1740 kg)'],
+  ] as const)('%o', (record, text) => {
+    expect(formatRecord({ ...base, ...record })).toBe(text)
+  })
+})
+
+describe('rangeStart', () => {
+  it('meses hacia atrás desde hoy, incluido el día siguiente', () => {
+    expect(rangeStart('1m', '2026-10-31')).toBe('2026-10-01')
+    expect(rangeStart('3m', '2026-10-31')).toBe('2026-08-01')
+    expect(rangeStart('1y', '2026-10-31')).toBe('2025-11-01')
+    expect(rangeStart('all', '2026-10-31')).toBeNull()
+  })
+})
+
+describe('metricOf', () => {
+  const stats = sessionStats([set(60, 10)])
+  it('elige la cifra de la gráfica', () => {
+    expect(metricOf(stats, 'weight')).toBe(60)
+    expect(metricOf(stats, 'e1rm')).toBe(80)
+    expect(metricOf(stats, 'volume')).toBe(600)
+    expect(metricOf(sessionStats([set(null, 10)]), 'volume')).toBeNull()
+  })
+})
+
+describe('formatSet', () => {
+  it('peso × reps o reps sin peso', () => {
+    expect(formatSet({ weight: 62.5, reps: 8 })).toBe('62,5 kg × 8')
+    expect(formatSet({ weight: null, reps: 12 })).toBe('12 reps')
   })
 })

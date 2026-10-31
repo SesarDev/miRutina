@@ -6,7 +6,8 @@ import { buildIndex } from '@/lib/exerciseSearch'
 import { sortSets, type PastSession } from '@/lib/lastTime'
 import { estimateMinutes } from '@/lib/routines'
 import { db } from './schema'
-import type { ExerciseSettings, PlannedWorkout } from './types'
+import type { DateKey } from '@/lib/dates'
+import type { ExerciseSettings, PlannedWorkout, SetLog } from './types'
 
 const EMPTY: never[] = []
 
@@ -206,4 +207,47 @@ export function useExerciseSettingsById(ids: string[]) {
     [key],
     new Map<string, ExerciseSettings>(),
   )
+}
+
+/** One past session of an exercise, with its completed rows (warm-ups and drops included). */
+export type HistorySession = {
+  sessionId: string
+  date: DateKey
+  startedAt: string
+  sets: SetLog[]
+}
+
+/**
+ * Every session with completed rows of an exercise, most recent first. Rows of deleted sessions
+ * or deleted rows are left out; filtering warm-ups is up to the caller (`lib/progress`).
+ */
+export async function exerciseHistory(exerciseId: string): Promise<HistorySession[]> {
+  const logs = await db.setLogs
+    .where('[exerciseId+completedAt]')
+    .between([exerciseId, Dexie.minKey], [exerciseId, Dexie.maxKey])
+    .toArray()
+
+  const bySession = new Map<string, SetLog[]>()
+  for (const log of logs) {
+    if (log.deletedAt) continue
+    const list = bySession.get(log.sessionId)
+    if (list) list.push(log)
+    else bySession.set(log.sessionId, [log])
+  }
+
+  const sessions = await db.sessions.bulkGet([...bySession.keys()])
+  return sessions
+    .filter((s) => s !== undefined && !s.deletedAt)
+    .map((s) => ({
+      sessionId: s!.id,
+      date: s!.date,
+      startedAt: s!.startedAt,
+      sets: sortSets(bySession.get(s!.id)!),
+    }))
+    .sort((a, b) => b.date.localeCompare(a.date) || b.startedAt.localeCompare(a.startedAt))
+}
+
+/** undefined while loading. */
+export function useExerciseHistory(exerciseId: string) {
+  return useLiveQuery(() => exerciseHistory(exerciseId), [exerciseId])
 }

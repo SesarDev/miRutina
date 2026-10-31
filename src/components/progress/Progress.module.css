@@ -1,0 +1,307 @@
+/* ── Personal records ── */
+.records {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(6.5rem, 1fr));
+  gap: var(--space-3);
+  margin: 0;
+}
+
+.records div {
+  display: grid;
+  align-content: start;
+  gap: var(--space-1);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-line);
+}
+
+.records dt,
+.label {
+  color: var(--color-text-2);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.records dd {
+  margin: 0;
+}
+
+.figure {
+  display: block;
+  font-family: var(--font-condensed);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.unit {
+  margin-left: 0.15em;
+  color: var(--color-text-2);
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+}
+
+.meta {
+  display: block;
+  margin-top: var(--space-1);
+  color: var(--color-text-3);
+  font-size: var(--text-sm);
+}
+
+/* ── History ── */
+.history {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.session {
+  display: grid;
+  gap: var(--space-2);
+  padding-block: var(--space-4);
+  border-top: 1px solid var(--color-line);
+}
+
+.sessionHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-1) var(--space-3);
+}
+
+.date {
+  font-weight: var(--weight-semibold);
+}
+
+.date::first-letter {
+  text-transform: uppercase;
+}
+
+.ago {
+  color: var(--color-text-3);
+  font-size: var(--text-sm);
+}
+
+.sets {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.set {
+  display: grid;
+  grid-template-columns: 1.5rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 36px;
+}
+
+.setIndex {
+  color: var(--color-text-3);
+  font-family: var(--font-condensed);
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.setFigure {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-condensed);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.drop .setFigure {
+  color: var(--color-text-2);
+  font-size: var(--text-lg);
+}
+
+.recordMark {
+  display: inline-flex;
+  color: var(--color-text);
+}
+
+.recordMark svg {
+  fill: currentColor;
+}
+
+.sessionRecords {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--color-text-2);
+  font-size: var(--text-sm);
+}
+
+.sessionRecords li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.empty {
+  padding: var(--space-4);
+  border: 1px dashed var(--color-line-strong);
+  border-radius: var(--radius-md);
+  color: var(--color-text-2);
+  font-size: var(--text-sm);
+}
+
+/* ── Chart ── */
+.chartTools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.chart {
+  height: 15rem;
+  margin-inline: calc(var(--space-2) * -1);
+}
+
+.chart :global(.recharts-cartesian-grid line) {
+  stroke: var(--color-line);
+}
+
+.chart :global(.recharts-cartesian-axis-tick-value) {
+  fill: var(--color-text-3);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.chart :global(.recharts-line-curve) {
+  stroke: var(--color-text-3);
+  stroke-width: 2;
+}
+
+.chart :global(.recharts-tooltip-cursor) {
+  stroke: var(--color-line-strong);
+}
+
+.chart :global(.recharts-surface):focus {
+  outline: none;
+}
+
+.chart :global(.recharts-wrapper):has(:focus-visible) {
+  border-radius: var(--radius-sm);
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.dot {
+  stroke: var(--color-bg);
+  stroke-width: 2;
+  fill: var(--color-text-3);
+}
+
+.dotNone {
+  stroke: var(--color-text-3);
+  fill: var(--color-bg);
+}
+
+.dot.demasiado {
+  fill: var(--feel-demasiado);
+}
+
+.dot.justo {
+  fill: var(--feel-justo);
+}
+
+.dot.bien {
+  fill: var(--feel-bien);
+}
+
+.dot.puedo_mas {
+  fill: var(--feel-puedo-mas);
+}
+
+.dot.poco {
+  fill: var(--feel-poco);
+}
+
+.dotLabel {
+  fill: var(--color-text-2);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+}
+
+.tooltip {
+  display: grid;
+  gap: var(--space-1);
+  max-width: 16rem;
+  padding: var(--space-3);
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-2);
+  box-shadow: var(--shadow-lift);
+  font-size: var(--text-sm);
+}
+
+.tooltip .figure {
+  font-size: var(--text-xl);
+}
+
+.tooltipSets {
+  color: var(--color-text-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: var(--space-3) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.data {
+  margin-top: var(--space-4);
+}
+
+.data summary {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--hit-min);
+  color: var(--color-text-2);
+  font-weight: var(--weight-semibold);
+  cursor: pointer;
+}
+
+.table {
+  width: 100%;
+  margin-top: var(--space-2);
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+
+.table th,
+.table td {
+  padding: var(--space-2) var(--space-2);
+  border-bottom: 1px solid var(--color-line);
+  text-align: left;
+}
+
+.table th {
+  color: var(--color-text-2);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.table .numCell {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}

@@ -56,7 +56,13 @@ const routeTree = rootRoute.addChildren([
   createRoute({ getParentRoute, path: '/cuerpo', component: CuerpoPage }),
   createRoute({ getParentRoute, path: '/ajustes', component: AjustesPage }),
   createRoute({ getParentRoute, path: '/sesion/$sessionId', component: SesionPage }),
-  createRoute({ getParentRoute, path: '/ejercicio/$exerciseId', component: EjercicioPage }),
+  createRoute({
+    getParentRoute,
+    path: '/ejercicio/$exerciseId',
+    component: EjercicioPage,
+    validateSearch: (s: Record<string, unknown>): { tab?: 'historial' | 'grafica' } =>
+      s.tab === 'historial' || s.tab === 'grafica' ? { tab: s.tab } : {},
+  }),
   // Hidden: primitives showcase, not linked from the navigation.
   createRoute({ getParentRoute, path: '/dev/ui', component: DevUiPage }),
 ])

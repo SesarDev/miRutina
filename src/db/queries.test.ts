@@ -1,5 +1,5 @@
 import 'fake-indexeddb/auto'
-import { lastSessionsForExercise } from './queries'
+import { exerciseHistory, lastSessionsForExercise } from './queries'
 import { save, softDelete } from './repo'
 import { db } from './schema'
 import type { SetLog } from './types'
@@ -75,5 +75,28 @@ describe('lastSessionsForExercise', () => {
 
   it('sin historial devuelve una lista vacía', async () => {
     expect(await lastSessionsForExercise('press')).toEqual([])
+  })
+})
+
+describe('exerciseHistory', () => {
+  it('todas las sesiones del ejercicio, de más reciente a más antigua, sin borrados', async () => {
+    await session('a', '2026-10-01')
+    await session('b', '2026-10-05')
+    await session('gone', '2026-10-07')
+    await log('a', '2026-10-01', 0, { isWarmup: true, weight: 40 })
+    await log('a', '2026-10-01', 1)
+    await log('b', '2026-10-05', 1, { weight: 62.5 })
+    await log('b', '2026-10-05', 0, { weight: 62.5 })
+    await log('b', '2026-10-05', 2, { id: 'deleted' })
+    await softDelete('setLogs', 'deleted')
+    await log('b', '2026-10-05', 3, { completedAt: null })
+    await log('gone', '2026-10-07', 0)
+    await softDelete('sessions', 'gone')
+
+    const history = await exerciseHistory('press')
+    expect(history.map((h) => h.sessionId)).toEqual(['b', 'a'])
+    expect(history[0]!.sets.map((s) => s.order)).toEqual([0, 1])
+    // Warm-ups stay: lib/progress filters them.
+    expect(history[1]!.sets.map((s) => s.isWarmup)).toEqual([true, false])
   })
 })
