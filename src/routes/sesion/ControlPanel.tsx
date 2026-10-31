@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { Button, Icon } from '@/components/ui'
 import { completeSet, setFeel, uncompleteSet, updateSetRow } from '@/db/sessions'
 import { FEEL_LABELS, FEELS, type Session, type SessionItem, type SetLog } from '@/db/types'
@@ -14,6 +14,8 @@ import { RestTimer } from './RestTimer'
 import { SessionStepper } from './SessionStepper'
 import { askFeel, closeFeelPrompt, selectRow, startRest, useSessionUi } from './sessionStore'
 import styles from './Session.module.css'
+
+const DOUBLE_TAP_MS = 600
 
 type Props = {
   session: Session
@@ -53,8 +55,13 @@ export function ControlPanel({
     return () => window.clearTimeout(id)
   }, [feelPrompt])
 
+  // «Serie hecha» stays in the same place for the next set: a sweaty double tap must not mark
+  // two sets.
+  const lockedUntil = useRef(0)
+
   const markDone = async () => {
-    if (!row) return
+    if (!row || row.reps === null || Date.now() < lockedUntil.current) return
+    lockedUntil.current = Date.now() + DOUBLE_TAP_MS
     closeFeelPrompt()
     await completeSet(row.id)
     const restSec = restAfter(items, rows, row.id)
@@ -77,6 +84,17 @@ export function ControlPanel({
       ? 'Calentamiento'
       : `Serie ${workIndex + 1} de ${workTotal}${row.dropIndex > 0 ? ` · bajada ${row.dropIndex}` : ''}`
 
+  const promptLabel = promptRow
+    ? promptRow.isWarmup
+      ? 'Calentamiento'
+      : `Serie ${
+          workIndexOf(
+            promptRow,
+            rows.filter((r) => r.exerciseId === promptRow.exerciseId),
+          ) + 1
+        }`
+    : ''
+
   return (
     <section className={styles.panel} aria-label="Registro de la serie">
       {rest && <RestTimer rest={rest} />}
@@ -84,7 +102,7 @@ export function ControlPanel({
       {feelPrompt && promptRow && (
         <div className={styles.feelPrompt}>
           <p className={styles.panelLabel} id="feel-title">
-            ¿Cómo ha ido? <span className={styles.optional}>Opcional</span>
+            {promptLabel} · ¿Cómo ha ido? <span className={styles.optional}>Opcional</span>
           </p>
           <div className={styles.feels} role="group" aria-labelledby="feel-title">
             {FEELS.map((feel) => (
@@ -157,9 +175,14 @@ export function ControlPanel({
               Desmarcar serie
             </Button>
           ) : (
-            <button type="button" className={styles.done} onClick={() => void markDone()}>
+            <button
+              type="button"
+              className={styles.done}
+              disabled={row.reps === null}
+              onClick={() => void markDone()}
+            >
               <Icon name="check" size={26} />
-              Serie hecha
+              {row.reps === null ? 'Indica las repeticiones' : 'Serie hecha'}
             </button>
           )}
         </>

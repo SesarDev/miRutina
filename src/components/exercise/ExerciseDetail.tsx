@@ -3,6 +3,7 @@ import { BODY_PART_LABELS, EQUIPMENT_LABELS, label, MUSCLE_LABELS } from '@/db/l
 import type { Exercise } from '@/db/types'
 import { ExerciseMedia } from './ExerciseMedia'
 import { FavoriteButton } from './FavoriteButton'
+import { WeightStepPicker } from './WeightStepPicker'
 import styles from './ExerciseDetail.module.css'
 
 type Props = {
@@ -74,6 +75,13 @@ export function ExerciseDetail({ exercise, favorite, as: Heading = 'h2' }: Props
           </ol>
         </section>
       )}
+
+      <section aria-labelledby={`session-${exercise.id}`}>
+        <Section id={`session-${exercise.id}`} className={styles.sectionTitle}>
+          En la sesión
+        </Section>
+        <WeightStepPicker exercise={exercise} />
+      </section>
 
       <section aria-labelledby={`hist-${exercise.id}`}>
         <Section id={`hist-${exercise.id}`} className={styles.sectionTitle}>

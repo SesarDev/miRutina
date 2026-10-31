@@ -108,10 +108,6 @@ export function SesionPage() {
                   rows={rows.filter((r) => r.exerciseId === item.exerciseId)}
                   active={item.id === expandedId}
                   activeRowId={active?.row.id ?? null}
-                  weightStep={
-                    settings.get(item.exerciseId)?.weightStep ??
-                    defaultWeightStep(exercises.get(item.exerciseId)?.equipment ?? '')
-                  }
                 />
               ))
               if (block.length === 1) return cards

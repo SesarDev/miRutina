@@ -76,9 +76,13 @@
   background: transparent;
   color: var(--color-on-band);
   font-weight: var(--weight-semibold);
+  transition:
+    transform var(--dur-instant) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out);
 }
 
 .finish:active {
+  transform: scale(var(--scale-press));
   background: color-mix(in oklch, var(--color-on-band) 14%, transparent);
 }
 
@@ -559,37 +563,6 @@
   transform: rotate(90deg);
 }
 
-.stepChoice {
-  display: grid;
-  gap: var(--space-2);
-  margin: 0;
-  padding: 0;
-  border: 0;
-}
-
-.stepChips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-}
-
-.stepChip {
-  min-width: var(--hit-min);
-  min-height: var(--hit-min);
-  padding: 0 var(--space-3);
-  border: 1px solid var(--color-line-strong);
-  border-radius: var(--radius-md);
-  background: transparent;
-  color: var(--color-text);
-  font-weight: var(--weight-semibold);
-}
-
-.stepChip[aria-pressed='true'] {
-  border-color: var(--color-text);
-  background: var(--color-text);
-  color: var(--color-bg);
-}
-
 /* ── Control panel (thumb zone) ── */
 .panel {
   position: sticky;
@@ -733,13 +706,18 @@
     background-color var(--dur-fast) var(--ease-out);
 }
 
-.done:active {
+.done:disabled {
+  background: var(--color-surface-2);
+  color: var(--color-text-2);
+}
+
+.done:active:not(:disabled) {
   transform: scale(var(--scale-press));
   background: var(--color-accent-press);
 }
 
 @media (hover: hover) {
-  .done:hover {
+  .done:hover:not(:disabled) {
     background: var(--color-accent-hover);
   }
 }
@@ -861,6 +839,11 @@
   font-size: var(--text-4xl);
   font-weight: var(--weight-bold);
   line-height: 1;
+}
+
+.rest[data-ended] .restProgress {
+  /* A round cap leaves a dot at zero length. */
+  opacity: 0;
 }
 
 .rest[data-ended] .restLabel {

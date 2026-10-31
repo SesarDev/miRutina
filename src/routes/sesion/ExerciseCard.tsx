@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { ExerciseThumb } from '@/components/exercise/ExerciseMedia'
+import { WeightStepPicker } from '@/components/exercise/WeightStepPicker'
 import { Button, Icon, IconButton, Sheet } from '@/components/ui'
 import { useLastSessions } from '@/db/queries'
-import { updateExerciseSettings } from '@/db/repo'
 import {
   addSet,
   addWarmup,
@@ -33,8 +33,6 @@ import { NoteField } from './SessionNotes'
 import { selectRow } from './sessionStore'
 import styles from './Session.module.css'
 
-const WEIGHT_STEPS = [0.5, 1, 2, 2.5, 5]
-
 type Props = {
   sessionId: string
   item: SessionItem
@@ -44,7 +42,6 @@ type Props = {
   rows: SetLog[]
   active: boolean
   activeRowId: string | null
-  weightStep: number
 }
 
 export function ExerciseCard({
@@ -56,7 +53,6 @@ export function ExerciseCard({
   rows,
   active,
   activeRowId,
-  weightStep,
 }: Props) {
   const [options, setOptions] = useState(false)
   const name = exercise?.nameEs ?? 'Ejercicio'
@@ -128,7 +124,7 @@ export function ExerciseCard({
           count={count}
           rows={rows}
           activeRowId={active ? activeRowId : null}
-          weightStep={weightStep}
+          exercise={exercise}
           onDone={() => setOptions(false)}
         />
       </Sheet>
@@ -262,7 +258,7 @@ function ExerciseOptions({
   count,
   rows,
   activeRowId,
-  weightStep,
+  exercise,
   onDone,
 }: {
   sessionId: string
@@ -271,7 +267,7 @@ function ExerciseOptions({
   count: number
   rows: SetLog[]
   activeRowId: string | null
-  weightStep: number
+  exercise: Exercise | undefined
   onDone: () => void
 }) {
   const selected = rows.find((r) => r.id === activeRowId)
@@ -316,22 +312,7 @@ function ExerciseOptions({
         )}
       </div>
 
-      <fieldset className={styles.stepChoice}>
-        <legend className={styles.noteLabel}>Paso de los botones de peso</legend>
-        <div className={styles.stepChips}>
-          {WEIGHT_STEPS.map((step) => (
-            <button
-              key={step}
-              type="button"
-              className={styles.stepChip}
-              aria-pressed={step === weightStep}
-              onClick={() => void updateExerciseSettings(item.exerciseId, { weightStep: step })}
-            >
-              <span className="num">{formatWeight(step)}</span> kg
-            </button>
-          ))}
-        </div>
-      </fieldset>
+      {exercise && <WeightStepPicker exercise={exercise} />}
 
       <NoteField
         label="Nota del ejercicio en esta sesión"

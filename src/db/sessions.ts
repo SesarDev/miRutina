@@ -220,6 +220,9 @@ export async function finishSession(sessionId: string): Promise<Session | undefi
   const session = await db.sessions.get(sessionId)
   if (!session || session.endedAt) return session
 
+  // Ended first, so the screen goes straight to the summary while the rest is tidied up.
+  const ended = await save('sessions', { ...session, endedAt: nowIso() })
+
   const rows = await db.setLogs.where('sessionId').equals(sessionId).toArray()
   for (const row of rows)
     if (!row.completedAt && !row.deletedAt) await softDelete('setLogs', row.id)
@@ -232,5 +235,5 @@ export async function finishSession(sessionId: string): Promise<Session | undefi
     planned.find((p) => p.routineId === session.routineId && p.status === 'planned' && !p.sessionId)
   if (linked) await save('plannedWorkouts', { ...linked, status: 'done', sessionId })
 
-  return save('sessions', { ...session, endedAt: nowIso() })
+  return ended
 }

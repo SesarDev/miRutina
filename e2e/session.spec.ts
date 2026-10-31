@@ -62,3 +62,30 @@ test('registrar una sesión, recargar a mitad, continuar y terminar', async ({ p
   await expect(page.getByRole('textbox', { name: 'Peso en kilos' })).toHaveValue('60')
   await expect(page.getByRole('textbox', { name: 'Repeticiones' })).toHaveValue('10')
 })
+
+test('un doble toque marca una sola serie y una serie sin reps no se puede marcar', async ({
+  page,
+}) => {
+  await page.goto('/')
+  await page.getByRole('button', { name: 'Entrenar algo hoy' }).click()
+  await page.getByRole('button', { name: /^Sesión libre/ }).click()
+  await page.getByRole('button', { name: 'Añadir ejercicio' }).click()
+  await page.getByLabel('Buscar ejercicio para añadir').fill('press de banca con barra')
+  await page.getByRole('button', { name: 'Añadir Press de banca con barra', exact: true }).click()
+
+  // First time, no history: nothing to mark until there are reps.
+  await expect(page.getByRole('button', { name: 'Indica las repeticiones' })).toBeDisabled()
+  // Sets 2 and 1 both ready, so a second tap would have something to mark.
+  for (const set of [2, 1]) {
+    await page.getByRole('button', { name: new RegExp(`^Serie ${set}:`) }).click()
+    await page.getByRole('textbox', { name: 'Repeticiones' }).fill('10')
+    await page.getByRole('textbox', { name: 'Repeticiones' }).blur()
+  }
+
+  // Two taps 350 ms apart: the second lands on the same spot, now showing set 2.
+  const done = await page.getByRole('button', { name: 'Serie hecha' }).boundingBox()
+  await page.mouse.click(done!.x + done!.width / 2, done!.y + done!.height / 2)
+  await page.waitForTimeout(350)
+  await page.mouse.click(done!.x + done!.width / 2, done!.y + done!.height / 2)
+  await expect(doneRows(page)).toHaveCount(1)
+})
