@@ -17,6 +17,8 @@
 
 - **F4 · Historial, progreso y cuerpo:** cerrada el 31 oct 2026 (etiqueta `f4-done`). Cálculos de 1RM y récords con tests, pestañas Historial y Gráfica en la ficha, pantalla Progreso (90 días, constancia de 12 semanas, récords de 30 días), récords en el resumen de sesión y Cuerpo (peso y medidas con media de 7 días). Criterios 1, 2, 3 y 5 verificados (tests, e2e y capturas en 390 y 1440 px, oscuro y claro). **Pendiente de verificar a mano** (el usuario lo prueba después): registrar peso y medidas en el PC y verlos en el móvil.
 
+- **F5 · Motion y pulido:** cerrada el 31 oct 2026 (etiqueta `f5-done`). Micro-interacciones CSS con tokens (check de serie, valoración escalonada, cifra del stepper, pulso del descanso, píldora deslizante, toast, icon swap, shake, skeleton, acordeón), Flip (semana ↔ mes, miniatura → ficha, brazalete y reordenar en la sesión), ScrollTrigger con moderación (historial, Progreso, líneas de las gráficas), momento de récord y Hoy reorganizado. Criterios 2–6 verificados (Playwright: medición de animaciones, «reducir movimiento» emulado, 0 ScrollTriggers/tweens tras navegar, detector de impeccable limpio, `refine` sin valores sueltos). **Pendiente de verificar a mano** (el usuario lo prueba después): que marcar y valorar se sienta instantáneo en el móvil real y los 60 fps con DevTools remoto (medido solo con la CPU emulada 4× en Chromium).
+
 ## F5 · Auditoría de partida (31 oct 2026)
 
 ### transitions.dev (elegido con el usuario)
