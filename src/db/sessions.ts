@@ -294,3 +294,35 @@ export async function finishSession(sessionId: string): Promise<Session | undefi
 
   return ended
 }
+
+/**
+ * Discards a session: one started by mistake (cancelled from the session screen) or deleted from
+ * the calendar. The session and its rows are soft-deleted and its planned workout goes back to
+ * «Planificado». Records and history are computed, so they update on their own. Returns an undo.
+ */
+export async function discardSession(sessionId: string): Promise<() => Promise<void>> {
+  const session = await db.sessions.get(sessionId)
+  if (!session || session.deletedAt) return async () => {}
+  const rows = (await db.setLogs.where('sessionId').equals(sessionId).toArray()).filter(
+    (r) => !r.deletedAt,
+  )
+  const planned = (await db.plannedWorkouts.toArray()).filter(
+    (p) => p.sessionId === sessionId && !p.deletedAt,
+  )
+
+  for (const row of rows) await softDelete('setLogs', row.id)
+  await softDelete('sessions', sessionId)
+  await saveMany(
+    'plannedWorkouts',
+    planned.map((p) => ({ ...p, status: 'planned' as const, sessionId: null })),
+  )
+
+  return async () => {
+    await save('sessions', { ...session, deletedAt: null })
+    await saveMany(
+      'setLogs',
+      rows.map((r) => ({ ...r, deletedAt: null })),
+    )
+    await saveMany('plannedWorkouts', planned)
+  }
+}

@@ -9,13 +9,13 @@ import {
   useOpenSession,
   usePlannedBetween,
   useRoutine,
-  useRoutines,
   useSessionsBetween,
   type PlannedEntry,
 } from '@/db/queries'
 import { startSession } from '@/db/sessions'
 import { formatDay, formatLongDay, todayKey, WEEKDAY_INITIALS, weekDays } from '@/lib/dates'
 import { estimateMinutes, repsLabel } from '@/lib/routines'
+import { StartList } from './StartList'
 import styles from './HoyPage.module.css'
 
 export function HoyPage() {
@@ -191,7 +191,6 @@ function NothingToday() {
 
 function StartSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
   const navigate = useNavigate()
-  const routines = useRoutines()
 
   const start = async (routineId: string | null) => {
     const session = await startSession({ routineId })
@@ -201,24 +200,7 @@ function StartSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
 
   return (
     <Sheet open={open} onClose={onClose} title="Entrenar hoy">
-      <ul className={styles.startList}>
-        {routines?.map((r) => (
-          <li key={r.id}>
-            <button type="button" className={styles.startOption} onClick={() => void start(r.id)}>
-              <span className={styles.startName}>{r.name}</span>
-              <span className={`${styles.startMeta} num`}>
-                {r.items.length} ejercicios · ≈ {estimateMinutes(r.items)} min
-              </span>
-            </button>
-          </li>
-        ))}
-        <li>
-          <button type="button" className={styles.startOption} onClick={() => void start(null)}>
-            <span className={styles.startName}>Sesión libre</span>
-            <span className={styles.startMeta}>Añade los ejercicios sobre la marcha</span>
-          </button>
-        </li>
-      </ul>
+      <StartList onPick={(id) => void start(id)} />
     </Sheet>
   )
 }

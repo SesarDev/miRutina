@@ -19,6 +19,7 @@ import { usePersistentStorage, useWakeLock } from './device'
 import { FinishButton, SessionSummary } from './FinishSession'
 import { ExerciseCard } from './ExerciseCard'
 import { SessionHeader } from './SessionHeader'
+import { SessionMenu } from './SessionMenu'
 import { SessionNotes } from './SessionNotes'
 import { captureSessionLayout, playSessionLayout } from './sessionFlip'
 import { onBeforeArmbandMove, selectRow, useSessionUi } from './sessionStore'
@@ -101,7 +102,12 @@ export function SesionPage() {
       <SessionHeader
         session={session}
         title={title}
-        action={<FinishButton session={session} rows={rows} />}
+        action={
+          <>
+            <SessionMenu session={session} rows={rows} />
+            <FinishButton session={session} rows={rows} />
+          </>
+        }
       />
 
       <div className={styles.body}>

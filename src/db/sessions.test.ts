@@ -10,6 +10,7 @@ import {
   addSet,
   addWarmup,
   completeSet,
+  discardSession,
   findOpenSession,
   finishSession,
   moveSessionItem,
@@ -258,5 +259,45 @@ describe('sesiones abiertas de otro día', () => {
       sessionId: null,
     })
     expect((await findOpenSession())?.id).toBe(today.id)
+  })
+})
+
+describe('descartar una sesión', () => {
+  it('borra la sesión y sus series, el entreno vuelve a planificado, y se puede deshacer', async () => {
+    const r = await routine()
+    const [planned] = await planWorkout(todayKey(), r.id)
+    const s = await startSession({ plannedId: planned!.id })
+    const [first] = await rowsOf(s.id, 'press')
+    await updateSetRow(first!.id, { weight: 60, reps: 10 })
+    await completeSet(first!.id)
+
+    const undo = await discardSession(s.id)
+    expect((await db.sessions.get(s.id))?.deletedAt).not.toBeNull()
+    expect(await rowsOf(s.id)).toEqual([])
+    expect(await db.plannedWorkouts.get(planned!.id)).toMatchObject({
+      status: 'planned',
+      sessionId: null,
+    })
+    expect(await findOpenSession()).toBeUndefined()
+
+    // A new start from the same plan creates a fresh session.
+    const again = await startSession({ plannedId: planned!.id })
+    expect(again.id).not.toBe(s.id)
+    await discardSession(again.id)
+
+    await undo()
+    expect((await db.sessions.get(s.id))?.deletedAt).toBeNull()
+    expect(await rowsOf(s.id)).toHaveLength(5)
+    expect((await db.plannedWorkouts.get(planned!.id))?.sessionId).toBe(s.id)
+  })
+
+  it('una sesión terminada vuelve a dejar el entreno sin hacer', async () => {
+    const r = await routine()
+    const [planned] = await planWorkout(todayKey(), r.id)
+    const s = await startSession({ plannedId: planned!.id })
+    await finishSession(s.id)
+    expect((await db.plannedWorkouts.get(planned!.id))?.status).toBe('done')
+    await discardSession(s.id)
+    expect((await db.plannedWorkouts.get(planned!.id))?.status).toBe('planned')
   })
 })

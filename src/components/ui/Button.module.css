@@ -60,13 +60,21 @@
   color: var(--color-text-2);
 }
 
+/* Destructive actions (cancel a workout, delete a session): red ink, never a red fill. */
+.danger {
+  background: transparent;
+  border-color: color-mix(in oklch, var(--color-danger) 55%, transparent);
+  color: var(--color-danger);
+}
+
 @media (hover: hover) {
   .primary:hover:not(:disabled) {
     background: var(--color-accent-hover);
   }
 
   .secondary:hover:not(:disabled),
-  .ghost:hover:not(:disabled) {
+  .ghost:hover:not(:disabled),
+  .danger:hover:not(:disabled) {
     background: var(--color-hover);
     color: var(--color-text);
   }
@@ -77,7 +85,8 @@
 }
 
 .secondary:active:not(:disabled),
-.ghost:active:not(:disabled) {
+.ghost:active:not(:disabled),
+.danger:active:not(:disabled) {
   background: var(--color-press);
 }
 
