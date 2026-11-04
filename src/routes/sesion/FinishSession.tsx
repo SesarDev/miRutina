@@ -8,6 +8,7 @@ import { formatDay } from '@/lib/dates'
 import { summarize } from '@/lib/session'
 import { requestSync } from '@/sync'
 import { RecordMoment } from './RecordMoment'
+import { RoutineChangesPrompt } from './RoutineChangesPrompt'
 import { resetSessionUi } from './sessionStore'
 import styles from './Session.module.css'
 
@@ -94,6 +95,7 @@ export function SessionSummary({
           </div>
         ))}
       </dl>
+      <RoutineChangesPrompt session={session} rows={rows} />
       {session.notes && <p className={styles.itemNote}>{session.notes}</p>}
       <Link to="/" className={buttonClassName({ variant: 'primary', size: 'lg', block: true })}>
         Ir a Hoy

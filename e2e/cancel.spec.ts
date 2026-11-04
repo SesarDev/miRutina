@@ -43,3 +43,39 @@ test('cancelar un entreno empezado por error, deshacer y cambiar de rutina', asy
   await expect(page.getByRole('heading', { level: 1, name: 'Sesión libre' })).toBeVisible()
   await expect(page).not.toHaveURL(firstUrl)
 })
+
+test('al terminar, guardar en la rutina los cambios hechos en la sesión', async ({ page }) => {
+  await page.goto('/rutinas')
+  await page.getByRole('button', { name: 'Nueva rutina' }).first().click()
+  await page.getByLabel('Nombre de la rutina').fill('Empuje')
+  await page.getByRole('button', { name: 'Añadir ejercicio' }).click()
+  await page.getByLabel('Buscar ejercicio para añadir').fill('press de banca con barra')
+  await page.getByRole('button', { name: 'Añadir Press de banca con barra', exact: true }).click()
+  await page.keyboard.press('Escape')
+  await expect(page.getByText('1 ejercicio')).toBeVisible()
+
+  await page.goto('/')
+  await page.getByRole('button', { name: 'Entrenar algo hoy' }).click()
+  await page.getByRole('button', { name: /^Empuje/ }).click()
+  await page.getByRole('button', { name: 'Añadir ejercicio' }).click()
+  await page.getByLabel('Buscar ejercicio para añadir').fill('remo pendlay')
+  await page
+    .getByRole('button', { name: /^Añadir Remo Pendlay con barra/ })
+    .first()
+    .click()
+
+  await page.getByRole('button', { name: 'Terminar' }).click()
+  await page.getByRole('button', { name: 'Terminar entreno' }).click()
+  await expect(
+    page.getByRole('heading', { name: 'Has cambiado la rutina en esta sesión' }),
+  ).toBeVisible()
+  await expect(page.getByText(/^Añadido: Remo Pendlay con barra/)).toBeVisible()
+  await page.getByRole('button', { name: 'Guardar en «Empuje»' }).click()
+  await expect(page.getByText('«Empuje» actualizada')).toBeVisible()
+  await expect(
+    page.getByRole('heading', { name: 'Has cambiado la rutina en esta sesión' }),
+  ).toHaveCount(0)
+
+  await page.goto('/rutinas')
+  await expect(page.getByText(/^2 ejercicios/)).toBeVisible()
+})
