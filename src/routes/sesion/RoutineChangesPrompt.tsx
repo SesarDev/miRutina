@@ -28,7 +28,8 @@ export function RoutineChangesPrompt({ session, rows }: { session: Session; rows
   const items = itemsOf(session)
   const names = useExercisesById(items.map((i) => i.exerciseId))
 
-  if (!routine || routine.deletedAt || answered) return null
+  // A built-in routine used as is cannot be edited (copy it to make it yours).
+  if (!routine || routine.deletedAt || routine.isTemplate || answered) return null
   const { changes, items: next } = routineChanges(routine.items, items, rows)
   if (!changes.length) return null
 

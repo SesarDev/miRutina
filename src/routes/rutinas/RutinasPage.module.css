@@ -217,3 +217,38 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
+
+/* ── «Usar» a built-in routine ── */
+.useSheet {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.useHint {
+  color: var(--color-text-2);
+  font-size: var(--text-sm);
+}
+
+.usePlan {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-2);
+}
+
+.useLabel {
+  display: grid;
+  gap: var(--space-1);
+  color: var(--color-text-2);
+  font-size: var(--text-sm);
+}
+
+.useDate {
+  min-height: var(--control-height-sm);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-2);
+  color: var(--color-text);
+  font-size: max(16px, var(--text-md));
+}

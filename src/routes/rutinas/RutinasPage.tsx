@@ -10,6 +10,7 @@ import {
   Icon,
   IconButton,
   Segmented,
+  Sheet,
   showToast,
 } from '@/components/ui'
 import { BODY_PART_LABELS, label } from '@/db/labels'
@@ -25,9 +26,12 @@ import {
   deleteRoutine,
   duplicateRoutine,
   restoreRoutine,
+  templateRoutineId,
 } from '@/db/routines'
+import { planWorkout } from '@/db/planning'
+import { startSession } from '@/db/sessions'
 import { TECHNIQUE_LABELS, type Routine, type RoutineTemplate, type SetTechnique } from '@/db/types'
-import { DATE_OPTIONS } from '@/lib/dates'
+import { DATE_OPTIONS, formatDay, isValidDateKey, todayKey } from '@/lib/dates'
 import { estimateMinutes } from '@/lib/routines'
 import styles from './RutinasPage.module.css'
 
@@ -298,6 +302,7 @@ function FilterRow({ label: text, children }: { label: string; children: React.R
 
 function TemplateCard({ template }: { template: RoutineTemplate }) {
   const navigate = useNavigate()
+  const [using, setUsing] = useState(false)
   const exercises = useExercisesById(template.items.map((i) => i.exerciseId))
 
   const copy = async () => {
@@ -339,10 +344,70 @@ function TemplateCard({ template }: { template: RoutineTemplate }) {
         </ol>
       </details>
       <div className={styles.cardActions}>
-        <Button variant="secondary" icon="copy" onClick={() => void copy()}>
+        <Button variant="secondary" icon="play" onClick={() => setUsing(true)}>
+          Usar
+        </Button>
+        <Button variant="ghost" icon="copy" onClick={() => void copy()}>
           Copiar a mis rutinas
         </Button>
       </div>
+      <UseTemplateSheet template={template} open={using} onClose={() => setUsing(false)} />
     </li>
+  )
+}
+
+/**
+ * «Usar» a built-in routine as it is, without copying it: start it today or plan it on a day.
+ * To change its exercises, «Copiar a mis rutinas».
+ */
+function UseTemplateSheet({
+  template,
+  open,
+  onClose,
+}: {
+  template: RoutineTemplate
+  open: boolean
+  onClose: () => void
+}) {
+  const navigate = useNavigate()
+  const [date, setDate] = useState(todayKey())
+  const routineId = templateRoutineId(template.id)
+
+  const start = async () => {
+    const session = await startSession({ routineId })
+    onClose()
+    void navigate({ to: '/sesion/$sessionId', params: { sessionId: session.id } })
+  }
+
+  const plan = async () => {
+    if (!isValidDateKey(date)) return
+    await planWorkout(date, routineId)
+    onClose()
+    showToast({ message: `«${template.name}» el ${formatDay(date, "EEEE d 'de' MMMM")}` })
+  }
+
+  return (
+    <Sheet open={open} onClose={onClose} title={template.name}>
+      <div className={styles.useSheet}>
+        <p className={styles.useHint}>
+          Úsala tal cual. Si quieres cambiar ejercicios o series, cópiala a tus rutinas.
+        </p>
+        <Button variant="primary" size="lg" block icon="play" onClick={() => void start()}>
+          Empezar hoy
+        </Button>
+        <div className={styles.usePlan}>
+          <label className={styles.useLabel}>
+            <span>Planificar el día</span>
+            <input
+              type="date"
+              className={styles.useDate}
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+            />
+          </label>
+          <Button onClick={() => void plan()}>Planificar</Button>
+        </div>
+      </div>
+    </Sheet>
   )
 }

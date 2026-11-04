@@ -79,3 +79,16 @@ test('al terminar, guardar en la rutina los cambios hechos en la sesión', async
   await page.goto('/rutinas')
   await expect(page.getByText(/^2 ejercicios/)).toBeVisible()
 })
+
+test('usar una rutina predefinida tal cual, sin copiarla', async ({ page }) => {
+  await page.goto('/rutinas?tab=predefinidas')
+  const card = page.locator('li', { has: page.getByRole('heading', { level: 2 }) }).first()
+  const name = (await card.getByRole('heading', { level: 2 }).textContent())!.trim()
+  await card.getByRole('button', { name: 'Usar' }).click()
+  await page.getByRole('button', { name: 'Empezar hoy' }).click()
+  await expect(page).toHaveURL(/\/sesion\//)
+  await expect(page.getByRole('heading', { level: 1, name })).toBeVisible()
+  // Mis rutinas stays empty: nothing was copied.
+  await page.goto('/rutinas')
+  await expect(page.getByText('Todavía no tienes rutinas')).toBeVisible()
+})

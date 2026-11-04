@@ -1,10 +1,12 @@
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { useState } from 'react'
+import { Link } from '@tanstack/react-router'
 import { ExerciseThumb } from '@/components/exercise/ExerciseThumb'
 import { Icon, IconButton, Stepper } from '@/components/ui'
 import { TECHNIQUE_LABELS, type Exercise, type RoutineItem, type SetTechnique } from '@/db/types'
 import { LIMITS, repsLabel } from '@/lib/routines'
+import { captureForRoute } from '@/motion/flip'
 import styles from './RoutineEditor.module.css'
 
 const SOLO_TECHNIQUES: SetTechnique[] = ['normal', 'aleman', 'descendente', 'ascendente']
@@ -63,7 +65,19 @@ export function RoutineItemCard(props: Props) {
         >
           <Icon name="grip" size={20} />
         </button>
-        <ExerciseThumb src={exercise?.image ?? ''} />
+        {exercise ? (
+          <Link
+            to="/ejercicio/$exerciseId"
+            params={{ exerciseId: exercise.id }}
+            className={styles.thumbLink}
+            aria-label={`Ver la ficha de ${name}`}
+            onClick={(e) => captureForRoute(e.currentTarget.querySelector('[data-flip-id]'))}
+          >
+            <ExerciseThumb src={exercise.image} flipId={`media-${exercise.id}`} />
+          </Link>
+        ) : (
+          <ExerciseThumb src="" />
+        )}
         <button
           type="button"
           className={styles.itemToggle}

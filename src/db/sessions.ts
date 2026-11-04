@@ -9,6 +9,7 @@ import { newItem, TECHNIQUE_DEFAULTS } from '@/lib/routines'
 import { uuid } from '@/lib/uuid'
 import { lastSessionsForExercise } from './queries'
 import { nowIso, patch, save, saveMany, softDelete } from './repo'
+import { getRoutineOrTemplate } from './routines'
 import { db } from './schema'
 import type { Feel, RoutineItem, Session, SessionItem, SetLog } from './types'
 
@@ -58,7 +59,7 @@ export async function startSession(
   }
 
   const routineId = options.routineId ?? planned?.routineId ?? null
-  const routine = routineId ? await db.routines.get(routineId) : undefined
+  const routine = routineId ? await getRoutineOrTemplate(routineId) : undefined
   // One entry per exercise: the session keys rows by exercise.
   const seen = new Set<string>()
   const items = (routine && !routine.deletedAt ? routine.items : [])

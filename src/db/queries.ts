@@ -13,6 +13,7 @@ import {
 } from '@/lib/progress'
 import { estimateMinutes } from '@/lib/routines'
 import { summarize } from '@/lib/session'
+import { getRoutineOrTemplate } from './routines'
 import { db } from './schema'
 import { addDaysKey, type DateKey } from '@/lib/dates'
 import type { ExerciseSettings, Feel, PlannedWorkout, Session, SetLog } from './types'
@@ -53,7 +54,7 @@ export function useRoutines() {
 
 /** undefined while loading, null if it does not exist. */
 export function useRoutine(id: string) {
-  return useLiveQuery(async () => (await db.routines.get(id)) ?? null, [id])
+  return useLiveQuery(async () => (await getRoutineOrTemplate(id)) ?? null, [id])
 }
 
 export function useRoutineTemplates() {
@@ -102,7 +103,8 @@ export function usePlannedBetween(from: string, to: string) {
     const rows = (
       await db.plannedWorkouts.where('date').between(from, to, true, true).toArray()
     ).filter((p) => !p.deletedAt)
-    const routines = await db.routines.bulkGet([...new Set(rows.map((r) => r.routineId))])
+    const ids = [...new Set(rows.map((r) => r.routineId))]
+    const routines = await Promise.all(ids.map(getRoutineOrTemplate))
     const byId = new Map(routines.filter((r) => r !== undefined).map((r) => [r.id, r]))
     return rows
       .map((p): PlannedEntry => {
@@ -123,7 +125,7 @@ export function useNextPlanned(afterKey: string) {
     const rows = await db.plannedWorkouts.where('date').above(afterKey).sortBy('date')
     const next = rows.find((p) => !p.deletedAt && p.status === 'planned')
     if (!next) return null
-    const routine = await db.routines.get(next.routineId)
+    const routine = await getRoutineOrTemplate(next.routineId)
     return { ...next, routineName: routine?.name ?? 'Rutina borrada' }
   }, [afterKey])
 }
@@ -376,7 +378,9 @@ export function useDaySessions(day: DateKey) {
         const rows = (await db.setLogs.where('sessionId').equals(session.id).toArray()).filter(
           (r) => !r.deletedAt,
         )
-        const routine = session.routineId ? await db.routines.get(session.routineId) : undefined
+        const routine = session.routineId
+          ? await getRoutineOrTemplate(session.routineId)
+          : undefined
         return {
           session,
           name: !session.routineId

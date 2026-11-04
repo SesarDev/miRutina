@@ -1,5 +1,5 @@
 /** Routine writes (all through repo.save / softDelete, so they queue for sync). */
-import { uuid } from '@/lib/uuid'
+import { uuid, uuidFromString } from '@/lib/uuid'
 import { save, softDelete } from './repo'
 import { db } from './schema'
 import { ROUTINE_TEMPLATES, TEMPLATES_VERSION } from './seed/routineTemplates'
@@ -58,4 +58,26 @@ export const deleteRoutine = (id: string) => softDelete('routines', id)
 export async function restoreRoutine(id: string): Promise<void> {
   const routine = await db.routines.get(id)
   if (routine?.deletedAt) await save('routines', { ...routine, deletedAt: null })
+}
+
+/** The id a built-in routine uses when planned or started «tal cual» (same on every device). */
+export const templateRoutineId = (templateId: string) => uuidFromString(templateId)
+
+/** A routine of mine, or a built-in one used without copying it (`isTemplate`). */
+export type ResolvedRoutine = Routine & { isTemplate?: true }
+
+/** Looks up my routines first, then the built-in ones by their derived id. */
+export async function getRoutineOrTemplate(id: string): Promise<ResolvedRoutine | undefined> {
+  const own = await db.routines.get(id)
+  if (own) return own
+  const template = (await db.routineTemplates.toArray()).find((t) => templateRoutineId(t.id) === id)
+  if (!template) return undefined
+  return {
+    id,
+    name: template.name,
+    items: template.items,
+    updatedAt: '',
+    deletedAt: null,
+    isTemplate: true,
+  }
 }

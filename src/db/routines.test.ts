@@ -6,8 +6,10 @@ import {
   deleteRoutine,
   duplicateRoutine,
   ensureRoutineTemplates,
+  getRoutineOrTemplate,
   restoreRoutine,
   saveRoutine,
+  templateRoutineId,
 } from './routines'
 import { db } from './schema'
 
@@ -65,5 +67,21 @@ describe('rutinas (repositorio)', () => {
     expect(copy?.items.length).toBeGreaterThan(5)
     // The template itself never enters the outbox; the copy does.
     expect((await db.outbox.toArray()).map((e) => e.table)).toEqual(['routines'])
+  })
+})
+
+describe('usar una predefinida sin copiarla', () => {
+  it('se resuelve por su id derivado, con su nombre y ejercicios', async () => {
+    await ensureRoutineTemplates()
+    const [template] = await db.routineTemplates.toArray()
+    const id = templateRoutineId(template!.id)
+    expect(await getRoutineOrTemplate(id)).toMatchObject({
+      id,
+      name: template!.name,
+      items: template!.items,
+      isTemplate: true,
+    })
+    expect(await db.routines.count()).toBe(0)
+    expect(await getRoutineOrTemplate('no-existe')).toBeUndefined()
   })
 })
