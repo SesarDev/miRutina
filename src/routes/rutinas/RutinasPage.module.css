@@ -195,6 +195,14 @@
   margin-top: var(--space-1);
 }
 
+/* My routines in two columns on desktop. */
+@container main (min-width: 60rem) {
+  .list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--space-6);
+  }
+}
+
 @container main (min-width: 48rem) {
   .cards {
     grid-template-columns: repeat(2, minmax(0, 1fr));

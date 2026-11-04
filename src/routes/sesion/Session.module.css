@@ -444,14 +444,18 @@
 }
 
 .cardName {
+  display: -webkit-box;
   overflow: hidden;
   font-weight: var(--weight-semibold);
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  /* Two lines before cutting: long names («Press sentado con barra, por encima…») stay readable. */
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
 }
 
 .card[data-active] .cardName {
-  white-space: normal;
+  -webkit-line-clamp: unset;
+  line-clamp: none;
 }
 
 .card[data-skipped] .cardName {

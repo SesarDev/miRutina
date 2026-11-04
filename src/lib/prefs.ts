@@ -17,6 +17,8 @@ export type Prefs = {
   rateLastOnly: boolean
   /** Bar used by the plate calculator (kg). */
   barWeight: number
+  /** «HH:mm»: after this time, Hoy reminds an unstarted planned workout. null = off. */
+  reminderTime: string | null
 }
 
 export const DEFAULT_PREFS: Prefs = {
@@ -27,6 +29,7 @@ export const DEFAULT_PREFS: Prefs = {
   countdownBeeps: false,
   rateLastOnly: false,
   barWeight: 20,
+  reminderTime: null,
 }
 
 export const usePrefs = create<Prefs>()(
@@ -37,3 +40,10 @@ export const usePrefs = create<Prefs>()(
 )
 
 export const setPrefs = (changes: Partial<Prefs>) => usePrefs.setState(changes)
+
+/** True once `now` has reached the reminder time of today («HH:mm», local). */
+export function reminderDue(reminderTime: string | null, now: Date): boolean {
+  if (!reminderTime || !/^\d{2}:\d{2}$/.test(reminderTime)) return false
+  const [h, m] = reminderTime.split(':').map(Number) as [number, number]
+  return now.getHours() * 60 + now.getMinutes() >= h * 60 + m
+}

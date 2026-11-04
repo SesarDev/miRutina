@@ -6,7 +6,8 @@ import styles from './AjustesPage.module.css'
 
 /** Session preferences of this device. */
 export function WorkoutSection() {
-  const { defaultRestSec, vibrate, wakeLock, sound, countdownBeeps, rateLastOnly } = usePrefs()
+  const { defaultRestSec, vibrate, wakeLock, sound, countdownBeeps, rateLastOnly, reminderTime } =
+    usePrefs()
 
   return (
     <section className={styles.section} aria-labelledby="ajustes-entreno">
@@ -96,6 +97,30 @@ export function WorkoutSection() {
           </span>
         </span>
       </label>
+      <label className={styles.toggle}>
+        <input
+          type="checkbox"
+          checked={reminderTime !== null}
+          onChange={(e) => setPrefs({ reminderTime: e.target.checked ? '19:00' : null })}
+        />
+        <span>
+          Recordarme el entreno del día
+          <span className={styles.hint}>
+            En Hoy, si a esa hora aún no lo has empezado (solo con la app abierta).
+          </span>
+        </span>
+      </label>
+      {reminderTime !== null && (
+        <label className={styles.timeField}>
+          <span>Hora del recordatorio</span>
+          <input
+            type="time"
+            value={reminderTime}
+            className={styles.timeInput}
+            onChange={(e) => e.target.value && setPrefs({ reminderTime: e.target.value })}
+          />
+        </label>
+      )}
       <p className={styles.hint}>Estos ajustes son de este dispositivo.</p>
     </section>
   )

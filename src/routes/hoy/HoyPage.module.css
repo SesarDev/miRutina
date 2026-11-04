@@ -87,6 +87,22 @@
   gap: var(--space-3);
 }
 
+.reminder {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  font-size: var(--text-sm);
+}
+
+.reminder svg {
+  flex: none;
+  color: var(--color-warning);
+}
+
 .state {
   display: inline-flex;
   align-items: center;
@@ -220,8 +236,9 @@
   color: var(--color-text);
 }
 
+/* Neutral: gold is only for what can be pressed now (DESIGN.md · la regla del oro). */
 .weekDay[data-state='planned'] .weekMark {
-  color: var(--color-accent-ink);
+  color: var(--color-text-2);
 }
 
 .weekDay[data-state='done'] {

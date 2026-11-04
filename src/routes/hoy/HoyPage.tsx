@@ -13,6 +13,8 @@ import {
   type PlannedEntry,
 } from '@/db/queries'
 import { startSession } from '@/db/sessions'
+import { reminderDue, usePrefs } from '@/lib/prefs'
+import { useNow } from '@/routes/sesion/clock'
 import { formatDay, formatLongDay, todayKey, WEEKDAY_INITIALS, weekDays } from '@/lib/dates'
 import { estimateMinutes, repsLabel } from '@/lib/routines'
 import { StartList } from './StartList'
@@ -97,6 +99,10 @@ function TodayWorkout({ workout }: { workout: PlannedEntry }) {
   const exercises = useExercisesById(routine?.items.map((i) => i.exerciseId) ?? [])
   const [starting, setStarting] = useState(false)
   const done = workout.status === 'done'
+  const reminderTime = usePrefs((p) => p.reminderTime)
+  const now = useNow(60_000)
+  // Reminder (Ajustes): past the chosen time, a planned workout not started yet says so.
+  const remind = !done && !workout.sessionId && reminderDue(reminderTime, new Date(now))
 
   const start = async () => {
     setStarting(true)
@@ -121,6 +127,12 @@ function TodayWorkout({ workout }: { workout: PlannedEntry }) {
           </>
         )}
       </p>
+      {remind && (
+        <p className={styles.reminder} role="status">
+          <Icon name="clock" size={18} />
+          Son más de las {reminderTime} y aún no has empezado.
+        </p>
+      )}
       {!done && (
         <Button
           variant="primary"
