@@ -160,6 +160,42 @@
   line-height: 1;
 }
 
+.compare {
+  display: grid;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.compare ul {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--color-line);
+}
+
+.compare li {
+  display: grid;
+  gap: 2px;
+  padding-block: var(--space-3);
+  border-bottom: 1px solid var(--color-line);
+}
+
+.compareName {
+  font-weight: var(--weight-semibold);
+}
+
+.compareNow {
+  font-size: var(--text-lg);
+}
+
+.compareBefore {
+  color: var(--color-text-2);
+  font-family: inherit;
+  font-size: var(--text-sm);
+  font-weight: inherit;
+}
+
 .routinePrompt {
   display: grid;
   gap: var(--space-3);

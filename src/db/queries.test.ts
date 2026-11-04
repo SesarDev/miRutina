@@ -3,6 +3,7 @@ import {
   exerciseHistory,
   lastSessionsForExercise,
   progressOverview,
+  sessionComparison,
   sessionRecords,
 } from './queries'
 import { save, softDelete } from './repo'
@@ -145,5 +146,22 @@ describe('sessionRecords', () => {
       'weight',
     ])
     expect(await sessionRecords('a')).toEqual([])
+  })
+})
+
+describe('sessionComparison', () => {
+  it('cada ejercicio frente a la sesión anterior a esta, no a la más reciente', async () => {
+    await session('a', '2026-10-01')
+    await session('b', '2026-10-05')
+    await session('c', '2026-10-09')
+    await log('a', '2026-10-01', 0, { weight: 60 })
+    await log('b', '2026-10-05', 0, { weight: 62.5 })
+    await log('b', '2026-10-05', 1, { weight: 62.5, reps: 9 })
+    await log('c', '2026-10-09', 0, { weight: 65 })
+
+    expect(await sessionComparison('b')).toEqual([
+      { exerciseId: 'press', name: 'Ejercicio', now: '62,5 kg × 10, 9', before: '60 kg × 10' },
+    ])
+    expect((await sessionComparison('a'))[0]?.before).toBeNull()
   })
 })

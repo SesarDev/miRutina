@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { useState } from 'react'
 import { Button, buttonClassName, Sheet } from '@/components/ui'
-import { useSessionRecords } from '@/db/queries'
+import { useSessionComparison, useSessionRecords } from '@/db/queries'
 import { finishSession } from '@/db/sessions'
 import type { Session, SetLog } from '@/db/types'
 import { formatDay } from '@/lib/dates'
@@ -95,6 +95,7 @@ export function SessionSummary({
           </div>
         ))}
       </dl>
+      <Comparison sessionId={session.id} />
       <RoutineChangesPrompt session={session} rows={rows} />
       {session.notes && <p className={styles.itemNote}>{session.notes}</p>}
       <Link to="/" className={buttonClassName({ variant: 'primary', size: 'lg', block: true })}>
@@ -109,5 +110,29 @@ export function SessionSummary({
         Corregir series
       </Link>
     </div>
+  )
+}
+
+/** Each exercise next to the previous time it was done: a fact to read, never a target. */
+function Comparison({ sessionId }: { sessionId: string }) {
+  const list = useSessionComparison(sessionId) ?? []
+  if (!list.length) return null
+  return (
+    <section aria-labelledby="summary-compare" className={styles.compare}>
+      <h2 id="summary-compare" className={styles.lastLabel}>
+        Frente a la última vez
+      </h2>
+      <ul>
+        {list.map((c) => (
+          <li key={c.exerciseId}>
+            <span className={styles.compareName}>{c.name}</span>
+            <span className={`${styles.compareNow} num`}>{c.now}</span>
+            <span className={`${styles.compareBefore} num`}>
+              {c.before ? `antes ${c.before}` : 'primera vez'}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </section>
   )
 }

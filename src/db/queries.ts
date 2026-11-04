@@ -391,3 +391,54 @@ export function useDaySessions(day: DateKey) {
     )
   }, [day])
 }
+
+export type ExerciseComparison = {
+  exerciseId: string
+  name: string
+  /** This session's work sets, e.g. «65 kg × 10, 10, 9». */
+  now: string
+  /** The session before this one with the exercise, or null the first time. */
+  before: string | null
+}
+
+/**
+ * For the summary: each exercise of a session next to the previous time it was done (the
+ * session before this one, not the latest: an old summary compares with what came before it).
+ */
+export async function sessionComparison(sessionId: string): Promise<ExerciseComparison[]> {
+  const session = await db.sessions.get(sessionId)
+  if (!session) return []
+  const rows = (await db.setLogs.where('sessionId').equals(sessionId).toArray()).filter(
+    (r) => !r.deletedAt && r.completedAt && !r.isWarmup,
+  )
+  const order = itemsOfSession(session)
+  const ids = [...new Set([...order, ...rows.map((r) => r.exerciseId)])].filter((id) =>
+    rows.some((r) => r.exerciseId === id),
+  )
+  const names = new Map(
+    (await db.exercises.bulkGet(ids)).filter((e) => e !== undefined).map((e) => [e.id, e.nameEs]),
+  )
+  const out: ExerciseComparison[] = []
+  for (const exerciseId of ids) {
+    const history = await exerciseHistory(exerciseId)
+    const previous = history.find(
+      (h) =>
+        h.sessionId !== sessionId &&
+        (h.date < session.date || (h.date === session.date && h.startedAt < session.startedAt)) &&
+        workSets(h.sets).length > 0,
+    )
+    out.push({
+      exerciseId,
+      name: names.get(exerciseId) ?? 'Ejercicio',
+      now: summarizeSets(sortSets(rows.filter((r) => r.exerciseId === exerciseId))),
+      before: previous ? summarizeSets(workSets(previous.sets)) : null,
+    })
+  }
+  return out
+}
+
+const itemsOfSession = (s: Session) => (s.items ?? []).map((i) => i.exerciseId)
+
+export function useSessionComparison(sessionId: string) {
+  return useLiveQuery(() => sessionComparison(sessionId), [sessionId])
+}
