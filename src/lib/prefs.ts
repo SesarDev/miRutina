@@ -9,9 +9,19 @@ export type Prefs = {
   vibrate: boolean
   /** Keep the screen on during a session. */
   wakeLock: boolean
+  /** Tone when a rest ends (needs the app open). */
+  sound: boolean
+  /** Short ticks in the last 3 s of a rest. */
+  countdownBeeps: boolean
 }
 
-export const DEFAULT_PREFS: Prefs = { defaultRestSec: 120, vibrate: true, wakeLock: true }
+export const DEFAULT_PREFS: Prefs = {
+  defaultRestSec: 120,
+  vibrate: true,
+  wakeLock: true,
+  sound: true,
+  countdownBeeps: false,
+}
 
 export const usePrefs = create<Prefs>()(
   persist(() => DEFAULT_PREFS, {

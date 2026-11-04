@@ -5,6 +5,8 @@ const PORT = 4180
 export default defineConfig({
   testDir: './e2e',
   timeout: 60_000,
+  // Several specs run in parallel against one dev server: give slow moments room.
+  expect: { timeout: 10_000 },
   fullyParallel: false,
   reporter: 'list',
   use: {

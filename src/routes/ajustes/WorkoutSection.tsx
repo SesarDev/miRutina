@@ -1,11 +1,12 @@
 import { Stepper } from '@/components/ui'
 import { LIMITS } from '@/lib/routines'
+import { playCountdownTick, playRestEnd, unlockAudio } from '@/lib/beep'
 import { setPrefs, usePrefs } from '@/lib/prefs'
 import styles from './AjustesPage.module.css'
 
 /** Session preferences of this device. */
 export function WorkoutSection() {
-  const { defaultRestSec, vibrate, wakeLock } = usePrefs()
+  const { defaultRestSec, vibrate, wakeLock, sound, countdownBeeps } = usePrefs()
 
   return (
     <section className={styles.section} aria-labelledby="ajustes-entreno">
@@ -36,6 +37,39 @@ export function WorkoutSection() {
         <span>
           Vibrar al terminar el descanso
           <span className={styles.hint}>En Android. El iPhone no permite vibrar desde la web.</span>
+        </span>
+      </label>
+      <label className={styles.toggle}>
+        <input
+          type="checkbox"
+          checked={sound}
+          onChange={(e) => {
+            unlockAudio()
+            setPrefs({ sound: e.target.checked })
+            if (e.target.checked) playRestEnd()
+          }}
+        />
+        <span>
+          Sonido al terminar el descanso
+          <span className={styles.hint}>
+            Con la app abierta. En iPhone no suena con el interruptor de silencio.
+          </span>
+        </span>
+      </label>
+      <label className={styles.toggle}>
+        <input
+          type="checkbox"
+          checked={countdownBeeps}
+          disabled={!sound}
+          onChange={(e) => {
+            unlockAudio()
+            setPrefs({ countdownBeeps: e.target.checked })
+            if (e.target.checked) playCountdownTick()
+          }}
+        />
+        <span>
+          Pitidos en los últimos 3 segundos
+          <span className={styles.hint}>Un aviso corto por segundo antes del final.</span>
         </span>
       </label>
       <label className={styles.toggle}>

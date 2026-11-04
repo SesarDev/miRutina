@@ -1,6 +1,7 @@
 import { useEffect, useRef, type CSSProperties } from 'react'
 import { Button, Icon } from '@/components/ui'
 import { completeSet, setFeel, setSetValue, uncompleteSet } from '@/db/sessions'
+import { unlockAudio } from '@/lib/beep'
 import { FEEL_LABELS, FEELS, type Session, type SessionItem, type SetLog } from '@/db/types'
 import {
   FEEL_TIMEOUT_MS,
@@ -66,6 +67,8 @@ export function ControlPanel({
 
   const markDone = async () => {
     if (!row || row.reps === null || Date.now() < lockedUntil.current) return
+    // A tap: the moment browsers allow audio to start (the rest tone plays later).
+    unlockAudio()
     lockedUntil.current = Date.now() + DOUBLE_TAP_MS
     closeFeelPrompt()
     await completeSet(row.id)
