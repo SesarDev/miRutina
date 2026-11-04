@@ -8,7 +8,8 @@ import { useProgressOverview, type RecentExercise, type RecentRecord } from '@/d
 import { formatDay, todayKey, type DateKey } from '@/lib/dates'
 import { relativeDay } from '@/lib/lastTime'
 import { formatWeight } from '@/lib/numbers'
-import { consistencyWeeks, formatRecord } from '@/lib/progress'
+import { consistencyWeeks, formatRecord, groupRecords, type MuscleWeek } from '@/lib/progress'
+import { BODY_PART_LABELS, label } from '@/db/labels'
 import { useRevealBatch } from '@/motion/scroll'
 import styles from './ProgresoPage.module.css'
 
@@ -60,6 +61,15 @@ export function ProgresoPage() {
             <ConsistencyGrid weeks={weeks} />
           </section>
 
+          {overview.muscles.length > 0 && (
+            <section aria-labelledby="prog-musculos">
+              <h2 id="prog-musculos" className={styles.title}>
+                Series por grupo muscular · esta semana
+              </h2>
+              <MuscleWeeks weeks={overview.muscles} />
+            </section>
+          )}
+
           <section aria-labelledby="prog-records">
             <h2 id="prog-records" className={styles.title}>
               Récords · últimos 30 días
@@ -104,14 +114,10 @@ function ExerciseRow({ exercise: e, today }: { exercise: RecentExercise; today: 
 }
 
 function RecentRecords({ records }: { records: RecentRecord[] }) {
-  // One entry per exercise and session, with all of its records.
-  const groups = new Map<string, RecentRecord[]>()
-  for (const r of records) {
-    const key = `${r.sessionId}:${r.exerciseId}`
-    groups.set(key, [...(groups.get(key) ?? []), r])
-  }
+  // One entry per exercise, with its current records (the latest of each kind).
+  const groups = groupRecords(records)
 
-  if (!groups.size) {
+  if (!groups.length) {
     return (
       <p className={styles.none}>
         Ningún récord en los últimos 30 días. Aquí aparecerán cuando superes una marca.
@@ -121,10 +127,10 @@ function RecentRecords({ records }: { records: RecentRecord[] }) {
 
   return (
     <ul className={styles.records}>
-      {[...groups.entries()].map(([key, list]) => {
-        const { exerciseId, name, date } = list[0]!
+      {groups.map(({ exerciseId, date, records: list }) => {
+        const { name } = list[0]!
         return (
-          <li key={key} data-reveal>
+          <li key={exerciseId} data-reveal>
             <Link
               to="/ejercicio/$exerciseId"
               params={{ exerciseId }}
@@ -147,6 +153,26 @@ function RecentRecords({ records }: { records: RecentRecord[] }) {
           </li>
         )
       })}
+    </ul>
+  )
+}
+
+/** Work sets per body part this week, as bars, with last week's figure next to it. */
+function MuscleWeeks({ weeks }: { weeks: MuscleWeek[] }) {
+  const max = Math.max(1, ...weeks.map((w) => Math.max(w.sets, w.previous)))
+  return (
+    <ul className={styles.muscles}>
+      {weeks.map((w) => (
+        <li key={w.bodyPart} className={styles.muscle}>
+          <span className={styles.muscleName}>{label(BODY_PART_LABELS, w.bodyPart)}</span>
+          <span className={styles.muscleBar} aria-hidden="true">
+            <span style={{ inlineSize: `${(w.sets / max) * 100}%` }} />
+          </span>
+          <span className={`${styles.muscleSets} num`}>
+            {w.sets} <span className={styles.musclePrev}>· antes {w.previous}</span>
+          </span>
+        </li>
+      ))}
     </ul>
   )
 }

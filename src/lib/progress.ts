@@ -284,18 +284,28 @@ export function formatRecord(record: ExerciseRecord): string {
 
 // ── Chart ──
 
-export type ChartMetric = 'weight' | 'e1rm' | 'volume'
+export type ChartMetric = 'weight' | 'e1rm' | 'volume' | 'reps'
 
 export const CHART_METRIC_LABELS: Record<ChartMetric, string> = {
   weight: 'Peso máximo',
   e1rm: '1RM estimado',
   volume: 'Volumen',
+  reps: 'Reps máximas',
 }
+
+/** «reps» for the reps metric, kg for the rest. */
+export const metricUnit = (metric: ChartMetric) => (metric === 'reps' ? 'reps' : 'kg')
 
 export function metricOf(stats: SessionStats, metric: ChartMetric): number | null {
   if (metric === 'weight') return stats.maxWeight
   if (metric === 'e1rm') return stats.best1RM
+  if (metric === 'reps') return stats.maxReps
   return stats.volume > 0 ? stats.volume : null
+}
+
+/** Metrics that make sense for an exercise: bodyweight work has only reps. */
+export function metricsFor(withWeight: boolean): ChartMetric[] {
+  return withWeight ? ['weight', 'e1rm', 'volume', 'reps'] : ['reps']
 }
 
 export type ChartRange = '1m' | '3m' | '1y' | 'all'
@@ -340,4 +350,61 @@ export function consistencyWeeks(
     out.push({ start: days[0]!.date, days, count: days.filter((d) => d.trained).length })
   }
   return out
+}
+
+// ── Grouping ──
+
+/**
+ * Records of a period grouped by exercise, most recent exercise first. For each kind (and, for
+ * «más reps», each weight) only the latest record stays: it is the current best.
+ */
+export function groupRecords<T extends ExerciseRecord>(
+  records: T[],
+): { exerciseId: string; date: DateKey; records: T[] }[] {
+  const byExercise = new Map<string, Map<string, T>>()
+  for (const r of [...records].sort((a, b) => a.date.localeCompare(b.date))) {
+    const kinds = byExercise.get(r.exerciseId) ?? new Map<string, T>()
+    kinds.set(`${r.kind}:${r.weight ?? ''}`, r)
+    byExercise.set(r.exerciseId, kinds)
+  }
+  return [...byExercise.entries()]
+    .map(([exerciseId, kinds]) => {
+      const list = [...kinds.values()]
+      return {
+        exerciseId,
+        date: list.reduce((d, r) => (r.date > d ? r.date : d), ''),
+        records: list,
+      }
+    })
+    .sort((a, b) => b.date.localeCompare(a.date))
+}
+
+export type MuscleWeek = { bodyPart: string; sets: number; previous: number }
+
+/**
+ * Work sets per body part this week (Monday to today) next to the whole previous week.
+ * `rows` carry the date of their session and the body part of their exercise.
+ */
+export function setsByBodyPart(
+  rows: {
+    date: DateKey
+    bodyPart: string
+    isWarmup: boolean
+    dropIndex: number
+    completedAt: string | null
+  }[],
+  today: DateKey,
+): MuscleWeek[] {
+  const monday = weekDays(today)[0]!
+  const previousMonday = addDaysKey(monday, -7)
+  const out = new Map<string, MuscleWeek>()
+  for (const r of rows) {
+    if (r.isWarmup || r.dropIndex > 0 || !r.completedAt || !r.bodyPart) continue
+    const entry = out.get(r.bodyPart) ?? { bodyPart: r.bodyPart, sets: 0, previous: 0 }
+    if (r.date >= monday && r.date <= today) entry.sets++
+    else if (r.date >= previousMonday && r.date < monday) entry.previous++
+    else continue
+    out.set(r.bodyPart, entry)
+  }
+  return [...out.values()].sort((a, b) => b.sets - a.sets || b.previous - a.previous)
 }

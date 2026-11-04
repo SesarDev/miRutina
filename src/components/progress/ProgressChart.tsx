@@ -19,6 +19,8 @@ import {
   CHART_METRIC_LABELS,
   CHART_RANGE_LABELS,
   metricOf,
+  metricsFor,
+  metricUnit,
   rangeStart,
   sessionStats,
   workSets,
@@ -41,12 +43,8 @@ const MAX_LABELLED_POINTS = 5
 
 const volumeFormat = new Intl.NumberFormat('es-ES', { maximumFractionDigits: 0 })
 const formatValue = (metric: ChartMetric, v: number) =>
-  metric === 'volume' ? volumeFormat.format(v) : formatWeight(v)
+  metric === 'volume' || metric === 'reps' ? volumeFormat.format(v) : formatWeight(v)
 
-const metricOptions = (Object.keys(CHART_METRIC_LABELS) as ChartMetric[]).map((value) => ({
-  value,
-  label: CHART_METRIC_LABELS[value],
-}))
 const rangeOptions = (Object.keys(CHART_RANGE_LABELS) as ChartRange[]).map((value) => ({
   value,
   label: CHART_RANGE_LABELS[value],
@@ -54,7 +52,14 @@ const rangeOptions = (Object.keys(CHART_RANGE_LABELS) as ChartRange[]).map((valu
 
 /** Evolution of one exercise; each point carries the feel of the session's last set. */
 export function ProgressChart({ sessions, today }: { sessions: HistorySession[]; today: DateKey }) {
-  const [metric, setMetric] = useState<ChartMetric>('weight')
+  // Bodyweight work has no weight: its chart is the reps.
+  const withWeight = sessions.some((s) => s.sets.some((x) => (x.weight ?? 0) > 0))
+  const metricOptions = metricsFor(withWeight).map((value) => ({
+    value,
+    label: CHART_METRIC_LABELS[value],
+  }))
+  const [chosen, setMetric] = useState<ChartMetric>('weight')
+  const metric = metricOptions.some((o) => o.value === chosen) ? chosen : metricOptions[0]!.value
   const [range, setRange] = useState<ChartRange>('3m')
 
   const points = useMemo(() => {
@@ -81,7 +86,7 @@ export function ProgressChart({ sessions, today }: { sessions: HistorySession[];
 
   const labelled = points.length <= MAX_LABELLED_POINTS
   const feelsShown = FEELS.filter((f) => points.some((p) => p.feel === f))
-  const unit = 'kg'
+  const unit = metricUnit(metric)
   const values = points.map((p) => p.value)
   const description = points.length
     ? `${CHART_METRIC_LABELS[metric]} en ${points.length} ${points.length === 1 ? 'sesión' : 'sesiones'}, ` +
@@ -92,13 +97,15 @@ export function ProgressChart({ sessions, today }: { sessions: HistorySession[];
   return (
     <div>
       <div className={styles.chartTools}>
-        <Segmented
-          label="Qué mostrar"
-          options={metricOptions}
-          value={metric}
-          onChange={setMetric}
-          size="sm"
-        />
+        {metricOptions.length > 1 && (
+          <Segmented
+            label="Qué mostrar"
+            options={metricOptions}
+            value={metric}
+            onChange={setMetric}
+            size="sm"
+          />
+        )}
         <Segmented
           label="Periodo"
           options={rangeOptions}
@@ -267,7 +274,7 @@ function ChartTooltip({ point, metric }: { point: Point | undefined; metric: Cha
       <span className={styles.label}>{formatDay(point.date, "EEEE d 'de' MMMM")}</span>
       <span className={styles.figure}>
         {formatValue(metric, point.value)}
-        <span className={styles.unit}>kg</span>
+        <span className={styles.unit}>{metricUnit(metric)}</span>
       </span>
       <span className={styles.tooltipSets}>{point.sets}</span>
       <span>{point.feel ? FEEL_LABELS[point.feel] : 'Sin valorar'}</span>

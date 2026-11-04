@@ -3,6 +3,8 @@ import {
   consistencyWeeks,
   estimated1RM,
   formatRecord,
+  groupRecords,
+  setsByBodyPart,
   formatSet,
   metricOf,
   rangeStart,
@@ -320,6 +322,70 @@ describe('consistencyWeeks', () => {
       false,
       false,
       null,
+    ])
+  })
+})
+
+describe('groupRecords', () => {
+  const r = (
+    exerciseId: string,
+    date: string,
+    kind: 'weight' | 'reps',
+    value: number,
+    weight?: number,
+  ) => ({
+    exerciseId,
+    sessionId: date,
+    date,
+    kind,
+    value,
+    previous: value - 1,
+    weight,
+  })
+
+  it('agrupa por ejercicio y deja solo el último de cada tipo', () => {
+    const groups = groupRecords([
+      r('press', '2026-10-05', 'weight', 62.5),
+      r('press', '2026-10-12', 'weight', 65),
+      r('press', '2026-10-12', 'reps', 11, 60),
+      r('remo', '2026-10-20', 'weight', 70),
+    ])
+    expect(groups.map((g) => g.exerciseId)).toEqual(['remo', 'press'])
+    expect(groups[1]!.records.map((x) => [x.kind, x.value])).toEqual([
+      ['weight', 65],
+      ['reps', 11],
+    ])
+    expect(groups[1]!.date).toBe('2026-10-12')
+  })
+})
+
+describe('setsByBodyPart', () => {
+  const row = (date: string, bodyPart: string, extra = {}) => ({
+    date,
+    bodyPart,
+    isWarmup: false,
+    dropIndex: 0,
+    completedAt: 'x',
+    ...extra,
+  })
+
+  it('series de trabajo de esta semana y de la anterior por grupo muscular', () => {
+    // 2026-11-04 is a Wednesday: this week starts on 2 Nov, the previous one on 26 Oct.
+    const result = setsByBodyPart(
+      [
+        row('2026-11-02', 'chest'),
+        row('2026-11-04', 'chest'),
+        row('2026-11-04', 'chest', { isWarmup: true }),
+        row('2026-11-04', 'chest', { dropIndex: 1 }),
+        row('2026-10-28', 'chest'),
+        row('2026-10-30', 'back'),
+        row('2026-10-20', 'back'),
+      ],
+      '2026-11-04',
+    )
+    expect(result).toEqual([
+      { bodyPart: 'chest', sets: 2, previous: 1 },
+      { bodyPart: 'back', sets: 0, previous: 1 },
     ])
   })
 })

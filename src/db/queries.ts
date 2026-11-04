@@ -8,6 +8,7 @@ import {
   detectRecords,
   recordsBySession,
   sessionStats,
+  setsByBodyPart,
   workSets,
   type ExerciseRecord,
 } from '@/lib/progress'
@@ -292,8 +293,16 @@ export async function progressOverview(today: DateKey) {
   const dateOf = new Map(sessions.map((s) => [s.id, s.date]))
   const trainedDates = new Set(workSets(logs).map((l) => dateOf.get(l.sessionId)!))
   const ids = [...new Set(workSets(logs).map((l) => l.exerciseId))]
-  const names = new Map(
-    (await db.exercises.bulkGet(ids)).filter((e) => e !== undefined).map((e) => [e.id, e.nameEs]),
+  const catalogue = (await db.exercises.bulkGet(ids)).filter((e) => e !== undefined)
+  const names = new Map(catalogue.map((e) => [e.id, e.nameEs]))
+  const bodyParts = new Map(catalogue.map((e) => [e.id, e.bodyPart]))
+  const muscles = setsByBodyPart(
+    logs.map((l) => ({
+      ...l,
+      date: dateOf.get(l.sessionId)!,
+      bodyPart: bodyParts.get(l.exerciseId) ?? '',
+    })),
+    today,
   )
 
   const exercises: RecentExercise[] = []
@@ -328,7 +337,7 @@ export async function progressOverview(today: DateKey) {
 
   exercises.sort((a, b) => b.lastDate.localeCompare(a.lastDate) || a.name.localeCompare(b.name))
   records.sort((a, b) => b.date.localeCompare(a.date) || a.name.localeCompare(b.name))
-  return { exercises, records, trainedDates }
+  return { exercises, records, trainedDates, muscles }
 }
 
 export function useProgressOverview(today: DateKey) {
