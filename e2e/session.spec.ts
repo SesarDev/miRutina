@@ -33,6 +33,10 @@ test('registrar una sesión, recargar a mitad, continuar y terminar', async ({ p
   await expect(page.getByRole('timer', { name: 'Descanso' })).toBeVisible()
   await logSet(page, '60', '9', 'Puedo más')
   await expect(doneRows(page)).toHaveCount(2)
+  // The feel is on screen, so it is stored (the write takes a few ms).
+  await expect(
+    page.getByRole('button', { name: /^Serie 2: 60 kilos por 9 repeticiones, hecha, Puedo más/ }),
+  ).toBeVisible()
 
   // Closing the app mid-session loses nothing.
   await page.reload()
