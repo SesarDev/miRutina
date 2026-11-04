@@ -14,7 +14,7 @@ import { getRouteApi, Link } from '@tanstack/react-router'
 import { useRef, useState } from 'react'
 import { PageHeader } from '@/components/PageHeader'
 import { Button, buttonClassName, Icon, IconButton, Segmented, showToast } from '@/components/ui'
-import { usePlannedBetween, useRoutines, type PlannedEntry } from '@/db/queries'
+import { useCalendarEntries, useRoutines, type CalendarEntry } from '@/db/queries'
 import { moveWorkout, planWorkout } from '@/db/planning'
 import type { Routine } from '@/db/types'
 import {
@@ -81,8 +81,9 @@ export function CalendarioPage() {
       : monthGrid(anchor)
           .flat()
           .map((d) => d.key)
-  const planned = usePlannedBetween(days[0]!, days.at(-1)!) ?? []
-  const byDay = new Map<DateKey, PlannedEntry[]>()
+  // Planned workouts and the sessions done without a plan (they are not «Descanso»).
+  const planned = useCalendarEntries(days[0]!, days.at(-1)!) ?? []
+  const byDay = new Map<DateKey, CalendarEntry[]>()
   for (const p of planned) byDay.set(p.date, [...(byDay.get(p.date) ?? []), p])
 
   const go = (patch: { vista?: CalendarView; fecha?: DateKey }) =>
@@ -220,7 +221,7 @@ function WeekView({
   draggable,
 }: {
   days: DateKey[]
-  byDay: Map<DateKey, PlannedEntry[]>
+  byDay: Map<DateKey, CalendarEntry[]>
   onOpen: (d: DateKey) => void
   draggable: boolean
 }) {
@@ -250,7 +251,9 @@ function WeekView({
                 onOpen={() => onOpen(day)}
               />
             ))}
-            {!byDay.get(day)?.length && <span className={styles.restDay}>Descanso</span>}
+            {!byDay.get(day)?.length && (
+              <span className={styles.restDay}>{day < today ? 'Descanso' : 'Sin planificar'}</span>
+            )}
           </span>
         </DayCell>
       ))}
@@ -267,7 +270,7 @@ function MonthView({
   draggable,
 }: {
   anchor: DateKey
-  byDay: Map<DateKey, PlannedEntry[]>
+  byDay: Map<DateKey, CalendarEntry[]>
   onOpen: (d: DateKey) => void
   draggable: boolean
 }) {

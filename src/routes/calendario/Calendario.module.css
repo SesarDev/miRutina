@@ -347,6 +347,14 @@
   color: var(--color-success);
 }
 
+.pill[data-status='live'] {
+  border-color: var(--color-line-strong);
+}
+
+.pill[data-status='live'] .pillIcon {
+  color: var(--color-text);
+}
+
 .pill[data-status='skipped'] {
   border-style: dashed;
   color: var(--color-text-2);

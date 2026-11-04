@@ -18,8 +18,14 @@ test('desde el calendario: ver la sesión del día, corregir una serie y borrarl
   await page.getByRole('button', { name: 'Terminar entreno' }).click()
   await expect(page.locator('dl div', { hasText: 'Volumen' }).locator('dd')).toHaveText('600 kg')
 
-  // The day sheet lists the session.
+  // The day shows the session done (not «Descanso»), even without a plan.
   await page.goto('/calendario?vista=semana')
+  const today = page.locator('li[data-today]')
+  await expect(today.getByText('Sesión libre')).toBeVisible()
+  await expect(today.getByText(/^Hecho/)).toBeVisible()
+  await expect(today.getByText('Descanso')).toHaveCount(0)
+
+  // The day sheet lists the session.
   await page.locator('[data-today] button[aria-label$="Abrir el día"]').click()
   const sheet = page.getByRole('dialog')
   await expect(sheet.getByText('Sesión libre')).toBeVisible()

@@ -455,3 +455,61 @@ const itemsOfSession = (s: Session) => (s.items ?? []).map((i) => i.exerciseId)
 export function useSessionComparison(sessionId: string) {
   return useLiveQuery(() => sessionComparison(sessionId), [sessionId])
 }
+
+/**
+ * What the calendar shows: the planned workouts plus the sessions that no plan points at (a
+ * «Sesión libre», or a routine started from «Entrenar algo hoy»). Those come as entries with
+ * `session` set, done or in progress, never draggable.
+ */
+export type CalendarEntry = PlannedEntry & { session?: { live: boolean } }
+
+export function useCalendarEntries(from: string, to: string) {
+  return useLiveQuery(async (): Promise<CalendarEntry[]> => {
+    const planned = (
+      await db.plannedWorkouts.where('date').between(from, to, true, true).toArray()
+    ).filter((p) => !p.deletedAt)
+    const sessions = (
+      await db.sessions.where('date').between(from, to, true, true).toArray()
+    ).filter((s) => !s.deletedAt)
+    const linked = new Set(planned.map((p) => p.sessionId).filter(Boolean))
+    const ids = [
+      ...new Set([...planned.map((p) => p.routineId), ...sessions.map((s) => s.routineId)]),
+    ]
+    const routines = new Map(
+      (await Promise.all(ids.filter((id): id is string => !!id).map(getRoutineOrTemplate)))
+        .filter((r) => r !== undefined)
+        .map((r) => [r.id, r]),
+    )
+    const nameOf = (id: string | null) => {
+      if (!id) return 'Sesión libre'
+      const r = routines.get(id)
+      return r && !r.deletedAt ? r.name : 'Rutina borrada'
+    }
+
+    const entries: CalendarEntry[] = planned.map((p) => ({
+      ...p,
+      routineName: nameOf(p.routineId),
+      minutes: estimateMinutes(routines.get(p.routineId)?.items ?? []),
+    }))
+    for (const s of sessions) {
+      if (linked.has(s.id)) continue
+      entries.push({
+        id: `session-${s.id}`,
+        date: s.date,
+        routineId: s.routineId ?? '',
+        status: 'done',
+        sessionId: s.id,
+        updatedAt: s.startedAt,
+        deletedAt: null,
+        routineName: nameOf(s.routineId),
+        minutes: s.endedAt
+          ? Math.max(1, Math.round((Date.parse(s.endedAt) - Date.parse(s.startedAt)) / 60000))
+          : 0,
+        session: { live: !s.endedAt },
+      })
+    }
+    return entries.sort(
+      (a, b) => a.date.localeCompare(b.date) || a.updatedAt.localeCompare(b.updatedAt),
+    )
+  }, [from, to])
+}

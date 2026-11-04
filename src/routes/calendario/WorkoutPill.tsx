@@ -1,11 +1,12 @@
 import { useDraggable } from '@dnd-kit/core'
 import { Icon } from '@/components/ui'
-import type { PlannedEntry } from '@/db/queries'
-import { PLANNED_DRAG_PREFIX, STATUS_META } from './status'
+import type { CalendarEntry } from '@/db/queries'
+import { LIVE_SESSION, PLANNED_DRAG_PREFIX, STATUS_META } from './status'
 import styles from './Calendario.module.css'
 
 type Props = {
-  workout: PlannedEntry
+  /** A planned workout, or a session done without a plan (`session`). */
+  workout: CalendarEntry
   /** Compact: month cells (icon + name only, status in the accessible name). */
   compact?: boolean
   draggable?: boolean
@@ -14,20 +15,22 @@ type Props = {
 }
 
 export function WorkoutPill({ workout, compact = false, draggable = false, onOpen }: Props) {
-  const status = STATUS_META[workout.status]
+  const status = workout.session?.live ? LIVE_SESSION : STATUS_META[workout.status]
+  // Done workouts and sessions stay on their day: only planned ones move.
+  const movable = draggable && workout.status !== 'done' && !workout.session
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: `${PLANNED_DRAG_PREFIX}${workout.id}`,
-    disabled: !draggable || workout.status === 'done',
+    disabled: !movable,
   })
 
   return (
     <span
       ref={setNodeRef}
       className={styles.pill}
-      data-status={workout.status}
+      data-status={workout.session?.live ? 'live' : workout.status}
       data-compact={compact || undefined}
       data-dragging={isDragging || undefined}
-      {...(draggable && workout.status !== 'done'
+      {...(movable
         ? {
             ...attributes,
             ...listeners,
@@ -45,6 +48,9 @@ export function WorkoutPill({ workout, compact = false, draggable = false, onOpe
           {status.label}
           {workout.minutes > 0 && workout.status === 'planned' && (
             <span className="num"> · ≈ {workout.minutes} min</span>
+          )}
+          {workout.session && workout.minutes > 0 && (
+            <span className="num"> · {workout.minutes} min</span>
           )}
         </span>
       )}
