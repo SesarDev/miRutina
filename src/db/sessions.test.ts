@@ -11,6 +11,8 @@ import {
   addWarmup,
   completeSet,
   discardSession,
+  finishEditing,
+  moveSessionDate,
   findOpenSession,
   finishSession,
   moveSessionItem,
@@ -299,5 +301,40 @@ describe('descartar una sesión', () => {
     expect((await db.plannedWorkouts.get(planned!.id))?.status).toBe('done')
     await discardSession(s.id)
     expect((await db.plannedWorkouts.get(planned!.id))?.status).toBe('planned')
+  })
+})
+
+describe('editar sesiones pasadas', () => {
+  it('cambiar de día: el planificado original vuelve a pendiente y se enlaza el del nuevo día', async () => {
+    const r = await routine()
+    const [wrong] = await planWorkout('2026-10-29', r.id)
+    const [right] = await planWorkout('2026-10-31', r.id)
+    const s = await startSession({ plannedId: wrong!.id })
+    await finishSession(s.id)
+    await db.sessions.update(s.id, { date: '2026-10-29' })
+
+    await moveSessionDate(s.id, '2026-10-31')
+    expect((await db.sessions.get(s.id))?.date).toBe('2026-10-31')
+    expect(await db.plannedWorkouts.get(wrong!.id)).toMatchObject({
+      status: 'planned',
+      sessionId: null,
+    })
+    expect(await db.plannedWorkouts.get(right!.id)).toMatchObject({
+      status: 'done',
+      sessionId: s.id,
+    })
+  })
+
+  it('al terminar de editar se descartan las filas añadidas sin marcar', async () => {
+    const r = await routine()
+    const s = await startSession({ routineId: r.id })
+    const [first] = await rowsOf(s.id, 'press')
+    await updateSetRow(first!.id, { weight: 60, reps: 10 })
+    await completeSet(first!.id)
+    await finishSession(s.id)
+    await addSet(s.id, 'press')
+    expect(await rowsOf(s.id)).toHaveLength(2)
+    await finishEditing(s.id)
+    expect(await rowsOf(s.id)).toHaveLength(1)
   })
 })

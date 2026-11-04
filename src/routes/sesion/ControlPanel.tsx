@@ -26,6 +26,8 @@ type Props = {
   exerciseName: string
   weightStep: number
   allDone: boolean
+  /** Correcting a finished session: marking a set starts no rest and asks no feel. */
+  editing?: boolean
 }
 
 /**
@@ -40,6 +42,7 @@ export function ControlPanel({
   exerciseName,
   weightStep,
   allDone,
+  editing = false,
 }: Props) {
   const feelPrompt = useSessionUi((s) =>
     s.feelPrompt?.sessionId === session.id ? s.feelPrompt : null,
@@ -75,7 +78,9 @@ export function ControlPanel({
     const restSec = restAfter(items, rows, row.id)
     // The armband moves to the set that follows this one (the partner in a superset).
     const next = nextAfter(items, rows, row.id)?.row.id ?? null
-    if (row.isWarmup) {
+    if (editing) {
+      selectRow(next)
+    } else if (row.isWarmup) {
       startRest(session.id, restSec)
       selectRow(next)
     } else {

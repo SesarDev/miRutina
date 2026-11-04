@@ -326,3 +326,38 @@ export async function discardSession(sessionId: string): Promise<() => Promise<v
     await saveMany('plannedWorkouts', planned)
   }
 }
+
+/**
+ * Moves a session (and so its sets) to another day, e.g. one saved on the wrong date. Its planned
+ * workout stays on its own day, back to «Planificado»; on the new day, a planned workout of the
+ * same routine without a session is marked done and linked.
+ */
+export async function moveSessionDate(sessionId: string, date: string) {
+  const session = await db.sessions.get(sessionId)
+  if (!session || session.deletedAt || session.date === date) return
+  const plannedAll = (await db.plannedWorkouts.toArray()).filter((p) => !p.deletedAt)
+
+  await save('sessions', { ...session, date })
+  await saveMany(
+    'plannedWorkouts',
+    plannedAll
+      .filter((p) => p.sessionId === sessionId)
+      .map((p) => ({ ...p, status: 'planned' as const, sessionId: null })),
+  )
+  if (!session.endedAt) return
+  const target = plannedAll.find(
+    (p) =>
+      p.date === date && p.routineId === session.routineId && !p.sessionId && p.status !== 'done',
+  )
+  if (target) await save('plannedWorkouts', { ...target, status: 'done', sessionId })
+}
+
+/**
+ * Ends the editing of a finished session: rows added but not marked are discarded, as when a
+ * session finishes. The session keeps its original end.
+ */
+export async function finishEditing(sessionId: string) {
+  const rows = await db.setLogs.where('sessionId').equals(sessionId).toArray()
+  for (const row of rows)
+    if (!row.completedAt && !row.deletedAt) await softDelete('setLogs', row.id)
+}

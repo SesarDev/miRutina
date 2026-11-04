@@ -98,6 +98,14 @@ export function SessionSummary({
       <Link to="/" className={buttonClassName({ variant: 'primary', size: 'lg', block: true })}>
         Ir a Hoy
       </Link>
+      <Link
+        to="/sesion/$sessionId"
+        params={{ sessionId: session.id }}
+        search={{ editar: 1 }}
+        className={buttonClassName({ variant: 'ghost', block: true })}
+      >
+        Corregir series
+      </Link>
     </div>
   )
 }

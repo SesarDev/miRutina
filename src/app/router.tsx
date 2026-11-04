@@ -77,6 +77,9 @@ const routeTree = rootRoute.addChildren([
     getParentRoute,
     path: '/sesion/$sessionId',
     component: lazyRouteComponent(() => import('@/routes/sesion/SesionPage'), 'SesionPage'),
+    // ?editar=1: a finished session opened to correct it (from its summary or the calendar).
+    validateSearch: (s: Record<string, unknown>): { editar?: 1 } =>
+      s.editar === 1 || s.editar === '1' ? { editar: 1 } : {},
   }),
   createRoute({
     getParentRoute,

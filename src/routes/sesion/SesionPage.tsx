@@ -1,4 +1,4 @@
-import { getRouteApi, Link } from '@tanstack/react-router'
+import { getRouteApi, Link, useNavigate } from '@tanstack/react-router'
 import { useEffect, useMemo, useState } from 'react'
 import { PageHeader } from '@/components/PageHeader'
 import { Button, buttonClassName, EmptyState, Sheet } from '@/components/ui'
@@ -9,7 +9,7 @@ import {
   useSession,
   useSessionRows,
 } from '@/db/queries'
-import { addExerciseToSession, itemsOf } from '@/db/sessions'
+import { addExerciseToSession, finishEditing, itemsOf } from '@/db/sessions'
 import { usePrefs } from '@/lib/prefs'
 import { useGSAP } from '@/motion/gsap'
 import { blocksOf, defaultWeightStep, sequence } from '@/lib/session'
@@ -22,13 +22,15 @@ import { SessionHeader } from './SessionHeader'
 import { SessionMenu } from './SessionMenu'
 import { SessionNotes } from './SessionNotes'
 import { captureSessionLayout, playSessionLayout } from './sessionFlip'
-import { onBeforeArmbandMove, selectRow, useSessionUi } from './sessionStore'
+import { onBeforeArmbandMove, resetSessionUi, selectRow, useSessionUi } from './sessionStore'
 import styles from './Session.module.css'
 
 const route = getRouteApi('/sesion/$sessionId')
 
 export function SesionPage() {
   const { sessionId } = route.useParams()
+  const { editar } = route.useSearch()
+  const navigate = useNavigate()
   const session = useSession(sessionId)
   const rows = useSessionRows(sessionId)
   const routine = useRoutine(session?.routineId ?? '')
@@ -84,7 +86,21 @@ export function SesionPage() {
   }
 
   const title = session.routineId ? (routine?.name ?? 'Entreno') : 'Sesión libre'
-  if (session.endedAt) return <SessionSummary session={session} rows={rows} title={title} />
+  if (session.endedAt && !editar) {
+    return <SessionSummary session={session} rows={rows} title={title} />
+  }
+  // A finished session opened to correct it: same screen, no rest or feel prompt, «Hecho».
+  const editing = !!session.endedAt
+  const doneEditing = async () => {
+    await finishEditing(session.id)
+    resetSessionUi()
+    void navigate({
+      to: '/sesion/$sessionId',
+      params: { sessionId: session.id },
+      search: {},
+      replace: true,
+    })
+  }
 
   const next = steps.find((s) => !s.row.completedAt)
   const active = steps.find((s) => s.row.id === selectedRowId) ?? next
@@ -103,10 +119,16 @@ export function SesionPage() {
         session={session}
         title={title}
         action={
-          <>
-            <SessionMenu session={session} rows={rows} />
-            <FinishButton session={session} rows={rows} />
-          </>
+          editing ? (
+            <button type="button" className={styles.finish} onClick={() => void doneEditing()}>
+              Hecho
+            </button>
+          ) : (
+            <>
+              <SessionMenu session={session} rows={rows} />
+              <FinishButton session={session} rows={rows} />
+            </>
+          )
         }
       />
 
@@ -164,6 +186,7 @@ export function SesionPage() {
         exerciseName={activeExercise?.nameEs ?? ''}
         weightStep={weightStep}
         allDone={!next && rows.length > 0}
+        editing={editing}
       />
 
       <Sheet open={adding} onClose={() => setAdding(false)} title="Añadir ejercicio">

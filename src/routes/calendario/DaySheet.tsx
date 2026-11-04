@@ -1,7 +1,14 @@
 import { Link } from '@tanstack/react-router'
 import { useState } from 'react'
 import { Button, buttonClassName, Icon, Sheet, showToast, Stepper } from '@/components/ui'
-import { usePlannedBetween, useRoutines, type PlannedEntry } from '@/db/queries'
+import {
+  useDaySessions,
+  usePlannedBetween,
+  useRoutines,
+  type DaySession,
+  type PlannedEntry,
+} from '@/db/queries'
+import { discardSession, moveSessionDate } from '@/db/sessions'
 import {
   MAX_REPEAT_WEEKS,
   moveWorkout,
@@ -10,14 +17,17 @@ import {
   restoreWorkout,
   setWorkoutStatus,
 } from '@/db/planning'
-import { formatDay, isValidDateKey, type DateKey } from '@/lib/dates'
+import { formatDay, isValidDateKey, todayKey, type DateKey } from '@/lib/dates'
 import { estimateMinutes } from '@/lib/routines'
 import { WorkoutPill } from './WorkoutPill'
 import styles from './Calendario.module.css'
 
 type Props = { day: DateKey | null; onClose: () => void }
 
-/** Everything about one day: its workouts (skip, move, remove) and adding a routine. */
+/**
+ * Everything about one day: the sessions done (open, correct, move, delete), the planned
+ * workouts (done by hand, skip, move, remove) and adding a routine.
+ */
 export function DaySheet({ day, onClose }: Props) {
   const title = day ? capitalize(formatDay(day, "EEEE, d 'de' MMMM")) : ''
   return (
@@ -31,8 +41,21 @@ const capitalize = (s: string) => s.charAt(0).toLocaleUpperCase('es') + s.slice(
 
 function DayBody({ day }: { day: DateKey }) {
   const workouts = usePlannedBetween(day, day) ?? []
+  const sessions = useDaySessions(day) ?? []
   return (
     <div className={styles.sheetBody}>
+      {sessions.length > 0 && (
+        <section aria-labelledby={`sessions-${day}`} className={styles.addSection}>
+          <h3 id={`sessions-${day}`} className={styles.sheetSubtitle}>
+            {sessions.length === 1 ? 'Sesión' : 'Sesiones'}
+          </h3>
+          <ul className={styles.sheetList}>
+            {sessions.map((s) => (
+              <SessionRow key={s.session.id} entry={s} />
+            ))}
+          </ul>
+        </section>
+      )}
       {workouts.length > 0 && (
         <section aria-label="Entrenos del día">
           <ul className={styles.sheetList}>
@@ -71,6 +94,15 @@ function PlannedRow({ workout }: { workout: PlannedEntry }) {
       <WorkoutPill workout={workout} />
       {workout.status !== 'done' && (
         <div className={styles.sheetActions}>
+          {workout.status === 'planned' && !workout.sessionId && (
+            <Button
+              variant="ghost"
+              icon="check"
+              onClick={() => void setWorkoutStatus(workout.id, 'done')}
+            >
+              Marcar como hecho
+            </Button>
+          )}
           {workout.status === 'planned' ? (
             <Button
               variant="ghost"
@@ -109,6 +141,94 @@ function PlannedRow({ workout }: { workout: PlannedEntry }) {
               type="date"
               className={styles.dateInput}
               value={target}
+              onChange={(e) => setTarget(e.target.value)}
+            />
+          </label>
+          <Button variant="primary" onClick={() => void move()}>
+            Mover
+          </Button>
+        </div>
+      )}
+    </li>
+  )
+}
+
+const volumeFormat = new Intl.NumberFormat('es-ES')
+
+/** A session of the day: what was done, and open, correct, move or delete it. */
+function SessionRow({ entry }: { entry: DaySession }) {
+  const { session, name, summary, records } = entry
+  const [moving, setMoving] = useState(false)
+  const [target, setTarget] = useState(session.date)
+  const done = !!session.endedAt
+
+  const facts = [
+    done ? 'Hecha' : 'En curso',
+    `${summary.exercises} ${summary.exercises === 1 ? 'ejercicio' : 'ejercicios'}`,
+    `${summary.sets} ${summary.sets === 1 ? 'serie' : 'series'}`,
+    summary.volume ? `${volumeFormat.format(summary.volume)} kg` : null,
+    done ? `${summary.durationMin < 1 ? '< 1' : summary.durationMin} min` : null,
+    records ? `${records} ${records === 1 ? 'récord' : 'récords'}` : null,
+  ].filter(Boolean)
+
+  const remove = async () => {
+    const undo = await discardSession(session.id)
+    showToast({
+      message: `Sesión «${name}» borrada`,
+      actionLabel: 'Deshacer',
+      onAction: () => void undo(),
+    })
+  }
+
+  const move = async () => {
+    if (!isValidDateKey(target) || target === session.date) return setMoving(false)
+    await moveSessionDate(session.id, target)
+    showToast({ message: `Sesión movida al ${formatDay(target, "EEEE d 'de' MMMM")}` })
+  }
+
+  return (
+    <li className={styles.sessionRow}>
+      <p className={styles.sessionName}>{name}</p>
+      <p className={`${styles.sessionFacts} num`}>{facts.join(' · ')}</p>
+      <div className={styles.sheetActions}>
+        <Link
+          to="/sesion/$sessionId"
+          params={{ sessionId: session.id }}
+          className={buttonClassName({ variant: 'secondary' })}
+        >
+          {done ? 'Ver' : 'Continuar'}
+        </Link>
+        {done && (
+          <Link
+            to="/sesion/$sessionId"
+            params={{ sessionId: session.id }}
+            search={{ editar: 1 }}
+            className={buttonClassName({ variant: 'ghost' })}
+          >
+            Corregir series
+          </Link>
+        )}
+        <Button
+          variant="ghost"
+          icon="calendar"
+          onClick={() => setMoving((v) => !v)}
+          aria-expanded={moving}
+        >
+          Cambiar de día
+        </Button>
+        <Button variant="danger" icon="trash" onClick={() => void remove()}>
+          Borrar
+        </Button>
+      </div>
+      {moving && (
+        <div className={styles.moveRow}>
+          <label className={styles.moveLabel}>
+            <span>Nuevo día</span>
+            <input
+              type="date"
+              className={styles.dateInput}
+              value={target}
+              max={todayKey()}
               onChange={(e) => setTarget(e.target.value)}
             />
           </label>

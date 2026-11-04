@@ -12,9 +12,10 @@ import {
   type ExerciseRecord,
 } from '@/lib/progress'
 import { estimateMinutes } from '@/lib/routines'
+import { summarize } from '@/lib/session'
 import { db } from './schema'
 import { addDaysKey, type DateKey } from '@/lib/dates'
-import type { ExerciseSettings, Feel, PlannedWorkout, SetLog } from './types'
+import type { ExerciseSettings, Feel, PlannedWorkout, Session, SetLog } from './types'
 
 const EMPTY: never[] = []
 
@@ -354,4 +355,39 @@ export async function sessionRecords(sessionId: string): Promise<RecentRecord[]>
 
 export function useSessionRecords(sessionId: string) {
   return useLiveQuery(() => sessionRecords(sessionId), [sessionId])
+}
+
+export type DaySession = {
+  session: Session
+  /** Routine name, «Sesión libre» or «Rutina borrada». */
+  name: string
+  summary: ReturnType<typeof summarize>
+  records: number
+}
+
+/** Sessions of a day (calendar day sheet), oldest first, with their summary and record count. */
+export function useDaySessions(day: DateKey) {
+  return useLiveQuery(async (): Promise<DaySession[]> => {
+    const sessions = (await db.sessions.where('date').equals(day).toArray())
+      .filter((s) => !s.deletedAt)
+      .sort((a, b) => a.startedAt.localeCompare(b.startedAt))
+    return Promise.all(
+      sessions.map(async (session) => {
+        const rows = (await db.setLogs.where('sessionId').equals(session.id).toArray()).filter(
+          (r) => !r.deletedAt,
+        )
+        const routine = session.routineId ? await db.routines.get(session.routineId) : undefined
+        return {
+          session,
+          name: !session.routineId
+            ? 'Sesión libre'
+            : routine && !routine.deletedAt
+              ? routine.name
+              : 'Rutina borrada',
+          summary: summarize(session, rows),
+          records: session.endedAt ? (await sessionRecords(session.id)).length : 0,
+        }
+      }),
+    )
+  }, [day])
 }

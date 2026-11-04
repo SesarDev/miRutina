@@ -2,6 +2,7 @@ import { Link } from '@tanstack/react-router'
 import type { ReactNode } from 'react'
 import { Icon } from '@/components/ui'
 import type { Session } from '@/db/types'
+import { formatDay } from '@/lib/dates'
 import { formatClock, useNow } from './clock'
 import styles from './Session.module.css'
 
@@ -31,7 +32,13 @@ export function SessionHeader({ session, title, action }: Props) {
       </Link>
       <div className={styles.headerText}>
         <h1 className={styles.headerTitle}>{title}</h1>
-        <Elapsed startedAt={session.startedAt} />
+        {session.endedAt ? (
+          <span className={styles.elapsed}>
+            Editando · {formatDay(session.date, "d 'de' MMMM")}
+          </span>
+        ) : (
+          <Elapsed startedAt={session.startedAt} />
+        )}
       </div>
       {action}
     </header>
