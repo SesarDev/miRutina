@@ -121,3 +121,22 @@ test('un récord aparece en el resumen de la sesión y en la ficha del ejercicio
   await expect(page.getByRole('img', { name: 'Récord' })).toHaveCount(1)
   await expect(page.getByRole('list', { name: 'Sesiones' }).getByText('Bien')).toHaveCount(2)
 })
+
+test('la imagen del ejercicio abre cómo se hace sin salir de la sesión', async ({ page }) => {
+  await page.goto('/')
+  await page.getByRole('button', { name: 'Entrenar algo hoy' }).click()
+  await page.getByRole('button', { name: /^Sesión libre/ }).click()
+  await page.getByRole('button', { name: 'Añadir ejercicio' }).click()
+  await page.getByLabel('Buscar ejercicio para añadir').fill('press de banca con barra')
+  await page.getByRole('button', { name: 'Añadir Press de banca con barra', exact: true }).click()
+
+  await page.getByRole('button', { name: 'Ver cómo se hace: Press de banca con barra' }).click()
+  const sheet = page.getByRole('dialog', { name: 'Press de banca con barra' })
+  await expect(sheet.getByRole('heading', { name: 'Pasos' })).toBeVisible()
+  await expect(sheet.locator('img[src$=".gif"]')).toBeVisible()
+  await expect(sheet.getByText('© Gym visual — gymvisual.com')).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(sheet).toBeHidden()
+  // Still in the session, nothing changed.
+  await expect(page.getByRole('button', { name: 'Indica las repeticiones' })).toBeVisible()
+})

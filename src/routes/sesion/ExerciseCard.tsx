@@ -32,6 +32,7 @@ import { chainsOf, progressOf, targetReps, workIndexOf } from '@/lib/session'
 import { NoteField } from './SessionNotes'
 import { selectRow } from './sessionStore'
 import styles from './Session.module.css'
+import { ExerciseSheet } from './ExerciseSheet'
 import { captureSessionLayout } from './sessionFlip'
 
 type Props = {
@@ -56,6 +57,7 @@ export function ExerciseCard({
   activeRowId,
 }: Props) {
   const [options, setOptions] = useState(false)
+  const [howTo, setHowTo] = useState(false)
   const name = exercise?.nameEs ?? 'Ejercicio'
   const { done, total } = progressOf(rows)
   const technique = item.technique !== 'normal' ? TECHNIQUE_LABELS[item.technique] : null
@@ -76,12 +78,20 @@ export function ExerciseCard({
       <div className={styles.cardHead}>
         <button
           type="button"
+          className={styles.thumbButton}
+          aria-label={`Ver cómo se hace: ${name}`}
+          disabled={!exercise}
+          onClick={() => setHowTo(true)}
+        >
+          <ExerciseThumb src={exercise?.image ?? ''} />
+        </button>
+        <button
+          type="button"
           className={styles.cardToggle}
           aria-expanded={active}
           onClick={open}
           disabled={item.skipped}
         >
-          <ExerciseThumb src={exercise?.image ?? ''} />
           <span className={styles.cardText}>
             <span className={styles.cardName}>{name}</span>
             <span className={styles.cardMeta}>
@@ -130,6 +140,9 @@ export function ExerciseCard({
           onDone={() => setOptions(false)}
         />
       </Sheet>
+      {exercise && (
+        <ExerciseSheet exercise={exercise} open={howTo} onClose={() => setHowTo(false)} />
+      )}
     </li>
   )
 }

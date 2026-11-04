@@ -2,12 +2,12 @@ import { useMemo, useState } from 'react'
 import { HistoryList } from '@/components/progress/HistoryList'
 import { ProgressChart } from '@/components/progress/ProgressChart'
 import { RecordCards } from '@/components/progress/RecordCards'
-import { Chip, Segmented } from '@/components/ui'
-import { BODY_PART_LABELS, EQUIPMENT_LABELS, label, MUSCLE_LABELS } from '@/db/labels'
+import { Segmented } from '@/components/ui'
 import { useExerciseHistory } from '@/db/queries'
 import type { Exercise } from '@/db/types'
 import { todayKey } from '@/lib/dates'
 import { personalRecords, recordsBySession } from '@/lib/progress'
+import { ExerciseHowTo } from './ExerciseHowTo'
 import { ExerciseMedia } from './ExerciseMedia'
 import { FavoriteButton } from './FavoriteButton'
 import { WeightStepPicker } from './WeightStepPicker'
@@ -116,7 +116,6 @@ function HowTo({
 }) {
   // Section headings sit one level below the exercise name.
   const Section = heading === 'h1' ? 'h2' : 'h3'
-  const secondary = exercise.secondaryMuscles.filter((m) => m !== exercise.target)
 
   return (
     <>
@@ -130,44 +129,7 @@ function HowTo({
         <FavoriteButton exerciseId={exercise.id} favorite={favorite} />
       </div>
 
-      <dl className={styles.facts}>
-        <div>
-          <dt>Músculo principal</dt>
-          <dd>
-            <Chip>{label(MUSCLE_LABELS, exercise.target)}</Chip>
-            <Chip>{label(BODY_PART_LABELS, exercise.bodyPart)}</Chip>
-          </dd>
-        </div>
-        {secondary.length > 0 && (
-          <div>
-            <dt>Secundarios</dt>
-            <dd>
-              {secondary.map((m) => (
-                <Chip key={m}>{label(MUSCLE_LABELS, m)}</Chip>
-              ))}
-            </dd>
-          </div>
-        )}
-        <div>
-          <dt>Equipo</dt>
-          <dd>
-            <Chip>{label(EQUIPMENT_LABELS, exercise.equipment)}</Chip>
-          </dd>
-        </div>
-      </dl>
-
-      {exercise.stepsEs.length > 0 && (
-        <section aria-labelledby={`steps-${exercise.id}`}>
-          <Section id={`steps-${exercise.id}`} className={styles.sectionTitle}>
-            Pasos
-          </Section>
-          <ol className={styles.steps}>
-            {exercise.stepsEs.map((step, i) => (
-              <li key={i}>{step}</li>
-            ))}
-          </ol>
-        </section>
-      )}
+      <ExerciseHowTo exercise={exercise} section={Section} />
 
       <section aria-labelledby={`session-${exercise.id}`}>
         <Section id={`session-${exercise.id}`} className={styles.sectionTitle}>

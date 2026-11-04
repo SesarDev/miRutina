@@ -336,14 +336,48 @@
   cursor: default;
 }
 
-.cardToggle > :first-child {
+/* The picture opens «Cómo se hace» (ExerciseSheet); the rest of the head opens the card. */
+.thumbButton {
+  display: grid;
   flex: none;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  transition: transform var(--dur-instant) var(--ease-out);
+}
+
+.thumbButton > * {
   width: 44px;
   height: 44px;
 }
 
-.card[data-skipped] .cardToggle > :first-child {
+.thumbButton:active:not(:disabled) {
+  transform: scale(var(--scale-press));
+}
+
+.card[data-skipped] .thumbButton {
   opacity: 0.5;
+}
+
+.howTo {
+  display: grid;
+  gap: var(--space-5);
+  padding-bottom: var(--space-4);
+}
+
+.howToLink {
+  justify-self: start;
+  min-height: var(--hit-min);
+  display: inline-flex;
+  align-items: center;
+  color: var(--color-accent-ink);
+  font-weight: var(--weight-semibold);
+}
+
+.attribution {
+  color: var(--color-text-3);
+  font-size: var(--text-xs);
 }
 
 .cardText {
