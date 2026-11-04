@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
 import { Icon } from '@/components/ui'
 import { useNumberPop } from '@/motion/useNumberPop'
 import { clamp, parseDecimal, roundTo } from '@/lib/numbers'
@@ -18,6 +18,8 @@ type Props = {
   placeholder?: string
   /** Called before the first change (closes the feel prompt and starts the rest). */
   onEdit?: () => void
+  /** Next to the label, e.g. the «Discos» button of the weight. */
+  extra?: ReactNode
 }
 
 const HOLD_DELAY_MS = 400
@@ -37,6 +39,7 @@ export function SessionStepper({
   max = 999,
   placeholder = '—',
   onEdit,
+  extra,
 }: Props) {
   const id = useId()
   const [draft, setDraft] = useState<string | null>(null)
@@ -51,9 +54,12 @@ export function SessionStepper({
 
   return (
     <div className={styles.stepper} role="group" aria-labelledby={`${id}-label`}>
-      <span id={`${id}-label`} className={styles.stepperLabel}>
-        {label}
-      </span>
+      <div className={styles.stepperHead}>
+        <span id={`${id}-label`} className={styles.stepperLabel}>
+          {label}
+        </span>
+        {extra}
+      </div>
       <div className={styles.stepperControl}>
         <HoldButton
           label={`Restar ${stepText} ${label}`}

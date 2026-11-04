@@ -13,6 +13,10 @@ export type Prefs = {
   sound: boolean
   /** Short ticks in the last 3 s of a rest. */
   countdownBeeps: boolean
+  /** Ask the feel only after the last set of each exercise. */
+  rateLastOnly: boolean
+  /** Bar used by the plate calculator (kg). */
+  barWeight: number
 }
 
 export const DEFAULT_PREFS: Prefs = {
@@ -21,6 +25,8 @@ export const DEFAULT_PREFS: Prefs = {
   wakeLock: true,
   sound: true,
   countdownBeeps: false,
+  rateLastOnly: false,
+  barWeight: 20,
 }
 
 export const usePrefs = create<Prefs>()(

@@ -3,6 +3,7 @@ import { ExerciseThumb } from '@/components/exercise/ExerciseThumb'
 import { WeightStepPicker } from '@/components/exercise/WeightStepPicker'
 import { Button, Icon, IconButton, Sheet, showToast } from '@/components/ui'
 import { useLastSessions } from '@/db/queries'
+import { updateExerciseSettings } from '@/db/repo'
 import {
   addSet,
   addWarmup,
@@ -44,6 +45,8 @@ type Props = {
   rows: SetLog[]
   active: boolean
   activeRowId: string | null
+  /** The exercise's own note (exerciseSettings.note): seat height, grip… kept across sessions. */
+  fixedNote?: string | null
 }
 
 export function ExerciseCard({
@@ -55,6 +58,7 @@ export function ExerciseCard({
   rows,
   active,
   activeRowId,
+  fixedNote = null,
 }: Props) {
   const [options, setOptions] = useState(false)
   const [howTo, setHowTo] = useState(false)
@@ -122,6 +126,7 @@ export function ExerciseCard({
 
       {active && (
         <div className={styles.cardBody}>
+          {fixedNote && <p className={styles.fixedNote}>{fixedNote}</p>}
           <LastTime exerciseId={item.exerciseId} sessionId={sessionId} />
           <SetRows item={item} rows={rows} activeRowId={activeRowId} />
           {item.note && <p className={styles.itemNote}>{item.note}</p>}
@@ -137,6 +142,7 @@ export function ExerciseCard({
           rows={rows}
           activeRowId={active ? activeRowId : null}
           exercise={exercise}
+          fixedNote={fixedNote}
           onDone={() => setOptions(false)}
         />
       </Sheet>
@@ -275,6 +281,7 @@ function ExerciseOptions({
   rows,
   activeRowId,
   exercise,
+  fixedNote,
   onDone,
 }: {
   sessionId: string
@@ -284,6 +291,7 @@ function ExerciseOptions({
   rows: SetLog[]
   activeRowId: string | null
   exercise: Exercise | undefined
+  fixedNote: string | null
   onDone: () => void
 }) {
   const selected = rows.find((r) => r.id === activeRowId)
@@ -353,6 +361,15 @@ function ExerciseOptions({
           Saltar ejercicio
         </Button>
       </div>
+
+      <NoteField
+        label="Nota fija del ejercicio (se ve siempre)"
+        value={fixedNote}
+        placeholder="Altura del asiento, agarre, ajustes…"
+        onSave={(text) =>
+          void updateExerciseSettings(item.exerciseId, { note: text.trim() || null })
+        }
+      />
 
       <NoteField
         label="Nota del ejercicio en esta sesión"

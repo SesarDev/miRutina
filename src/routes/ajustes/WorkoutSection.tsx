@@ -6,7 +6,7 @@ import styles from './AjustesPage.module.css'
 
 /** Session preferences of this device. */
 export function WorkoutSection() {
-  const { defaultRestSec, vibrate, wakeLock, sound, countdownBeeps } = usePrefs()
+  const { defaultRestSec, vibrate, wakeLock, sound, countdownBeeps, rateLastOnly } = usePrefs()
 
   return (
     <section className={styles.section} aria-labelledby="ajustes-entreno">
@@ -81,6 +81,19 @@ export function WorkoutSection() {
         <span>
           Mantener la pantalla encendida durante la sesión
           <span className={styles.hint}>Gasta algo más de batería.</span>
+        </span>
+      </label>
+      <label className={styles.toggle}>
+        <input
+          type="checkbox"
+          checked={rateLastOnly}
+          onChange={(e) => setPrefs({ rateLastOnly: e.target.checked })}
+        />
+        <span>
+          Valorar solo la última serie de cada ejercicio
+          <span className={styles.hint}>
+            Las demás series empiezan el descanso sin preguntar. Puedes valorarlas tocándolas.
+          </span>
         </span>
       </label>
       <p className={styles.hint}>Estos ajustes son de este dispositivo.</p>

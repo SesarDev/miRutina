@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { Button } from '@/components/ui'
 import { formatClock, restRemaining, useNow, useRestEnd } from './clock'
 import { adjustRest, skipRest, type Rest } from './sessionStore'
@@ -7,7 +8,8 @@ const RADIUS = 26
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS
 const ENDING_SEC = 3
 
-export function RestTimer({ rest }: { rest: Rest }) {
+/** `next`: what comes after the rest («Siguiente: …»), so the next machine can be prepared. */
+export function RestTimer({ rest, next }: { rest: Rest; next?: ReactNode }) {
   const now = useNow(250)
   const ended = useRestEnd(rest, now)
   const left = restRemaining(rest, now)
@@ -53,6 +55,7 @@ export function RestTimer({ rest }: { rest: Rest }) {
           </Button>
         </div>
       )}
+      {next && <div className={styles.restNext}>{next}</div>}
     </div>
   )
 }

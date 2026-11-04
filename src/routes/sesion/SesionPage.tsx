@@ -151,6 +151,7 @@ export function SesionPage() {
                   rows={rows.filter((r) => r.exerciseId === item.exerciseId)}
                   active={item.id === expandedId}
                   activeRowId={active?.row.id ?? null}
+                  fixedNote={settings.get(item.exerciseId)?.note ?? null}
                 />
               ))
               if (block.length === 1) return cards
@@ -187,6 +188,7 @@ export function SesionPage() {
         weightStep={weightStep}
         allDone={!next && rows.length > 0}
         editing={editing}
+        equipment={activeExercise?.equipment ?? ''}
       />
 
       <Sheet open={adding} onClose={() => setAdding(false)} title="Añadir ejercicio">

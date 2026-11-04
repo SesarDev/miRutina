@@ -11,6 +11,10 @@ import {
   workIndexOf,
   type SequenceStep,
 } from '@/lib/session'
+import { usePrefs } from '@/lib/prefs'
+import { PLATE_EQUIPMENT } from '@/lib/plates'
+import { NextUp } from './NextUp'
+import { PlatesButton } from './PlatesButton'
 import { RestTimer } from './RestTimer'
 import { SessionStepper } from './SessionStepper'
 import { askFeel, closeFeelPrompt, selectRow, startRest, useSessionUi } from './sessionStore'
@@ -28,6 +32,8 @@ type Props = {
   allDone: boolean
   /** Correcting a finished session: marking a set starts no rest and asks no feel. */
   editing?: boolean
+  /** Equipment of the active exercise (dataset key): bars get the plate calculator. */
+  equipment?: string
 }
 
 /**
@@ -43,7 +49,9 @@ export function ControlPanel({
   weightStep,
   allDone,
   editing = false,
+  equipment = '',
 }: Props) {
+  const rateLastOnly = usePrefs((p) => p.rateLastOnly)
   const feelPrompt = useSessionUi((s) =>
     s.feelPrompt?.sessionId === session.id ? s.feelPrompt : null,
   )
@@ -78,9 +86,13 @@ export function ControlPanel({
     const restSec = restAfter(items, rows, row.id)
     // The armband moves to the set that follows this one (the partner in a superset).
     const next = nextAfter(items, rows, row.id)?.row.id ?? null
+    // «Valorar solo la última serie»: no feel prompt while sets of this exercise remain.
+    const moreToCome = rows.some(
+      (r) => r.exerciseId === row.exerciseId && r.id !== row.id && !r.isWarmup && !r.completedAt,
+    )
     if (editing) {
       selectRow(next)
-    } else if (row.isWarmup) {
+    } else if (row.isWarmup || (rateLastOnly && moreToCome)) {
       startRest(session.id, restSec)
       selectRow(next)
     } else {
@@ -110,7 +122,22 @@ export function ControlPanel({
 
   return (
     <section className={styles.panel} aria-label="Registro de la serie">
-      {rest && <RestTimer rest={rest} />}
+      {rest && (
+        <RestTimer
+          rest={rest}
+          next={
+            step && item ? (
+              <NextUp
+                sessionId={session.id}
+                step={step}
+                rows={rows}
+                name={exerciseName}
+                label={setLabel}
+              />
+            ) : null
+          }
+        />
+      )}
 
       {feelPrompt && promptRow && (
         <div className={styles.feelPrompt}>
@@ -177,6 +204,7 @@ export function ControlPanel({
               decimals={1}
               onEdit={onEdit}
               onChange={(weight) => void setSetValue(row.id, { weight })}
+              extra={PLATE_EQUIPMENT.has(equipment) ? <PlatesButton weight={row.weight} /> : null}
             />
             <SessionStepper
               label="reps"
