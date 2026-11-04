@@ -117,7 +117,8 @@ test('un récord aparece en el resumen de la sesión y en la ficha del ejercicio
   await freeSession('62,5')
   await expect(page.getByRole('heading', { name: '3 récords nuevos' })).toBeVisible()
   // The main record wears the armband with its figure; the others are listed underneath.
-  await expect(page.getByText('antes 60 kg')).toBeVisible()
+  await expect(page.getByText('antes 60 kg', { exact: true })).toBeVisible()
+  await expect(page.getByText('antes 60 kg × 10')).toBeVisible()
   await expect(page.getByText('Mejor 1RM estimado: 83,3 kg (antes 80 kg)')).toBeVisible()
 
   await page.goto('/ejercicio/0025?tab=historial')
