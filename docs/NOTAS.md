@@ -21,6 +21,8 @@
 
 - **F6 · PWA y lanzamiento:** implementada el 31 oct 2026 en una ejecución programada (sin el usuario delante); **sin cerrar** hasta que el usuario la confirme. PWA instalable y offline, exportar/importar, despliegue preparado (guía en `docs/DESPLIEGUE.md`) y Lighthouse móvil 90–92 / accesibilidad 100 / buenas prácticas 100 en local. Pendiente del usuario: variables en Vercel, URLs en Supabase, instalar en el móvil y la prueba de extremo a extremo.
 
+- **F7 · Ajustes de uso:** implementada el 4 nov 2026, **sin cerrar** (pendiente de que el usuario la pruebe). Cancelar o cambiar el entreno en curso, sonido al terminar el descanso, ver el ejercicio en la sesión, sesiones del día en el calendario (ver, corregir, mover, borrar) y las mejoras elegidas (siguiente ejercicio en el descanso, calculadora de discos, nota fija, valorar solo la última serie, guardar cambios en la rutina, comparación con la última vez, «Usar» predefinidas, ficha desde la rutina, progreso por grupo muscular, recordatorio).
+
 ## F5 · Auditoría de partida (31 oct 2026)
 
 ### transitions.dev (elegido con el usuario)
@@ -142,6 +144,18 @@ Menores: comentario «3 s» en `ControlPanel.tsx:52` (son 5 s); «0 de 0 días e
 - **Vercel**: los archivos de la PWA (`sw.js`, `workbox-*`, manifest, iconos) quedan fuera del reescrito a `index.html`; `sw.js`, el manifest e `index.html` sin caché.
 - **Medición**: Lighthouse 12 en local con `serve` (HTTP/1.1, gzip): rendimiento 90–92, accesibilidad 100, buenas prácticas 100; instalable sin errores (`Page.getInstallabilityErrors`). Lighthouse 12 ya no tiene categoría PWA.
 
+### F7
+- **Descartar una sesión** (`discardSession`): borrado lógico de la sesión y sus series; el planificado enlazado vuelve a «Planificado». Lo usan «Cancelar entreno», «Cambiar de rutina» (menú «⋯» de la sesión) y «Borrar» del calendario, siempre con «Deshacer».
+- **Corregir una sesión terminada**: la misma pantalla con `?editar=1` (sin descanso ni valoración automática; «Hecho» descarta las filas añadidas sin marcar). **Cambiar de día** (`moveSessionDate`) deja el planificado original pendiente y enlaza el del nuevo día si es de la misma rutina.
+- **Sonido** con Web Audio (sin archivos), desbloqueado al pulsar «Serie hecha» o al activarlo en Ajustes. El «ya avisado» es de módulo, así que cambiar de pantalla no repite el aviso. No suena con la pantalla bloqueada ni con el interruptor de silencio del iPhone.
+- **Predefinidas «tal cual»**: su `routineId` es un UUID determinista del id de la plantilla (`uuidFromString`), igual en todos los dispositivos (Supabase pide UUID). `getRoutineOrTemplate` las resuelve donde se busca una rutina. Las sesiones de una predefinida no proponen «guardar cambios» (hay que copiarla).
+- **Calculadora de discos**: solo para barra (barra, olímpica, Z, hexagonal), con barra de 20/15/10 kg por dispositivo y discos estándar hasta 1,25 kg (dos decimales solo aquí).
+- **Guardar cambios en la rutina**: ejercicios añadidos, otro orden y otro número de series hechas (menos por cansancio también, y lo decide el usuario). Un ejercicio saltado no cuenta como quitado; las pirámides no cambian de número de series. Se pregunta una vez por sesión (respuesta en `localStorage`).
+- **Comparación del resumen**: con la sesión anterior a esta (no con la más reciente), para que un resumen antiguo siga teniendo sentido.
+- **Progreso**: récords de 30 días agrupados por ejercicio (el último de cada tipo); series de trabajo por grupo muscular esta semana frente a la anterior (calentamientos y bajadas no cuentan); la gráfica de un ejercicio sin peso solo ofrece «Reps máximas».
+- **Recordatorio**: aviso en Hoy pasada la hora elegida si el entreno del día no ha empezado. Sin notificaciones del sistema (necesitarían un servidor).
+- **e2e**: `expect` con 10 s de margen (las specs corren en paralelo contra un único servidor de Vite) y el test de sesión espera a ver la valoración antes de recargar (era una carrera del test).
+
 ## Deuda
 
 - `impeccable critique` se ejecutó en un solo contexto (sin subagentes); repetir la crítica completa al cerrar F3, cuando haya una pantalla real de sesión.
@@ -152,7 +166,6 @@ Menores: comentario «3 s» en `ControlPanel.tsx:52` (son 5 s); «0 de 0 días e
 - F6 (lo hace el usuario fuera del repositorio): variables `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` en Vercel, Site URL y Redirect URLs en Supabase, instalar en el móvil y la prueba de extremo a extremo (ver `docs/DESPLIEGUE.md`). Lighthouse medido en local, no contra la URL de producción.
 - F6: el chunk de Recharts (≈ 100 kB gzip) se descarga al abrir la ficha, Progreso o Cuerpo; offline no importa (está precacheado).
 - F6: la primera instalación descarga ≈ 11,4 MB de precache; con datos móviles conviene hacerlo con wifi (lo dice la guía).
-- Predefinidas: solo «Copiar a mis rutinas». «Usar» (planificar o empezar tal cual sin copiar) queda pendiente: el calendario necesita una rutina propia.
 - Verificación manual de la sincronización entre dispositivos (criterios 5 y 6 de F1) pendiente; si falla, se arregla al inicio de F2.
 - El estado «Hecho» del calendario no se ha visto con datos reales: llega cuando F3 termine sesiones.
 - No hay script `test:e2e` ni tests de Playwright versionados; la verificación de F2 se hizo con un script suelto. Crear la suite e2e cuando haya flujo de sesión (F3).
@@ -160,8 +173,9 @@ Menores: comentario «3 s» en `ControlPanel.tsx:52` (son 5 s); «0 de 0 días e
 
 - F3: el resumen final no compara con la última vez (solo lista los récords).
 - F3: no hay deshacer al desmarcar una serie ni al borrar un calentamiento añadido por error (se puede quitar desde «Opciones»).
+- F7: el calendario solo pinta los entrenos planificados; una «Sesión libre» sin plan solo se ve al abrir el día.
+- F7: las series por grupo muscular no se han visto pintadas con datos reales (las de prueba eran más antiguas); las cubre su test.
 - F3: `logType` `reps` y `time` no tienen interfaz propia en la sesión: todo se registra como peso × reps (peso vacío = peso corporal).
-- F3: si el entreno de prueba se terminó como la sesión antigua, sus series quedaron con la fecha de esa sesión (29 oct) y el entreno de hoy sigue «Planificado»; no hay forma en la app de corregir la fecha de una sesión ni de marcar un entreno como hecho a mano.
 - F3: una «Sesión libre» no marca ningún entreno planificado del día como hecho (no hay rutina con la que emparejarlo).
 - F3: las preferencias (descanso por defecto, vibración, pantalla encendida) son por dispositivo, no se sincronizan.
 - F4: Recharts va en el chunk principal (375 kB gzip en total). Cargar las gráficas de forma diferida en F6.
