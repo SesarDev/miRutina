@@ -102,6 +102,8 @@ export type RoutineTemplate = {
   technique: SetTechnique
   /** Estimated minutes: 30, 45, 60 or 75. */
   durationMin: number
+  /** Only dumbbells, a bench and bodyweight: doable at home or in any gym. */
+  minimal?: boolean
   items: RoutineItem[]
 }
 

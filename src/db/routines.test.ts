@@ -61,7 +61,7 @@ describe('rutinas (repositorio)', () => {
   it('carga las predefinidas y copia una a mis rutinas', async () => {
     expect(await ensureRoutineTemplates()).toBe(true)
     expect(await ensureRoutineTemplates()).toBe(false)
-    expect(await db.routineTemplates.count()).toBe(12)
+    expect(await db.routineTemplates.count()).toBe(40)
     const copy = await copyTemplate('tpl-pierna')
     expect(copy?.name).toBe('Pierna completa')
     expect(copy?.items.length).toBeGreaterThan(5)

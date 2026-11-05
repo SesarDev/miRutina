@@ -217,6 +217,7 @@ function Templates() {
   const [part, setPart] = useState<string | null>(null)
   const [technique, setTechnique] = useState<SetTechnique | null>(null)
   const [duration, setDuration] = useState<string | null>(null)
+  const [minimalOnly, setMinimalOnly] = useState(false)
 
   if (templates === undefined) return null
 
@@ -227,7 +228,8 @@ function Templates() {
     (t) =>
       (!part || t.bodyParts.includes(part)) &&
       (!technique || t.technique === technique) &&
-      (!durationTest || durationTest(t.durationMin)),
+      (!durationTest || durationTest(t.durationMin)) &&
+      (!minimalOnly || t.minimal),
   )
 
   return (
@@ -250,6 +252,11 @@ function Templates() {
               {TECHNIQUE_LABELS[t]}
             </Chip>
           ))}
+        </FilterRow>
+        <FilterRow label="Material">
+          <Chip selected={minimalOnly} onClick={() => setMinimalOnly(!minimalOnly)}>
+            Mancuernas y banco
+          </Chip>
         </FilterRow>
         <FilterRow label="Duración">
           {DURATIONS.map((d) => (
@@ -274,6 +281,7 @@ function Templates() {
                 setPart(null)
                 setTechnique(null)
                 setDuration(null)
+                setMinimalOnly(false)
               }}
             >
               Quitar filtros
@@ -323,6 +331,7 @@ function TemplateCard({ template }: { template: RoutineTemplate }) {
       <p className={styles.cardDesc}>{template.description}</p>
       <div className={styles.cardChips}>
         <Chip selected>{TECHNIQUE_LABELS[template.technique]}</Chip>
+        {template.minimal && <Chip>Mancuernas y banco</Chip>}
         {template.bodyParts.map((p) => (
           <Chip key={p}>{label(BODY_PART_LABELS, p)}</Chip>
         ))}

@@ -1,12 +1,31 @@
 import seed from './exercises.json'
 import { ROUTINE_TEMPLATES } from './routineTemplates'
 
-const ids = new Set((seed as { exercises: { id: string }[] }).exercises.map((e) => e.id))
+const catalogue = (seed as { exercises: { id: string; equipment: string }[] }).exercises
+const ids = new Set(catalogue.map((e) => e.id))
+const equipment = new Map(catalogue.map((e) => [e.id, e.equipment]))
 
 describe('rutinas predefinidas', () => {
-  it('hay 12 con ids únicos', () => {
-    expect(ROUTINE_TEMPLATES).toHaveLength(12)
-    expect(new Set(ROUTINE_TEMPLATES.map((t) => t.id)).size).toBe(12)
+  it('hay 40 con ids únicos', () => {
+    expect(ROUTINE_TEMPLATES).toHaveLength(40)
+    expect(new Set(ROUTINE_TEMPLATES.map((t) => t.id)).size).toBe(40)
+  })
+
+  it('las de mancuernas y banco solo usan mancuernas o el propio cuerpo', () => {
+    const minimal = ROUTINE_TEMPLATES.filter((t) => t.minimal)
+    expect(minimal).toHaveLength(28)
+    for (const t of minimal)
+      for (const item of t.items)
+        expect(['dumbbell', 'body weight'], `${t.name}: ${item.exerciseId}`).toContain(
+          equipment.get(item.exerciseId),
+        )
+  })
+
+  it('cada grupo muscular tiene varias de mancuernas', () => {
+    for (const part of ['chest', 'back', 'shoulders', 'upper arms', 'upper legs', 'waist']) {
+      const n = ROUTINE_TEMPLATES.filter((t) => t.minimal && t.bodyParts.includes(part)).length
+      expect(n, part).toBeGreaterThanOrEqual(2)
+    }
   })
 
   it.each(ROUTINE_TEMPLATES.map((t) => [t.name, t] as const))(
