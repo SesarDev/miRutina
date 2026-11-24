@@ -17,6 +17,7 @@ dist-ssr
 !.vscode/extensions.json
 .idea
 .DS_Store
+Thumbs.db
 *.suo
 *.ntvs*
 *.njsproj
@@ -32,4 +33,19 @@ dev-dist
 coverage
 test-results
 playwright-report
+blob-report
+playwright/.cache
+
+# Media de ejercicios (© Gym visual, con licencia): se descarga en el build
+# con `npm run fetch:media`; nunca se versiona.
+public/exercises/
+
+# Skills de agentes de terceros: se reinstalan desde skills-lock.json
+.claude/skills/
+.claude/settings.local.json
+
+# Herramientas de despliegue y Supabase CLI
+.vercel
+supabase/.temp
+supabase/.branches
 
