@@ -6,9 +6,11 @@ Registro de entrenamiento de fuerza **local-first**: planificas la semana en el 
 
 ## Capturas
 
-| Hoy | Calendario | Progreso |
-| :---: | :---: | :---: |
-| <img src="docs/screenshots/hoy-movil.png" alt="Pantalla Hoy en el móvil" width="240"> | <img src="docs/screenshots/calendario-movil.png" alt="Calendario mensual con los entrenos hechos" width="240"> | <img src="docs/screenshots/progreso-movil.png" alt="Progreso por ejercicio con la última valoración y su tendencia" width="240"> |
+| Sesión en curso | Hoy | Calendario | Progreso |
+| :---: | :---: | :---: | :---: |
+| <img src="docs/screenshots/sesion-movil.png" alt="Sesión en curso: la última vez, la anterior y la serie precargada" width="200"> | <img src="docs/screenshots/hoy-movil.png" alt="Pantalla Hoy en el móvil" width="200"> | <img src="docs/screenshots/calendario-movil.png" alt="Calendario mensual con los entrenos hechos" width="200"> | <img src="docs/screenshots/progreso-movil.png" alt="Progreso por ejercicio con la última valoración y su tendencia" width="200"> |
+
+La sesión en curso muestra la última vez (peso, reps y valoración) y la anterior, y precarga esos valores: un toque en «Serie hecha» registra la serie.
 
 **En el PC:** rutinas predefinidas con filtros por músculo, técnica, material y duración.
 
