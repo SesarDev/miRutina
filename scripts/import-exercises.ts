@@ -3,7 +3,7 @@
  *   - validates every record against the dataset's JSON Schema (reports and skips invalid ones),
  *   - translates names to Spanish (scripts/exercise-terms.es.json + overrides),
  *   - writes src/db/seed/exercises.json,
- *   - copies images and GIFs to public/exercises/ (© Gym visual; not committed).
+ *   - copies images and GIFs to public/exercises/ (© Gym visual; never committed — builds use `npm run fetch:media`).
  *
  * Usage: npm run import:exercises [-- --report]
  */

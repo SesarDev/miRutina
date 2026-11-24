@@ -1,6 +1,6 @@
 # Despliegue e instalación
 
-La app es estática (Vite) y se publica en **Vercel** desde el repositorio de GitHub (privado). Supabase guarda los datos y hace el login por enlace mágico. Todo lo que hay en el repositorio ya está preparado (`vercel.json`, PWA, iconos); estos son los pasos que hay que hacer **a mano** en las webs de Vercel y Supabase.
+La app es estática (Vite) y se publica en **Vercel** desde el repositorio de GitHub. Supabase guarda los datos y hace el login por enlace mágico. Todo lo que hay en el repositorio ya está preparado (`vercel.json`, PWA, iconos); estos son los pasos que hay que hacer **a mano** en las webs de Vercel y Supabase.
 
 ## 1. Vercel (una vez)
 
@@ -12,7 +12,7 @@ La app es estática (Vite) y se publica en **Vercel** desde el repositorio de Gi
 4. **Deploy**. Cada `git push` a `main` vuelve a desplegar solo.
 5. Apunta la URL de producción (algo como `https://mirutina-xxxx.vercel.app`).
 
-> El repositorio lleva la media del dataset (`public/exercises/`, 138 MB) porque es privado; no lo hagas público (ver `docs/NOTAS.md` › F1).
+> La media del dataset (`public/exercises/`, 138 MB, © Gym visual) no está en el repositorio: `npm run build` la descarga antes de compilar (`prebuild` → `npm run fetch:media`), fijada a un commit del dataset. Vercel tiene `git` en el entorno de build, así que no hace falta configurar nada.
 
 ## 2. Supabase (una vez)
 

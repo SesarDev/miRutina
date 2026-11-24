@@ -36,7 +36,7 @@ src/
   motion/         # tokens y helpers de animación (GSAP + CSS)
   styles/         # tokens.css, global.css
 scripts/          # import-exercises.ts y otros
-public/exercises/ # images/ y gifs/ copiados del dataset
+public/exercises/ # images/ y gifs/ del dataset (© Gym visual): NO versionado, lo descarga `npm run fetch:media`
 vendor/exercises-dataset/  # clon del repo del dataset (en .gitignore)
 ```
 
@@ -66,7 +66,7 @@ Reglas:
 - Todo funciona sin conexión; la sync es en segundo plano y silenciosa salvo error.
 
 ## Diseño y motion
-Skills instaladas en el proyecto (usar cuando aplique, ver `docs/PLANNING.md` § Diseño):
+Skills instaladas en el proyecto (usar cuando aplique, ver `docs/PLANNING.md` § Diseño; no se versionan, si faltan: `bash scripts/install-skills.sh`):
 - **impeccable** — lenguaje visual; `PRODUCT.md` y `DESIGN.md` en la raíz los genera `/impeccable init`. Respetarlos siempre.
 - **transitions-dev** — micro-interacciones CSS y tokens de motion.
 - **gsap-skills** — GSAP: Flip, ScrollTrigger, `useGSAP` con scope y limpieza.
