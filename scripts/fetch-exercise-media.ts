@@ -6,19 +6,25 @@
  * Only the files referenced by src/db/seed/exercises.json are required; if they are all
  * present the script exits immediately (no network).
  *
+ * Needs only Node (fetch) and `tar`: build images such as Vercel's have no `git`.
+ *
  * Usage: npm run fetch:media   (runs automatically before `npm run build`)
  */
-import { spawnSync } from 'node:child_process'
-import { copyFileSync, existsSync, mkdirSync, readFileSync } from 'node:fs'
+import { spawn } from 'node:child_process'
+import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync } from 'node:fs'
+import { tmpdir } from 'node:os'
 import { basename, join } from 'node:path'
+import { Readable } from 'node:stream'
+import { pipeline } from 'node:stream/promises'
 
-const DATASET_URL = 'https://github.com/hasaneyldrm/exercises-dataset'
+const DATASET_REPO = 'hasaneyldrm/exercises-dataset'
 const DATASET_COMMIT = '7455efae41b330c265e7cd4b78dfa848e7ce5ebd'
+const TARBALL_URL = `https://codeload.github.com/${DATASET_REPO}/tar.gz/${DATASET_COMMIT}`
+const ATTEMPTS = 3
 
 const ROOT = join(import.meta.dirname, '..')
 const SEED = join(ROOT, 'src/db/seed/exercises.json')
 const MEDIA_OUT = join(ROOT, 'public/exercises')
-const CACHE = join(ROOT, 'node_modules/.cache/exercises-dataset')
 
 /** Dataset folder → public folder. */
 const FOLDERS = { images: 'images', videos: 'gifs' } as const
@@ -39,36 +45,57 @@ if (missing().length === 0) {
   process.exit(0)
 }
 
-const git = (...args: string[]) => {
-  const res = spawnSync('git', ['-C', CACHE, ...args], { stdio: 'inherit' })
-  if (res.status !== 0) {
-    console.error(`✘ Falló: git ${args.join(' ')}`)
-    process.exit(1)
-  }
+/** Streams the tarball into `tar -xz` run inside `dir` (no -C: avoids Windows path quirks). */
+async function downloadAndExtract(dir: string) {
+  const res = await fetch(TARBALL_URL)
+  if (!res.ok || !res.body) throw new Error(`HTTP ${res.status} al descargar ${TARBALL_URL}`)
+
+  const tar = spawn('tar', ['-xzf', '-'], { cwd: dir, stdio: ['pipe', 'inherit', 'inherit'] })
+  const exited = new Promise<void>((resolve, reject) => {
+    tar.on('error', reject)
+    tar.on('close', (code) => (code === 0 ? resolve() : reject(new Error(`tar salió con ${code}`))))
+  })
+  await pipeline(Readable.fromWeb(res.body), tar.stdin)
+  await exited
 }
 
 console.log(`↓ Descargando la media del dataset (${DATASET_COMMIT.slice(0, 7)})…`)
-if (!existsSync(join(CACHE, '.git'))) {
-  mkdirSync(CACHE, { recursive: true })
-  git('init', '--quiet')
-  git('remote', 'add', 'origin', DATASET_URL)
-  git('sparse-checkout', 'set', '--no-cone', '/images/', '/videos/')
-}
-git('fetch', '--quiet', '--depth', '1', 'origin', DATASET_COMMIT)
-git('checkout', '--quiet', '--detach', 'FETCH_HEAD')
+const work = mkdtempSync(join(tmpdir(), 'exercises-dataset-'))
+try {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      await downloadAndExtract(work)
+      break
+    } catch (err) {
+      if (attempt >= ATTEMPTS) throw err
+      console.warn(`⚠ Intento ${attempt} fallido (${(err as Error).message}); reintentando…`)
+      rmSync(work, { recursive: true, force: true })
+      mkdirSync(work)
+      await new Promise((r) => setTimeout(r, 2000 * attempt))
+    }
+  }
 
-let copied = 0
-for (const r of missing()) {
-  const src = join(CACHE, r.from, r.file)
-  if (!existsSync(src)) continue
-  mkdirSync(join(MEDIA_OUT, FOLDERS[r.from]), { recursive: true })
-  copyFileSync(src, target(r))
-  copied++
-}
+  // The tarball has a single top-level folder: <repo>-<commit>/
+  const top = join(work, `${DATASET_REPO.split('/')[1]}-${DATASET_COMMIT}`)
+  let copied = 0
+  for (const r of missing()) {
+    const src = join(top, r.from, r.file)
+    if (!existsSync(src)) continue
+    mkdirSync(join(MEDIA_OUT, FOLDERS[r.from]), { recursive: true })
+    copyFileSync(src, target(r))
+    copied++
+  }
 
-const stillMissing = missing()
-if (stillMissing.length) {
-  console.error(`✘ Faltan ${stillMissing.length} archivos en el dataset, p. ej. ${stillMissing[0].file}`)
-  process.exit(1)
+  const stillMissing = missing()
+  if (stillMissing.length) {
+    throw new Error(
+      `faltan ${stillMissing.length} archivos en el dataset, p. ej. ${stillMissing[0].file}`,
+    )
+  }
+  console.log(`✔ ${copied} archivos de media copiados a public/exercises/.`)
+} catch (err) {
+  console.error(`✘ No se pudo descargar la media: ${(err as Error).message}`)
+  process.exitCode = 1
+} finally {
+  rmSync(work, { recursive: true, force: true })
 }
-console.log(`✔ ${copied} archivos de media copiados a public/exercises/.`)
