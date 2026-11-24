@@ -13,7 +13,7 @@
 
 -- Función común: marca server_updated_at en cada insert/update
 create or replace function public.touch_server_updated_at()
-returns trigger language plpgsql as $$
+returns trigger language plpgsql set search_path = '' as $$
 begin
   new.server_updated_at := now();
   return new;
@@ -21,7 +21,7 @@ end $$;
 
 -- Función común: last-write-wins en el servidor (ignora un upsert más antiguo)
 create or replace function public.keep_newest()
-returns trigger language plpgsql as $$
+returns trigger language plpgsql set search_path = '' as $$
 begin
   if tg_op = 'UPDATE' and new.updated_at < old.updated_at then
     return old;
