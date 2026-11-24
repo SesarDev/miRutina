@@ -1,7 +1,9 @@
 {
   "name": "mirutina",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "Registro de entrenamiento de fuerza local-first: PWA offline con sincronización entre dispositivos.",
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "dev": "vite",
