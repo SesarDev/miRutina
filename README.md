@@ -4,6 +4,22 @@ Registro de entrenamiento de fuerza **local-first**: planificas la semana en el 
 
 > **Principio de producto:** la app nunca sugiere el peso de hoy. Muestra la última sesión y la anterior (peso, reps y una valoración de sensaciones), precarga esos valores y deja que decidas tú.
 
+## Capturas
+
+| Hoy | Calendario | Progreso |
+| :---: | :---: | :---: |
+| <img src="docs/screenshots/hoy-movil.png" alt="Pantalla Hoy en el móvil" width="240"> | <img src="docs/screenshots/calendario-movil.png" alt="Calendario mensual con los entrenos hechos" width="240"> | <img src="docs/screenshots/progreso-movil.png" alt="Progreso por ejercicio con la última valoración y su tendencia" width="240"> |
+
+**En el PC:** rutinas predefinidas con filtros por músculo, técnica, material y duración.
+
+<img src="docs/screenshots/rutinas-pc.png" alt="Rutinas predefinidas en el PC" width="100%">
+
+**Biblioteca de 1.324 ejercicios** con búsqueda en español e inglés y filtros.
+
+<img src="docs/screenshots/biblioteca-pc.png" alt="Biblioteca de ejercicios en el PC" width="100%">
+
+<sub>Imágenes de los ejercicios: © Gym visual — gymvisual.com</sub>
+
 ## Funcionalidades
 
 - **Sesión en curso pensada para una mano:** registrar una serie es un toque; la valoración (Demasiado · Voy justo · Bien · Puedo más · Poco) es opcional y arranca el descanso. Se guarda en cada cambio, mantiene la pantalla encendida (Wake Lock) y sobrevive a recargas y cierres.
