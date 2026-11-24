@@ -33,9 +33,3 @@ export function setThemePreference(preference: ThemePreference) {
   }
   applyThemePreference(preference)
 }
-
-export function resolvedTheme(root = document.documentElement): 'dark' | 'light' {
-  const attr = root.getAttribute('data-theme')
-  if (attr === 'dark' || attr === 'light') return attr
-  return window.matchMedia?.('(prefers-color-scheme: light)').matches ? 'light' : 'dark'
-}

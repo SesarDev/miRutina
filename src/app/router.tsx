@@ -91,11 +91,14 @@ const routeTree = rootRoute.addChildren([
     validateSearch: (s: Record<string, unknown>): { tab?: 'historial' | 'grafica' } =>
       s.tab === 'historial' || s.tab === 'grafica' ? { tab: s.tab } : {},
   }),
-  // Hidden: primitives showcase, not linked from the navigation.
+  // Primitives showcase, development only: in production builds the import is dropped and the
+  // path shows the not-found page (the route stays in the tree to keep its types stable).
   createRoute({
     getParentRoute,
     path: '/dev/ui',
-    component: lazyRouteComponent(() => import('@/routes/dev/DevUiPage'), 'DevUiPage'),
+    component: import.meta.env.DEV
+      ? lazyRouteComponent(() => import('@/routes/dev/DevUiPage'), 'DevUiPage')
+      : NotFoundPage,
   }),
 ])
 

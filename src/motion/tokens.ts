@@ -1,5 +1,6 @@
 import { gsap } from 'gsap'
 import { CustomEase } from 'gsap/CustomEase'
+import { REDUCED_MOTION_QUERY } from '@/lib/useMediaQuery'
 import { parseDuration } from './time'
 
 gsap.registerPlugin(CustomEase)
@@ -73,7 +74,5 @@ export function ease(token: EaseToken): string {
 
 export function prefersReducedMotion(): boolean {
   if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return false
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  return window.matchMedia(REDUCED_MOTION_QUERY).matches
 }
-
-export const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)'
