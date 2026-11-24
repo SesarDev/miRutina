@@ -12,7 +12,7 @@ La app es estática (Vite) y se publica en **Vercel** desde el repositorio de Gi
 4. **Deploy**. Cada `git push` a `main` vuelve a desplegar solo.
 5. Apunta la URL de producción (algo como `https://mirutina-xxxx.vercel.app`).
 
-> La media del dataset (`public/exercises/`, 138 MB, © Gym visual) no está en el repositorio: `npm run build` la descarga antes de compilar (`prebuild` → `npm run fetch:media`), fijada a un commit del dataset. Vercel tiene `git` en el entorno de build, así que no hace falta configurar nada.
+> La media del dataset (`public/exercises/`, 138 MB, © Gym visual) no está en el repositorio: `npm run build` la descarga antes de compilar (`prebuild` → `npm run fetch:media`), fijada a un commit del dataset. Solo usa `fetch` de Node y `tar` (el entorno de build de Vercel no tiene `git`), así que no hace falta configurar nada.
 
 ## 2. Supabase (una vez)
 
